@@ -1,0 +1,65 @@
+project-name/
+├── client/                    # React Frontend
+│   ├── public/
+│   │   ├── index.html
+│   │   ├── favicon.ico
+│   │   └── manifest.json
+│   ├── src/
+│   │   ├── components/        # Reusable UI components
+│   │   │   ├── Header.js
+│   │   │   ├── Footer.js
+│   │   │   └── Navbar.js
+│   │   ├── pages/            # Route-based components
+│   │   │   ├── Home.js
+│   │   │   ├── About.js
+│   │   │   └── Contact.js
+│   │   ├── services/         # API calls and external services
+│   │   │   ├── api.js
+│   │   │   └── authService.js
+│   │   ├── hooks/            # Custom React hooks
+│   │   │   ├── useAuth.js
+│   │   │   └── useFetch.js
+│   │   ├── context/          # React Context providers
+│   │   │   ├── AuthContext.js
+│   │   │   └── ThemeContext.js
+│   │   ├── utils/            # Helper functions
+│   │   │   ├── helpers.js
+│   │   │   └── constants.js
+│   │   └── assets/           # Static files
+│   │       ├── images/
+│   │       └── styles/
+│   ├── App.js
+│   ├── index.js
+│   ├── package.json
+│   └── setupProxy.js         # Proxy configuration
+│
+├── server/                   # Node.js Backend
+│   ├── config/              # Configuration files
+│   │   ├── db.js           # Database connection
+│   │   └── config.js       # App configuration
+│   ├── controllers/         # Request handlers
+│   │   ├── userController.js
+│   │   └── authController.js
+│   ├── models/             # Database schemas
+│   │   ├── User.js
+│   │   └── Product.js
+│   ├── routes/             # API route definitions
+│   │   ├── userRoutes.js
+│   │   └── authRoutes.js
+│   ├── middleware/         # Custom middleware
+│   │   ├── auth.js
+│   │   └── errorHandler.js
+│   ├── utils/              # Backend utilities
+│   │   ├── helpers.js
+│   │   └── validation.js
+│   ├── server.js           # Main server file
+│   ├── package.json
+│   ├── .env                # Environment variables
+│   └── .env.example        # Environment template
+│
+├── shared/                 # Shared utilities (optional)
+│   ├── constants.js
+│   └── types.js
+├── package.json           # Root package.json
+├── README.md
+└── .gitignore
