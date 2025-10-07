@@ -1,12 +1,8 @@
 import './assets/styles/App.css'
+import HomePage from './pages/homePage'
 
 function App() {
-  return (
-    <>
-      <h1>power</h1>
-      <h1>power</h1>
-    </>
-  )
+  return <HomePage/>
 }
 
 export default App
