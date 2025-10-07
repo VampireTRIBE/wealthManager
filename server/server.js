@@ -1,4 +1,3 @@
-// pakages and port
 if (process.env.NODE_ENV != "production") {
   require("dotenv").config();
 }
@@ -19,17 +18,10 @@ corAuth.corAuth(app);
 DB_connect();
 sessionConfig(app);
 app.use(flash());
-
-//passPort Authentication
 passportAuth(app);
-
-//data Parsers
 dataParser.bodyParser(app);
-
-//Locals
 app.use(Locals);
 
-//route modules
 const userRoute = require("./routes/user");
 
 // for listning all requests
@@ -39,3 +31,11 @@ app.listen(port, () => {
 
 // Diffrent Routes
 app.use("/", userRoute);
+
+
+//error handling middleware
+app.use((err, req, res, next) => {
+  const { status = 500, message = "Some Error" } = err;
+  console.log(`Status Code : ${status}\nMessage : ${message}`);
+  res.send(`Status : ${status}\nMessage : ${message}`);
+});
