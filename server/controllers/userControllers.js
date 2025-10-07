@@ -1,4 +1,5 @@
 const user = require("../models/user");
+const custom_error = require("../utills/errors/custom_error");
 
 const usersControllers = {
   showRegisterForm(req, res) {
@@ -18,7 +19,7 @@ const usersControllers = {
       });
     } catch (error) {
       req.flash("error", error.message);
-      return res.send(`Error in registeration`);
+      throw new custom_error(400,error.message);
     }
   },
 
