@@ -1,0 +1,22 @@
+.primery{
+   width: fit-content;
+   font-size: 1.5rem;
+   font-weight: bold;
+}
+
+.primerynext{
+   composes: primery;
+}
+
+
+@media screen and (min-width: 500px) {
+  .primerynext{
+   width: 35%;
+  }
+}
+
+@media screen and (min-width: 570px) {
+  .primery{
+   width: 30%;
+  }
+}

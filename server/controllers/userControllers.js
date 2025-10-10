@@ -1,11 +1,8 @@
 const user = require("../models/user");
 const custom_error = require("../utills/errors/custom_error");
+const passport = require("passport");
 
 const usersControllers = {
-  showRegisterForm(req, res) {
-    res.send("Registeration Form");
-  },
-
   async registerUser(req, res, next) {
     try {
       const { newUser, password } = req.body;
@@ -15,22 +12,30 @@ const usersControllers = {
           return next();
         }
         req.flash("success", "Welecome To Wealth Manager.....");
-        res.send(`Registeration sccess`);
+        res.status(200).json({
+          message: "Welecome To Wealth Manager.....",
+          user_id: new_user._id,
+        });
       });
     } catch (error) {
       req.flash("error", error.message);
-      throw new custom_error(400,error.message);
+      throw new custom_error(400, error.message);
     }
   },
 
-  showLoginForm(req, res) {
-    res.send("login from");
-  },
+  async loginUser(req, res, next) {
+    passport.authenticate("local", (err, user, info) => {
+      if (err) return next(err);
+      if (!user)
+        return res.status(400).json({ error: info?.message || "Login failed" });
 
-  async loginUser(req, res) {
-    req.flash("success", "Welcome back to Wealth Manager....");
-    // res.locals.redirectUrl = res.locals.redirectUrl || `/listings`;
-    res.send("login Sccesss");
+      req.login(user, (err) => {
+        if (err) return next(err);
+        res
+          .status(200)
+          .json({ message: "Login successful", user_id: user._id });
+      });
+    })(req, res, next);
   },
 
   async logoutUser(req, res, next) {
@@ -38,9 +43,16 @@ const usersControllers = {
       if (err) {
         return next(err);
       }
-      req.flash("success", "You logout Successfuly.....");
-      res.send("logout Sccesss");
+      res.status(200).json({ message: "LogOut successful" });
     });
+  },
+
+  async isLogedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+      res.json({ authenticated: true, user_id: req.user._id });
+    } else {
+      res.json({ authenticated: false });
+    }
   },
 };
 

@@ -14,7 +14,7 @@ const app = express();
 const path = require("path");
 let port = 3000;
 
-corAuth.corAuth(app); 
+corAuth.corAuth(app);
 DB_connect();
 sessionConfig(app);
 app.use(flash());
@@ -31,7 +31,6 @@ app.listen(port, () => {
 
 // Diffrent Routes
 app.use("/", userRoute);
-
 
 //error handling middleware
 app.use((err, req, res, next) => {

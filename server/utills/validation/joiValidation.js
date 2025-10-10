@@ -33,3 +33,25 @@ const JoiValidation = {
 };
 
 module.exports = JoiValidation;
+
+
+// // validation/wealthValidation.js
+// const Joi = require("joi");
+
+// // recursive category schema with Joi.link
+// const categoryJoi = Joi.object({
+//   name: Joi.string().trim().min(1).required(),
+//   description: Joi.string().allow("").optional(),
+//   value: Joi.number().min(0).optional(),
+//   subcategories: Joi.array().items(Joi.link("#category")).default([]),
+// }).id("category");
+
+// const wealthJoi = Joi.object({
+//   user: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required(),
+//   categories: Joi.array().items(Joi.link("#category")).default([]),
+// });
+
+// module.exports = {
+//   categoryJoi,
+//   wealthJoi,
+// };
