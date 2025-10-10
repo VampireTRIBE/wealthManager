@@ -1,0 +1,11 @@
+.brandname {
+  white-space: nowrap;
+  color: #ffffff;
+  font-size: 1.65rem;
+}
+
+@media screen and (min-width: 601px) {
+  .brandname {
+    font-size: 2rem;
+  }
+}

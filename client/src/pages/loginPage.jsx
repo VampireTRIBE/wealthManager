@@ -1,23 +1,17 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../componets/layoutComponets/navbar/navbar";
-import PreLoginHome from "../componets/layoutComponets/main/preLogin/prelogin";
+import LoginFrom from "../componets/layoutComponets/main/loginForm/loginForm";
 import buttonStyle from "../componets/singleComponets/button/button.module.css";
 
-export default function HomePage() {
+
+export default function LoginPage() {
   const navigate = useNavigate();
   return (
     <>
       <header>
         <Navbar
           d_btns={[
-            {
-              text: "Login",
-              className: buttonStyle.nbutton,
-              onClick: () => {
-                navigate("/login");
-              },
-            },
             {
               text: "Sign Up",
               className: buttonStyle.nbutton,
@@ -27,13 +21,6 @@ export default function HomePage() {
             },
           ]}
           m_btns={[
-            {
-              text: "Login",
-              className: buttonStyle.mnbtns,
-              onClick: () => {
-                navigate("/login");
-              },
-            },
             {
               text: "Sign Up",
               className: buttonStyle.mnbtns,
@@ -46,7 +33,7 @@ export default function HomePage() {
         />
       </header>
       <>
-        <PreLoginHome />
+        <LoginFrom />
       </>
       <footer></footer>
     </>

@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../componets/layoutComponets/navbar/navbar";
-import PreLoginHome from "../componets/layoutComponets/main/preLogin/prelogin";
+import SingupFrom from "../componets/layoutComponets/main/signupFrom/signupForm";
 import buttonStyle from "../componets/singleComponets/button/button.module.css";
-
-export default function HomePage() {
+export default function SingupPage() {
   const navigate = useNavigate();
   return (
     <>
@@ -18,13 +17,6 @@ export default function HomePage() {
                 navigate("/login");
               },
             },
-            {
-              text: "Sign Up",
-              className: buttonStyle.nbutton,
-              onClick: () => {
-                navigate("/signup");
-              },
-            },
           ]}
           m_btns={[
             {
@@ -34,19 +26,12 @@ export default function HomePage() {
                 navigate("/login");
               },
             },
-            {
-              text: "Sign Up",
-              className: buttonStyle.mnbtns,
-              onClick: () => {
-                navigate("/signup");
-              },
-            },
           ]}
           path="/"
         />
       </header>
       <>
-        <PreLoginHome />
+        <SingupFrom />
       </>
       <footer></footer>
     </>

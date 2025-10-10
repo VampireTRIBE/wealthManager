@@ -1,27 +1,13 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const productDetailsSchema = new Schema(
+  {
+    product: { type: Schema.Types.ObjectId, ref: "products", required: true },
+    user: { type: Schema.Types.ObjectId, ref: "users", required: true },
 
-const productDetailSchema = new Schema({
-  quantity: {
-    type: Number,
-    required: true,
-    min: 0.000001,
+    quantity: { type: Number, required: true, min: 1 },
+    buyPrice: { type: Number, required: true, min: 0 },
+    buyDate: { type: Date, default: Date.now },
   },
-  buyPrice: {
-    type: Number,
-    required: true,
-    min: 0.000001,
-  },
-  buyDate: {
-    type: Date,
-    required: true,
-    default: Date.now,
-  },
-  product: {
-    type: Schema.Types.ObjectId,
-    ref: "product",
-  },
-});
+  { timestamps: true }
+);
 
-const productDetail = mongoose.model("productDetail", productDetailSchema);
-module.exports = productDetail;
+module.exports = mongoose.model("productDetails", productDetailsSchema);
