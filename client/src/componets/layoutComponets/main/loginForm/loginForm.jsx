@@ -12,6 +12,7 @@ import labelStyle from "../../../singleComponets/label/label.module.css";
 
 import { useFormData } from "../../../../hooks/fromdata";
 import api from "../../../../servises/apis/apis";
+import { useUser } from "../../../../hooks/userContext";
 
 function LoginFrom({ ...props }) {
   const { formData, handleInputChange, resetForm } = useFormData({
@@ -20,6 +21,7 @@ function LoginFrom({ ...props }) {
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { setUserData } = useUser();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,6 +32,7 @@ function LoginFrom({ ...props }) {
         password: formData.password,
       });
       resetForm();
+      setUserData(response.data.Data);
       navigate(`/home/${response.data.user_id}`);
     } catch (err) {
       console.error(err);

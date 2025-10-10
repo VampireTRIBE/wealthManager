@@ -5,11 +5,11 @@ import headingStyle from "../../../singleComponets/heading/heading.module.css";
 import buttonStyle from "../../../singleComponets/button/button.module.css";
 import NavButtons from "../../navbar/navButtons/navButtons";
 
-function HomeDashbord({ id, ...props }) {
+function HomeDashbord({ name, ...props }) {
   const navigate = useNavigate();
   return (
     <main className={postLoginStyle.main}>
-      <H1 className={headingStyle.title} text={`Hi... ${id}`} />
+      <H1 className={headingStyle.title} text={`Hi... ${name}`} />
       <H1 className={headingStyle.title} text={`Welcome to Wealth Manager`} />
     </main>
   );
