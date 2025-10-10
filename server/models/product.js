@@ -1,3 +1,6 @@
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+
 const productSchema = new Schema(
   {
     name: { type: String, required: true },
@@ -5,7 +8,7 @@ const productSchema = new Schema(
     description: { type: String },
 
     buyAVG: { type: Number, default: 0 },
-    AVGqty: { type: Number, default: 0 },
+    qty: { type: Number, default: 0 },
 
     categories: [{ type: Schema.Types.ObjectId, ref: "categories" }],
 

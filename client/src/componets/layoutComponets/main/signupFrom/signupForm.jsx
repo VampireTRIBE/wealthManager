@@ -11,6 +11,7 @@ import inputStyle from "../../../singleComponets/input/input.module.css";
 import labelStyle from "../../../singleComponets/label/label.module.css";
 import { useFormData } from "../../../../hooks/fromdata";
 import api from "../../../../servises/apis/apis";
+import { useUser } from "../../../../hooks/userContext";
 
 function SingupFrom({ ...props }) {
   const { formData, handleInputChange, resetForm } = useFormData({
@@ -24,6 +25,8 @@ function SingupFrom({ ...props }) {
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { userData, setUserData } = useUser();
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,6 +36,8 @@ function SingupFrom({ ...props }) {
         password: formData.password,
       });
       resetForm();
+      console.log(response.data);
+      setUserData(response.data.Data);
       navigate(`/home/${response.data.user_id}`);
     } catch (err) {
       setError(err.response?.data?.error || "Server error. Please try again.");

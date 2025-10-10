@@ -5,23 +5,31 @@ import LoginPage from "./pages/loginPage";
 import SignupPage from "./pages/SignupPage";
 import HomePagePostLogin from "./pages/homeDashboardPage";
 import ProtectRoute from "./componets/routeProtection/protectedRoute";
+import { UserProvider } from "./hooks/userContext";
 
 function App() {
   return (
     <>
       <GlobalStyles />
       <Router>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/home/:id" element={
-            <ProtectRoute children={<HomePagePostLogin/>}/>} />
-        </Routes>
+        <UserProvider>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route
+              path="/home/:id"
+              element={
+                <ProtectRoute>
+                  <HomePagePostLogin />
+                </ProtectRoute>
+              }
+            />
+          </Routes>
+        </UserProvider>
       </Router>
     </>
   );
 }
 
 export default App;
-

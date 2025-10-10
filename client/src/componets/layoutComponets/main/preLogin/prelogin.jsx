@@ -24,7 +24,7 @@ function PreLoginHome({ ...props }) {
               text: "Sign Up",
               className: buttonStyle.mainbtns,
               onClick: () => {
-                navigate("/login");
+                navigate("/signup");
               },
             },
           ]}
