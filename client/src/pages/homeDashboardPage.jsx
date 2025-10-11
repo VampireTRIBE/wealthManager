@@ -7,8 +7,10 @@ import HomeDashbord from "../componets/layoutComponets/main/dashbord/homedashbor
 import api from "../servises/apis/apis";
 import { useUser } from "../hooks/userContext";
 import { navPostLogin } from "../utills/helpers/buttonsArray/navbuton";
+import useTitle from "../hooks/useTitle";
 
 export default function HomePagePostLogin() {
+  useTitle("Wealth Manager - Home")
   const { id } = useParams();
   const navigate = useNavigate();
   const { userData, setUserData } = useUser();

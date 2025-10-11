@@ -27,7 +27,23 @@ function App() {
               }
             />
             <Route
-              path="/home/:id/:c"
+              path="/home/:id/assets"
+              element={
+                <ProtectRoute>
+                  <HomeAssets/>
+                </ProtectRoute>
+              }
+            />
+            <Route
+              path="/home/:id/expenses"
+              element={
+                <ProtectRoute>
+                  <HomeAssets/>
+                </ProtectRoute>
+              }
+            />
+            <Route
+              path="/home/:id/incomes"
               element={
                 <ProtectRoute>
                   <HomeAssets/>
