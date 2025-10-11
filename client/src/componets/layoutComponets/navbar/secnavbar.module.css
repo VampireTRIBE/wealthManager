@@ -1,0 +1,58 @@
+.navbar {
+  z-index: 5;
+  margin: auto auto;
+  width: 90%;
+  height: 2.5rem;
+  margin-top: 3.5rem;
+  padding: 0 1rem;
+  background-color: #1e3a8a;
+  border: 2px solid #ffffff;
+  border-radius: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  opacity: 0.8;
+}
+
+.navbar:hover{
+  opacity: 1;
+}
+
+.nbuttons {
+  height: 100%;
+  padding: 0px 10px;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 0.8rem;
+  overflow-x: auto;
+  white-space: nowrap;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+  cursor: grab;
+}
+.nbuttons:active {
+  cursor: grabbing;
+}
+
+.nbuttons::-webkit-scrollbar {
+  display: none;
+}
+
+.cat{
+  display: none;
+}
+
+@media screen and (min-width: 500px) {
+  .cat {
+    display: block;
+  }
+}
+@media screen and (min-width: 601px) {
+  .navbar {
+    margin-top: 4.5rem;
+    height: 3.5rem;
+  }
+}
