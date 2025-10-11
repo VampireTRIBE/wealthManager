@@ -12,6 +12,7 @@ export default function HomePagePostLogin() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { userData, setUserData } = useUser();
+  console.log(userData)
   if (!userData) return <p>Loading...</p>;
 
   const handleLogout = async (id) => {
@@ -27,28 +28,32 @@ export default function HomePagePostLogin() {
   const categories = userData.categories || [];
 
   const d_btns = [
-    ...categories.map((el) => ({
+    ...categories.map((el,index) => ({
       text: el.name,
       className: buttonStyle.nbutton,
-      onClick: () => console.log(`${el.name} clicked`),
+      onClick: () => navigate(`/home/${id}/${el.name.toLowerCase()}`),
+      dis: index,
     })),
     {
       text: "LogOut",
       className: buttonStyle.nbutton,
       onClick: () => handleLogout(id),
+      dis: categories.length,
     },
   ];
 
   const m_btns = [
-    ...categories.map((el) => ({
+    ...categories.map((el,index) => ({
       text: el.name,
       className: buttonStyle.mnbtns,
-      onClick: () => console.log(`${el.name} clicked`),
+      onClick: () => navigate(`/home/${id}/${el.name.toLowerCase()}`),
+      dis: index,
     })),
     {
       text: "LogOut",
       className: buttonStyle.mnbtns,
       onClick: () => handleLogout(id),
+      dis: categories.length,
     },
   ];
 

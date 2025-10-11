@@ -6,6 +6,7 @@ import SignupPage from "./pages/SignupPage";
 import HomePagePostLogin from "./pages/homeDashboardPage";
 import ProtectRoute from "./componets/routeProtection/protectedRoute";
 import { UserProvider } from "./hooks/userContext";
+import HomeAssets from "./pages/assets/homeAssets";
 
 function App() {
   return (
@@ -22,6 +23,14 @@ function App() {
               element={
                 <ProtectRoute>
                   <HomePagePostLogin />
+                </ProtectRoute>
+              }
+            />
+            <Route
+              path="/home/:id/:c"
+              element={
+                <ProtectRoute>
+                  <HomeAssets/>
                 </ProtectRoute>
               }
             />

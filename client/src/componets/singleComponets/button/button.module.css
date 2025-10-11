@@ -15,6 +15,15 @@
    display: block;
 }
 
+.snbtns{
+   composes:nbutton;
+   padding: 4px 12px;
+   font-size: 0.8rem;
+   font-weight: normal;
+   border: 1px solid #ffffff;
+   display: block;
+}
+
 .mainbtns{
    composes:nbutton;
    display: block;
@@ -34,22 +43,72 @@
 }
 
 @media screen and (min-width: 570px) {
-  .nbutton {
+  .nbutton[dis="0"] {
     display: block;
   }
-  .mnbtns{
+  .mnbtns[dis="0"]{
    display: none;
   }
 }
 
-@media screen and (min-width: 601px) {
-  /* .nbutton {
-    font-size: 1.3rem;
-  } */
+@media screen and (min-width: 720px) {
+  .nbutton[dis="1"] {
+    display: block;
+  }
+  .mnbtns[dis="2"]{
+   display: none;
+  }
 }
+
+@media screen and (min-width: 720px) {
+  .nbutton[dis="1"] {
+    display: block;
+  }
+  .mnbtns[dis="1"]{
+   display: none;
+  }
+}
+
+
 
 @media screen and (min-width: 750px) {
   .nbutton {
     font-size: 1.15rem;
+  }
+}
+
+@media screen and (min-width: 1000px) {
+  .nbutton[dis="2"] {
+    display: block;
+  }
+  .mnbtns[dis="2"]{
+   display: none;
+  }
+}
+
+@media screen and (min-width: 1150px) {
+  .nbutton[dis="3"] {
+    display: block;
+  }
+  .mnbtns[dis="3"]{
+   display: none;
+  }
+}
+
+@media screen and (min-width: 1300px) {
+  .nbutton[dis="4"] {
+    display: block;
+  }
+  .mnbtns[dis="4"]{
+   display: none;
+  }
+}
+
+@media screen and (min-width: 1450px) {
+  .nbutton[dis="5"] {
+    display: block;
+  }
+  .mnbtns[dis="6"]{
+   display: none;
   }
 }
