@@ -1,6 +1,9 @@
+const custom_error = require("../errors/custom_error");
+
 module.exports.isLogedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();
   }
-  return res.status(401).json({ authenticated: false, message: "Not Logged In" });
+  throw new custom_error("400" ,"Not Logedin");
 };
+

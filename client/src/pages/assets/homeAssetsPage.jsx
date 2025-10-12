@@ -23,6 +23,7 @@ export default function HomeAssets() {
 
   const { userData, setUserData } = useUser();
   if (!userData) return <p>Loading...</p>;
+    console.log(userData);
 
   const handleLogout = async () => {
     try {
@@ -38,16 +39,18 @@ export default function HomeAssets() {
     return <p>Bad Request</p>;
   }
 
-  const handleEditDeleteCat = async (s_id, edit = true) => {
-    try {
-      const method = edit ? "patch" : "delete";
-      const url = `/home/${id}/${c}/${s_id}`;
-      const res = await api[method](url);
-      console.log(`${edit ? "Edited" : "Deleted"} category`, res.data);
-    } catch (error) {
-      console.error("Error in handleEditDeleteCat:", error);
-    }
-  };
+  const handleEditDeleteCat = async (c_id, s_id, edit = true) => {
+  try {
+    const method = edit ? "patch" : "delete";
+    const url = `/home/${id}/${c_id}/${s_id}`;
+    const res = await api[method](url);
+    setUserData(res.data.Data);
+  } catch (error) {
+    console.error("Error in handleEditDeleteCat:", error);
+  }
+};
+
+
 
   const categories = userData?.categories || [];
   const parentCategory = categories.find((cat) => cat.name.toLowerCase() === c);
@@ -90,7 +93,7 @@ export default function HomeAssets() {
               className={buttonStyle.saveBtn}
               onClick={(e) => {
                 e.stopPropagation();
-                handleEditDeleteCat(cat._id, true);
+                handleEditDeleteCat(parentCategory?._id,cat._id, true);
                 setEditingCatId(null);
               }}>
               ✅
@@ -124,7 +127,7 @@ export default function HomeAssets() {
               alt="Delete"
               onClick={(e) => {
                 e.stopPropagation();
-                handleEditDeleteCat(cat._id, false);
+                handleEditDeleteCat(parentCategory?._id,cat._id, false);
               }}
             />
           </>
@@ -141,7 +144,7 @@ export default function HomeAssets() {
           m_btns={navButtons(categories, buttonStyle.mnbtns)}
           path={`/home/${id}`}
         />
-        {d_btns.length > 0 ? <SubNavbar d_btns={d_btns} /> : null}
+        {d_btns.length > 0 ? <SubNavbar d_btns={d_btns} c_id={parentCategory?._id}/> : null}
       </header>
       <>
         {d_btns.length > 0 ? <Home style={{ paddingTop: "10px" }} /> : <Home />}

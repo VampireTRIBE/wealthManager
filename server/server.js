@@ -23,6 +23,7 @@ dataParser.bodyParser(app);
 app.use(Locals);
 
 const userRoute = require("./routes/user");
+const categoryRoute = require("./routes/category");
 
 // for listning all requests
 app.listen(port, () => {
@@ -31,10 +32,11 @@ app.listen(port, () => {
 
 // Diffrent Routes
 app.use("/", userRoute);
+app.use("/home/:id/:c_id/", categoryRoute);
 
 //error handling middleware
-app.use((err, req, res, next) => {
-  const { status = 500, message = "Some Error" } = err;
-  console.log(`Status Code : ${status}\nMessage : ${message}`);
-  res.send(`Status : ${status}\nMessage : ${message}`);
-});
+// app.use((err, req, res, next) => {
+//   const { status = 500, message = "Some Error" } = err;
+//   console.log(`Status Code : ${status}\nMessage : ${message}`);
+//   res.send(`Status : ${status}\nMessage : ${message}`);
+// });
