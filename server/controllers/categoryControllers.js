@@ -107,47 +107,35 @@ const categoryController = {
       next(new custom_error(400, error.message));
     }
   },
+  
   async editCategory(req, res, next) {
-    try {
-      const { id, c_id, s_id } = req.params;
-      const { name } = req.body;
+  try {
+    const { id, c_id, s_id } = req.params;
+    const { name } = req.body;
 
-      const category = await Category.findById(s_id);
-      if (!category) throw new Error("Category not found");
+    if (!name) throw new Error("Category name is required");
 
-      // Optional: Recheck nesting level if parentCategory is changed
-      if (parentCategory && parentCategory !== category.parentCategory?.toString()) {
-        let parent = await Category.findById(parentCategory);
-        if (!parent) throw new Error("New parent category not found");
+    const category = await Category.findById(s_id);
+    if (!category) throw new Error("Category not found");
 
-        let level = 1;
-        while (parent && parent.parentCategory) {
-          level++;
-          if (level >= 4)
-            throw new Error("Cannot move category: nesting level cannot exceed 4");
-          parent = await Category.findById(parent.parentCategory);
-        }
+    // Update only the name
+    category.name = name;
+    await category.save();
 
-        category.parentCategory = parentCategory;
-      }
+    // Fetch updated user data
+    const u_data = await dbReq.userData(id);
+    if (!u_data) return res.status(404).json({ error: "User data not found" });
 
-      if (name) category.name = name;
-      if (description) category.description = description;
+    res.status(200).json({
+      message: "✅ Category name updated successfully",
+      user_id: id,
+      Data: u_data,
+    });
+  } catch (error) {
+    next(new custom_error(400, error.message));
+  }
+},
 
-      await category.save();
-
-      const u_data = await dbReq.userData(id);
-      if (!u_data) return res.status(404).json({ error: "User data not found" });
-
-      res.status(200).json({
-        message: "✏️ Category updated successfully",
-        user_id: id,
-        Data: u_data,
-      });
-    } catch (error) {
-      next(new custom_error(400, error.message));
-    }
-  },
 };
 
 module.exports = categoryController;
