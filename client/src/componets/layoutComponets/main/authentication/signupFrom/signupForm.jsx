@@ -1,17 +1,20 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Button from "../../../singleComponets/button/button";
-import { H1, H3 } from "../../../singleComponets/heading/heading";
-import Input from "../../../singleComponets/input/input";
-import Label from "../../../singleComponets/label/label";
-import Link from "../../../singleComponets/link/link";
+
+import api from "../../../../../servises/apis/apis";
+import { useFormData } from "../../../../../hooks/fromdata";
+import { useUser } from "../../../../../hooks/userContext";
+
+import Button from "../../../../singleComponets/button/button";
+import { H1, H3 } from "../../../../singleComponets/heading/heading";
+import Input from "../../../../singleComponets/input/input";
+import Label from "../../../../singleComponets/label/label";
+import Link from "../../../../singleComponets/link/link";
+
 import singupFromStyle from "./signupForm.module.css";
-import btnStyle from "../../../singleComponets/button/button.module.css";
-import inputStyle from "../../../singleComponets/input/input.module.css";
-import labelStyle from "../../../singleComponets/label/label.module.css";
-import { useFormData } from "../../../../hooks/fromdata";
-import api from "../../../../servises/apis/apis";
-import { useUser } from "../../../../hooks/userContext";
+import btnStyle from "../../../../singleComponets/button/button.module.css";
+import inputStyle from "../../../../singleComponets/input/input.module.css";
+import labelStyle from "../../../../singleComponets/label/label.module.css";
 
 function SingupFrom({ ...props }) {
   const { formData, handleInputChange, resetForm } = useFormData({

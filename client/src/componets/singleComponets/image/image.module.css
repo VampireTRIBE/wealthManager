@@ -1,4 +1,16 @@
-.logo{
-   height: 100%;
-   aspect-ratio: 1 / 1;
+.logo {
+  height: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.subimg {
+  width: 25px;
+  aspect-ratio: 2 / 1;
+  cursor: pointer;
+  margin-left: 8px; 
+  vertical-align: middle;
+}
+
+.subimg:hover{
+   transform: scale(1.3);
 }

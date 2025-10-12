@@ -19,13 +19,28 @@
   opacity: 1;
 }
 
+.addcatToggle {
+  z-index: 5;
+  position: absolute;
+  top: 6.5rem;
+  right: 6%;
+  transform: scale(0);
+  height: fit-content;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.addcatTogleopen {
+  transform: scale(1);
+}
+
 .nbuttons {
   height: 100%;
   padding: 0px 10px;
   display: flex;
   flex: 1;
   align-items: center;
-  gap: 0.8rem;
+  gap: 1rem;
   overflow-x: auto;
   white-space: nowrap;
   -ms-overflow-style: none;
@@ -45,6 +60,17 @@
   display: none;
 }
 
+.addcat {
+  height: 80%;
+}
+
+@media screen and (min-width: 400px) {
+  .addcatToggle{
+    top: 3.6rem;
+    right: 20%;
+  }
+}
+
 @media screen and (min-width: 500px) {
   .cat {
     display: block;
@@ -54,5 +80,13 @@
   .navbar {
     margin-top: 4.5rem;
     height: 3.5rem;
+  }
+  .addcatToggle{
+    top: 5rem;
+  }
+}
+@media screen and (min-width: 860px) {
+  .addcatToggle{
+    right: 14%;
   }
 }

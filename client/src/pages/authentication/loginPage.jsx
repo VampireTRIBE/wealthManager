@@ -1,31 +1,33 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../componets/layoutComponets/navbar/navbar";
-import SingupFrom from "../componets/layoutComponets/main/signupFrom/signupForm";
-import buttonStyle from "../componets/singleComponets/button/button.module.css";
-import useTitle from "../hooks/useTitle";
-export default function SingupPage() {
+import useTitle from "../../hooks/useTitle";
+
+import Navbar from "../../componets/layoutComponets/navbar/navbar";
+import LoginFrom from "../../componets/layoutComponets/main/authentication/loginForm/loginForm";
+
+import buttonStyle from "../../componets/singleComponets/button/button.module.css";
+
+export default function LoginPage() {
   const navigate = useNavigate();
-  useTitle("Wealth Manager - SignUp")
+  useTitle("Wealth Manager - Login");
   return (
     <>
       <header>
         <Navbar
           d_btns={[
             {
-              text: "Login",
+              text: "Sign Up",
               className: buttonStyle.nbutton,
               onClick: () => {
-                navigate("/login");
+                navigate("/signup");
               },
             },
           ]}
           m_btns={[
             {
-              text: "Login",
+              text: "Sign Up",
               className: buttonStyle.mnbtns,
               onClick: () => {
-                navigate("/login");
+                navigate("/signup");
               },
             },
           ]}
@@ -33,7 +35,7 @@ export default function SingupPage() {
         />
       </header>
       <>
-        <SingupFrom />
+        <LoginFrom />
       </>
       <footer></footer>
     </>

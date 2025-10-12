@@ -1,16 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import { H1 } from "../../../singleComponets/heading/heading";
-import preLoginStyle from "./prelogin.module.css";
+import NavButtons from "../../navbar/navButtons/navButtons";
+import homeStyle from "./home.module.css";
 import headingStyle from "../../../singleComponets/heading/heading.module.css";
 import buttonStyle from "../../../singleComponets/button/button.module.css";
-import NavButtons from "../../navbar/navButtons/navButtons";
 
-function PreLoginHome({ ...props }) {
+function Home({ ...props }) {
   const navigate = useNavigate();
   return (
-    <main className={preLoginStyle.main}>
+    <main className={homeStyle.main}>
       <H1 className={headingStyle.title} text="Welcome to Wealth Manager" />
-      <div className={preLoginStyle.authbtns}>
+      <div className={homeStyle.authbtns}>
         <NavButtons
           btns={[
             {
@@ -34,4 +34,4 @@ function PreLoginHome({ ...props }) {
   );
 }
 
-export default PreLoginHome;
+export default Home;
