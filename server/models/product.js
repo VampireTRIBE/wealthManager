@@ -4,14 +4,14 @@ const Schema = mongoose.Schema;
 const productSchema = new Schema(
   {
     name: { type: String, required: true },
-    industry: { type: String },
     description: { type: String },
-
+    industry: { type: String },
+    tags: [{ type: String }],
     buyAVG: { type: Number, default: 0 },
     qty: { type: Number, default: 0 },
-
-    categories: [{ type: Schema.Types.ObjectId, ref: "categories" }],
-
+    realizedGain: { type: Number, default: 0 },
+    totalValue: { type: Number, default: 0 },
+    categories: { type: Schema.Types.ObjectId, ref: "categories" },
     user: { type: Schema.Types.ObjectId, ref: "users", required: true },
   },
   { timestamps: true }

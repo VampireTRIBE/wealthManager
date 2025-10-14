@@ -19,6 +19,16 @@ const validation = {
     }
     next();
   },
+
+  transactionDATA(req, res, next) {
+    const { error } = JoiValidation.productDetailsDataValidation.validate(
+      req.body
+    );
+    if (error) {
+      throw new custom_error(400, error.details[0].message);
+    }
+    next();
+  },
 };
 
 module.exports = validation;

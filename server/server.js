@@ -24,6 +24,8 @@ app.use(Locals);
 
 const userRoute = require("./routes/user");
 const categoryRoute = require("./routes/category");
+const productRoute = require("./routes/product");
+const productDetailRoute = require("./routes/productDetail");
 
 // for listning all requests
 app.listen(port, () => {
@@ -33,10 +35,12 @@ app.listen(port, () => {
 // Diffrent Routes
 app.use("/", userRoute);
 app.use("/home/:id/:c_id/", categoryRoute);
+app.use("/product/:u_id/:c_id/", productRoute);
+app.use("/transaction/:u_id/:p_id/", productDetailRoute);
 
-//error handling middleware
-// app.use((err, req, res, next) => {
-//   const { status = 500, message = "Some Error" } = err;
-//   console.log(`Status Code : ${status}\nMessage : ${message}`);
-//   res.send(`Status : ${status}\nMessage : ${message}`);
-// });
+// error handling middleware
+app.use((err, req, res, next) => {
+  const { status = 500, message = "Some Error" } = err;
+  console.log(`Status Code : ${status}\nMessage : ${message}`);
+  res.send(`Status : ${status}\nMessage : ${message}`);
+});

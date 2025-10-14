@@ -148,12 +148,10 @@ export default function HomeAssets() {
           m_btns={navButtons(categories, buttonStyle.mnbtns)}
           path={`/home/${id}`}
         />
-        {d_btns.length > 0 ? (
-          <SubNavbar d_btns={d_btns} c_id={parentCategory?._id} />
-        ) : null}
+        <SubNavbar d_btns={d_btns} c_id={parentCategory?._id} />
       </header>
       <>
-        {d_btns.length > 0 ? <Home style={{ paddingTop: "10px" }} /> : <Home />}
+        <Home />
       </>
       <footer></footer>
     </>
