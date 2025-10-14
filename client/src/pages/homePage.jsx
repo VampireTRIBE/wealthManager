@@ -1,9 +1,9 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../componets/layoutComponets/navbar/navbar";
-import PreLoginHome from "../componets/layoutComponets/main/preLogin/prelogin";
-import buttonStyle from "../componets/singleComponets/button/button.module.css";
 import useTitle from "../hooks/useTitle";
+
+import buttonStyle from "../componets/singleComponets/button/button.module.css";
+import Home from "../componets/layoutComponets/main/home/home";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -48,7 +48,7 @@ export default function HomePage() {
         />
       </header>
       <>
-        <PreLoginHome />
+        <Home/>
       </>
       <footer></footer>
     </>

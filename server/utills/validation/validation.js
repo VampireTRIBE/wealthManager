@@ -1,5 +1,4 @@
 const JoiValidation = require("./joiValidation");
-const custom_error = require("../errors/custom_error");
 
 const validation = {
   registerDATA(req, res, next) {
@@ -7,7 +6,9 @@ const validation = {
       req.body
     );
     if (error) {
-      throw new custom_error(400, error.details[0].message);
+      return res.status(404).json({
+        error: error.details[0].message,
+      });
     }
     next();
   },
@@ -15,7 +16,49 @@ const validation = {
   loginDATA(req, res, next) {
     const { username, password } = req.body;
     if (!username || !password || password.length < 8) {
-      throw new custom_error(400, "Username Or Password Not Valid");
+      return res.status(404).json({
+        error: "Username Or Password Not Valid",
+      });
+    }
+    next();
+  },
+
+  transactionDATA(req, res, next) {
+    const { error } = JoiValidation.productDetailsDataValidation.validate(
+      req.body
+    );
+    if (error) {
+      return res.status(404).json({
+        error: error.details[0].message,
+      });
+    }
+    next();
+  },
+
+  productDATA(req, res, next) {
+    const { error } = JoiValidation.productDataValidation.validate(req.body);
+    if (error) {
+      return res.status(404).json({
+        error: error.details[0].message,
+      });
+    }
+    next();
+  },
+  productDATA2(req, res, next) {
+    const { error } = JoiValidation.productDataValidation2.validate(req.body);
+    if (error) {
+      return res.status(404).json({
+        error: error.details[0].message,
+      });
+    }
+    next();
+  },
+  categoryDATA(req, res, next) {
+    const { error } = JoiValidation.categoryDataValidation.validate(req.body);
+    if (error) {
+      return res.status(404).json({
+        error: error.details[0].message,
+      });
     }
     next();
   },

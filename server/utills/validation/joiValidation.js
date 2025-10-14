@@ -30,28 +30,105 @@ const JoiValidation = {
       "string.max": "Password cannot exceed 128 characters",
     }),
   }),
+
+  productDetailsDataValidation: Joi.object({
+    transaction: Joi.object({
+      quantity: Joi.number().required().messages({
+        "number.base": "Quantity must be a number.",
+        "any.required": "Quantity is required.",
+      }),
+      buyPrice: Joi.number().min(0.00001).required().messages({
+        "number.base": "Buy price must be a number.",
+        "number.min": "Buy price cannot be Zero.",
+        "any.required": "Buy price is required.",
+      }),
+      buyDate: Joi.date()
+        .default(() => new Date())
+        .messages({
+          "date.base": "Invalid date format for buyDate.",
+        }),
+    }).required(),
+  }),
+
+  productDataValidation: Joi.object({
+    newProduct: Joi.object({
+      name: Joi.string().required().messages({
+        "string.base": "name must be a String.",
+        "any.required": "name is required.",
+      }),
+      description: Joi.string().max(50).messages({
+        "string.base": "Discreption must be a String.",
+        max: "max Char 50.",
+      }),
+      industry: Joi.string().max(50).messages({
+        "string.base": "Industry must be a String.",
+        max: "max Char 50.",
+      }),
+      tags: Joi.array()
+        .items(
+          Joi.string().max(20).messages({
+            "string.base": "Each tag must be a string.",
+            "string.max": "Each tag can have at most 20 characters.",
+          })
+        )
+        .messages({
+          "array.base": "Tags must be an array of strings.",
+        }),
+    }).required(),
+
+    transaction: Joi.object({
+      quantity: Joi.number().required().messages({
+        "number.base": "Quantity must be a number.",
+        "any.required": "Quantity is required.",
+      }),
+      buyPrice: Joi.number().min(0.00001).required().messages({
+        "number.base": "Buy price must be a number.",
+        "number.min": "Buy price cannot be Zero.",
+        "any.required": "Buy price is required.",
+      }),
+      buyDate: Joi.date()
+        .default(() => new Date())
+        .messages({
+          "date.base": "Invalid date format for buyDate.",
+        }),
+    }).required(),
+  }),
+
+  productDataValidation2: Joi.object({
+    newProduct: Joi.object({
+      description: Joi.string().max(50).messages({
+        "string.base": "Discreption must be a String.",
+        max: "max Char 50.",
+      }),
+      industry: Joi.string().max(50).messages({
+        "string.base": "Industry must be a String.",
+        max: "max Char 50.",
+      }),
+      tags: Joi.array()
+        .items(
+          Joi.string().max(20).messages({
+            "string.base": "Each tag must be a string.",
+            "string.max": "Each tag can have at most 20 characters.",
+          })
+        )
+        .messages({
+          "array.base": "Tags must be an array of strings.",
+        }),
+    }).required(),
+  }),
+
+  categoryDataValidation: Joi.object({
+    newCategory: Joi.object({
+      name: Joi.string().required().messages({
+        "string.base": "name must be a String.",
+        "any.required": "name is required.",
+      }),
+      description: Joi.string().max(50).messages({
+        "string.base": "Discreption must be a String.",
+        max: "max Char 50.",
+      }),
+    }).required(),
+  }),
 };
 
 module.exports = JoiValidation;
-
-
-// // validation/wealthValidation.js
-// const Joi = require("joi");
-
-// // recursive category schema with Joi.link
-// const categoryJoi = Joi.object({
-//   name: Joi.string().trim().min(1).required(),
-//   description: Joi.string().allow("").optional(),
-//   value: Joi.number().min(0).optional(),
-//   subcategories: Joi.array().items(Joi.link("#category")).default([]),
-// }).id("category");
-
-// const wealthJoi = Joi.object({
-//   user: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required(),
-//   categories: Joi.array().items(Joi.link("#category")).default([]),
-// });
-
-// module.exports = {
-//   categoryJoi,
-//   wealthJoi,
-// };

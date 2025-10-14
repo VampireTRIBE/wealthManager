@@ -1,12 +1,14 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { GlobalStyles } from "./styles/GlobalStyles";
-import HomePage from "./pages/homePage";
-import LoginPage from "./pages/loginPage";
-import SignupPage from "./pages/SignupPage";
-import HomePagePostLogin from "./pages/homeDashboardPage";
-import ProtectRoute from "./componets/routeProtection/protectedRoute";
 import { UserProvider } from "./hooks/userContext";
-import HomeAssets from "./pages/assets/homeAssets";
+import { GlobalStyles } from "./styles/GlobalStyles";
+import ProtectRoute from "./componets/routeProtection/protectedRoute";
+
+import HomePage from "./pages/homePage";
+import LoginPage from "./pages/authentication/loginPage";
+import SingupPage from "./pages/authentication/SignupPage";
+import HomeDashbordPage from "./pages/homeDashbordPage";
+import HomeAssets from "./pages/assets/homeAssetsPage";
+
 
 function App() {
   return (
@@ -17,33 +19,17 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/signup" element={<SingupPage />} />
             <Route
               path="/home/:id"
               element={
                 <ProtectRoute>
-                  <HomePagePostLogin />
+                  <HomeDashbordPage />
                 </ProtectRoute>
               }
             />
             <Route
-              path="/home/:id/assets"
-              element={
-                <ProtectRoute>
-                  <HomeAssets/>
-                </ProtectRoute>
-              }
-            />
-            <Route
-              path="/home/:id/expenses"
-              element={
-                <ProtectRoute>
-                  <HomeAssets/>
-                </ProtectRoute>
-              }
-            />
-            <Route
-              path="/home/:id/incomes"
+              path="/home/:id/:c"
               element={
                 <ProtectRoute>
                   <HomeAssets/>

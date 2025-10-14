@@ -1,32 +1,3 @@
-porduct details
-> quantity
-> buyPrice
-> buyDate
-> porduct ref to porduct
-
-porduct
->name
->industry
->discription
->buyAVG
->AVGqty
->c1 ref to c1
->c6 ref to c6
->c3 ref to c3
->c4 ref tp c4
-.
-.
-.
-
-
-catagery
->c1
->c2
->c3
-.
-.
-.
-.
-.
-.
-.
+user: > firstname, lastname, email
+category: > subCategory , totalValue, porducts, parent catagery 
+totalValue:

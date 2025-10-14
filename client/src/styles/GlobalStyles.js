@@ -8,4 +8,7 @@ export const GlobalStyles = createGlobalStyle`
   text-decoration: none;
   transition: all 0.3s ease-in-out;
   }
+  body{
+    background-color: #3b82f6;
+  }
 `;
