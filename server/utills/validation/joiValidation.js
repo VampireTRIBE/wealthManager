@@ -116,6 +116,19 @@ const JoiValidation = {
         }),
     }).required(),
   }),
+
+  categoryDataValidation: Joi.object({
+    newCategory: Joi.object({
+      name: Joi.string().required().messages({
+        "string.base": "name must be a String.",
+        "any.required": "name is required.",
+      }),
+      description: Joi.string().max(50).messages({
+        "string.base": "Discreption must be a String.",
+        max: "max Char 50.",
+      }),
+    }).required(),
+  }),
 };
 
 module.exports = JoiValidation;

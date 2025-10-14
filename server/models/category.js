@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
-const Product = require("./product"); // adjust the path
-const ProductDetails = require("./productDetail"); // adjust the path
+const Product = require("./product"); 
+const ProductDetails = require("./productDetail");
 
 const categorySchema = new Schema(
   {

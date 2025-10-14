@@ -34,7 +34,7 @@ app.listen(port, () => {
 
 // Diffrent Routes
 app.use("/", userRoute);
-app.use("/home/:id/:c_id/", categoryRoute);
+app.use("/category/:u_id/", categoryRoute);
 app.use("/product/:u_id/:c_id/", productRoute);
 app.use("/transaction/:u_id/:p_id/", productDetailRoute);
 

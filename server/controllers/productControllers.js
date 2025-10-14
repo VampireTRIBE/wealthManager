@@ -1,13 +1,6 @@
-const user = require("../models/user");
-const axios = require("axios");
-
 const product = require("../models/product");
 const productDetail = require("../models/productDetail");
-const custom_error = require("../utills/errors/custom_error");
-const passport = require("passport");
-const dbReq = require("../utills/databaseReq/dbReq");
 const category = require("../models/category");
-const { create } = require("connect-mongo");
 
 const productsControllers = {
   async addNewProduct(req, res, next) {
@@ -16,7 +9,7 @@ const productsControllers = {
     try {
       const cat = await category.findById(c_id);
       if (cat.parentCategory === null) {
-        return res.status(400).json({ error: "Can`t Create Product" });
+        return res.status(400).json({ error: "Can`t Create Product in Default Category" });
       }
       const newProd = await product.create({
         ...newProduct,

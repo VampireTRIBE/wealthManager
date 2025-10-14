@@ -1,7 +1,6 @@
 const category = require("../../models/category");
 const product = require("../../models/product");
 const users = require("../../models/user");
-const custom_error = require("../errors/custom_error");
 const mongoose = require("mongoose");
 
 module.exports.isLogedIn = (req, res, next) => {
