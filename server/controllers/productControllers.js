@@ -6,7 +6,7 @@ const productDetail = require("../models/productDetail");
 const custom_error = require("../utills/errors/custom_error");
 const passport = require("passport");
 const dbReq = require("../utills/databaseReq/dbReq");
-const Category = require("../models/category");
+const category = require("../models/category");
 const { create } = require("connect-mongo");
 
 const productsControllers = {
@@ -14,6 +14,10 @@ const productsControllers = {
     const { u_id, c_id } = req.params;
     const { newProduct, transaction } = req.body;
     try {
+      const cat = await category.findById(c_id);
+      if (cat.parentCategory === null) {
+        return res.status(400).json({ error: "Can`t Create Product" });
+      }
       const newProd = await product.create({
         ...newProduct,
         user: u_id,
@@ -39,10 +43,18 @@ const productsControllers = {
     }
   },
 
-  async deleteProduct(req, res, next) {
-    const { id, c_id, p_id } = req.params;
-    await product.findOneAndDelete({ _id: p_id });
-    res.send("working");
+  async editProduct(req, res, next) {
+    const { p_id } = req.params;
+    const { newProduct } = req.body;
+    try {
+      await product.findByIdAndUpdate(p_id, {
+        $set: newProduct,
+      });
+
+      return res.status(200).json({ success: "Product Edited" });
+    } catch (error) {
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
   },
 };
 

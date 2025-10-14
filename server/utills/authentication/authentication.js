@@ -32,16 +32,22 @@ module.exports.checkID = ({ type, paramName }) => {
   };
 };
 
-module.exports.checkOwner = ({ type, Param1, Param2 }) => {
+module.exports.checkOwner = ({ type, type2 , Param1, Param2 }) => {
   return async (req, res, next) => {
     try {
-      console.log("Cheaking OwnerShip.....");
       const param1Id = req.params[Param1];
       const param2Id = req.params[Param2];
 
       const Model =
         type === "product" ? product : type === "category" ? category : users;
-      const fieldName = type === "product" ? "user" : type==="category" ? "user" : "";
+      const fieldName =
+        type2 === "product"
+          ? "categories"
+          : type === "product"
+          ? "user"
+          : type === "category"
+          ? "user"
+          : "";
 
       const result = await Model.findOne({
         _id: param1Id,
