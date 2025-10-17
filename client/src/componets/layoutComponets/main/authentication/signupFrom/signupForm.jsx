@@ -40,7 +40,7 @@ function SingupFrom({ ...props }) {
       });
       resetForm();
       console.log(response.data);
-      setUserData(response.data.Data);
+      setUserData(response.data);
       navigate(`/home/${response.data.user_id}`);
     } catch (err) {
       setError(err.response?.data?.error || "Server error. Please try again.");

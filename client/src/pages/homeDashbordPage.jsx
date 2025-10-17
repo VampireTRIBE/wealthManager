@@ -10,65 +10,82 @@ import HomeDashbord from "../componets/layoutComponets/main/dashbords/homedashbo
 
 import buttonStyle from "../componets/singleComponets/button/button.module.css";
 
-
 export default function HomeDashbordPage() {
-  useTitle("Wealth Manager - Home")
-  const { id } = useParams();
+  useTitle("Wealth Manager - Home");
+  const { u_id } = useParams();
   const navigate = useNavigate();
-  const { userData, setUserData } = useUser();
-  console.log(userData)
-  if (!userData) return <p>Loading...</p>;
 
-  const handleLogout = async (id) => {
+  const handleLogout = async () => {
     try {
       const res = await api.get("/logout");
       setUserData(null);
-      navigate("/");
+      // navigate("/");
     } catch (error) {
       console.log(error);
     }
   };
 
-  const categories = userData.categories || [];
-
   const d_btns = [
-    ...categories.map((el,index) => ({
-      text: el.name,
-      className: buttonStyle.nbutton,
-      onClick: () => navigate(`/home/${id}/${el.name.toLowerCase()}`),
-      dis: index,
-    })),
     {
-      text: "LogOut",
-      className: buttonStyle.nbutton,
-      onClick: () => handleLogout(id),
-      dis: categories.length,
+      text: "INCOMES",
+      dis: 1,
+      className: buttonStyle.dnbutton,
+      onClick: () => {
+        navigate(`/home/u:id/incomes`);
+      },
     },
+    {
+      text: "ASSETS",
+      dis: 2,
+      className: buttonStyle.dnbutton,
+      onClick: () => {
+        navigate(`/home/u:id/assets`);
+      },
+    },
+    {
+      text: "EXPENSESS",
+      dis: 3,
+      className: buttonStyle.dnbutton,
+      onClick: () => {
+        navigate(`/home/u:id/expenses`);
+      },
+    },
+    { text: "LogOut", dis: 4, className: buttonStyle.dnbutton },
   ];
-
   const m_btns = [
-    ...categories.map((el,index) => ({
-      text: el.name,
-      className: buttonStyle.mnbtns,
-      onClick: () => navigate(`/home/${id}/${el.name.toLowerCase()}`),
-      dis: index,
-    })),
     {
-      text: "LogOut",
+      text: "INCOMES",
+      dis: 1,
       className: buttonStyle.mnbtns,
-      onClick: () => handleLogout(id),
-      dis: categories.length,
+      onClick: () => {
+        navigate(`/home/u:id/incomes`);
+      },
     },
+    {
+      text: "ASSETS",
+      dis: 2,
+      className: buttonStyle.mnbtns,
+      onClick: () => {
+        navigate(`/home/u:id/assets`);
+      },
+    },
+    {
+      text: "EXPENSESS",
+      dis: 3,
+      className: buttonStyle.mnbtns,
+      onClick: () => {
+        navigate(`/home/u:id/incomes`);
+      },
+    },
+    { text: "LogOut", dis: 4, className: buttonStyle.mnbtns },
   ];
 
   return (
     <>
       <header>
-        <Navbar d_btns={d_btns} m_btns={m_btns} path={`/home/${id}`} />
+        <Navbar d_btns={d_btns} m_btns={m_btns} path={`/home/${u_id}`} />
       </header>
-      <>
-        <HomeDashbord name={userData.user.firstName} />
-      </>
+      <>{/* <HomeDashbord /> */}</>
       <footer></footer>
     </>
   );

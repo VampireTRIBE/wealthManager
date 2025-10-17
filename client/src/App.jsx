@@ -7,37 +7,25 @@ import HomePage from "./pages/homePage";
 import LoginPage from "./pages/authentication/loginPage";
 import SingupPage from "./pages/authentication/SignupPage";
 import HomeDashbordPage from "./pages/homeDashbordPage";
-import HomeAssets from "./pages/assets/homeAssetsPage";
-
+import HomeAssets from "./pages/assets/homePage";
+import IndividualAssets from "./pages/assets/individualDetails";
 
 function App() {
   return (
     <>
       <GlobalStyles />
       <Router>
-        <UserProvider>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
+        {/* <UserProvider> */}
+        <Routes>
+          {/* <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SingupPage />} />
-            <Route
-              path="/home/:id"
-              element={
-                <ProtectRoute>
-                  <HomeDashbordPage />
-                </ProtectRoute>
-              }
-            />
-            <Route
-              path="/home/:id/:c"
-              element={
-                <ProtectRoute>
-                  <HomeAssets/>
-                </ProtectRoute>
-              }
-            />
-          </Routes>
-        </UserProvider>
+            <Route path="/signup" element={<SingupPage />} /> */}
+          <Route path="/home/:u_id" element={<HomeDashbordPage />} />
+          <Route path="/home/:u_id/:dc_id" element={<HomeAssets />} />
+          <Route path="/home/:u_id/:dc_id/:sc_id" element={<IndividualAssets />} />
+          <Route path="/home/:u_id/:dc_id/:sc_id/ssc_id" element={<IndividualAssets />} />
+        </Routes>
+        {/* </UserProvider> */}
       </Router>
     </>
   );

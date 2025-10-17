@@ -15,6 +15,7 @@ export default function LoginPage() {
         <Navbar
           d_btns={[
             {
+              dis: 1,
               text: "Sign Up",
               className: buttonStyle.nbutton,
               onClick: () => {
@@ -24,6 +25,7 @@ export default function LoginPage() {
           ]}
           m_btns={[
             {
+              dis: 1,
               text: "Sign Up",
               className: buttonStyle.mnbtns,
               onClick: () => {

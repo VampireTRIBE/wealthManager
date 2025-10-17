@@ -36,8 +36,9 @@ function LoginFrom({ ...props }) {
         password: formData.password,
       });
       resetForm();
+      console.log(response.data);
       setUserData(response.data.Data);
-      navigate(`/home/${response.data.user_id}`);
+      navigate(`/home/${response.data.userID}`);
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.error || "Server error. Please try again.");

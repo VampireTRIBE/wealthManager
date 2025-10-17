@@ -20,7 +20,7 @@ import api from "../../../servises/apis/apis";
 
 function SubNavbar({ d_btns, c_id }) {
   const { id, c } = useParams();
-  const { userData, setUserData } = useUser();
+  // const { userData, setUserData } = useUser();
   const [addcatToggle, setaddcatToggle] = useState(false);
   const handleAddcatClick = () => setaddcatToggle(!addcatToggle);
   const { formData, handleInputChange, resetForm } = useFormData({
