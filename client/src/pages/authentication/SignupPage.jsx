@@ -17,7 +17,7 @@ export default function SingupPage() {
             {
               dis: 1,
               text: "Login",
-              className: buttonStyle.nbutton,
+              className: buttonStyle.dnbutton,
               onClick: () => {
                 navigate("/login");
               },

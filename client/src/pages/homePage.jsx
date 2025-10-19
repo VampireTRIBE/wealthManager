@@ -16,7 +16,7 @@ export default function HomePage() {
             {
               dis: 1,
               text: "Login",
-              className: buttonStyle.nbutton,
+              className: buttonStyle.dnbutton,
               onClick: () => {
                 navigate("/login");
               },
@@ -24,7 +24,7 @@ export default function HomePage() {
             {
               dis: 2,
               text: "Sign Up",
-              className: buttonStyle.nbutton,
+              className: buttonStyle.dnbutton,
               onClick: () => {
                 navigate("/signup");
               },

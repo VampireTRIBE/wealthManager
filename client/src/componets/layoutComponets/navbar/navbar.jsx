@@ -8,7 +8,7 @@ import image from "../../singleComponets/image/image.module.css";
 import heading from "../../singleComponets/heading/heading.module.css";
 import link from "../../singleComponets/link/link.module.css";
 import button from "../../singleComponets/button/button.module.css";
-import Link from "../../singleComponets/link/link";
+import { Link } from "react-router-dom";
 
 function Navbar({ m_btns, d_btns, path }) {
   const [mToggle, setToggle] = useState(false);
@@ -16,8 +16,8 @@ function Navbar({ m_btns, d_btns, path }) {
 
   return (
     <nav className={navbar.navbar}>
-      <div
-        // to={path}
+      <Link
+        to={path}
         className={link.nhead}
         children={
           <>

@@ -1,11 +1,40 @@
+import { useParams } from "react-router-dom";
 import { H3, H4 } from "../../../singleComponets/heading/heading";
 import Image from "../../../singleComponets/image/image";
 import section2Style from "./section2.module.css";
 import imgStyle from "../../../singleComponets/image/image.module.css";
 import btnStyle from "../../../singleComponets/button/button.module.css";
 import Button from "../../../singleComponets/button/button";
+import { useUser } from "../../../../hooks/userContext";
+import { useFormData } from "../../../../hooks/fromdata";
+import Input from "../../../singleComponets/input/input";
+import inpStyle from "../../../singleComponets/input/input.module.css";
+import api from "../../../../servises/apis/apis";
 
 function AssetsSection2({ sections = [] }) {
+  const { u_id } = useParams();
+  const paramsLength = Object.keys(useParams()).length;
+  const { userData, setUserData } = useUser();
+  const { formData, handleInputChange, resetForm } = useFormData({
+    name: "",
+    description: "",
+  });
+
+  const handleSubmit = async (e, data) => {
+    e.preventDefault();
+    try {
+      const res = await api.patch(`/category/${u_id}/${data._id}/edit`, {
+        newCategory: formData,
+      });
+      resetForm();
+      data.onEdit(data.id);
+      setUserData(res.data.Data);
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.error || "Server error. Please try again.");
+    }
+  };
+
   return (
     <div className={section2Style.main}>
       {sections.map((data, index) => (
@@ -22,11 +51,57 @@ function AssetsSection2({ sections = [] }) {
             />
             <Image
               className={imgStyle.subimg}
-              src="/assets/medias/images/close.png"
+              src="/assets/medias/images/trash.png"
               alt="Delete"
               onClick={data.onDelete}
             />
           </H3>
+
+          <div className={section2Style.content}>
+            <form
+              className={`${section2Style.editcatToggle} ${
+                data.isEditing ? section2Style.editcatTogleopen : ""
+              }`}
+              onSubmit={(e) => handleSubmit(e, data)}>
+              <Input
+                className={`${inpStyle.primery}`}
+                placeholder="name"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+              />
+              <Input
+                className={`${inpStyle.primery}`}
+                placeholder="Description"
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+              />
+              <div className={`${section2Style.frombtndiv}`}>
+                <div
+                  className={`${btnStyle.snbtns} ${section2Style.fromdatabtn}`}
+                  onClick={() => data.onEdit(data.id)}>
+                  Cancel
+                </div>
+                <Button
+                  className={`${btnStyle.snbtns} ${section2Style.fromdatabtn}`}
+                  type="submit"
+                  text="Edit"
+                />
+              </div>
+            </form>
+
+            {data.rows?.map((row, i) => (
+              <div key={i} className={section2Style.info}>
+                {row.map((item, j) => (
+                  <div key={j} className={section2Style.info_detail}>
+                    <H4>{item.label}</H4>
+                    <H4>{item.value}</H4>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
 
           <div className={section2Style.content}>
             {data.rows?.map((row, i) => (

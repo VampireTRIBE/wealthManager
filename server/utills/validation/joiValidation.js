@@ -37,12 +37,12 @@ const JoiValidation = {
         "number.base": "Quantity must be a number.",
         "any.required": "Quantity is required.",
       }),
-      buyPrice: Joi.number().min(0.00001).required().messages({
+      Price: Joi.number().min(0.00001).required().messages({
         "number.base": "Buy price must be a number.",
         "number.min": "Buy price cannot be Zero.",
         "any.required": "Buy price is required.",
       }),
-      buyDate: Joi.date()
+      Date: Joi.date()
         .default(() => new Date())
         .messages({
           "date.base": "Invalid date format for buyDate.",
@@ -81,12 +81,12 @@ const JoiValidation = {
         "number.base": "Quantity must be a number.",
         "any.required": "Quantity is required.",
       }),
-      buyPrice: Joi.number().min(0.00001).required().messages({
+      Price: Joi.number().min(0.00001).required().messages({
         "number.base": "Buy price must be a number.",
         "number.min": "Buy price cannot be Zero.",
         "any.required": "Buy price is required.",
       }),
-      buyDate: Joi.date()
+      Date: Joi.date()
         .default(() => new Date())
         .messages({
           "date.base": "Invalid date format for buyDate.",

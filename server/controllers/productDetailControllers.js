@@ -12,29 +12,30 @@ const productDetailControllers = {
       await productDetail.create({
         ...transaction,
         product: p_id,
+        type: "buy",
       });
       return res.status(200).json({ success: "Buy Transaction Completed" });
     } catch (error) {
-      return res.status(500).json({ error: "Internal Server Error"});
+      return res.status(500).json({ error: "Internal Server Error" });
     }
   },
-  
+
   async sellProduct(req, res, next) {
     const { p_id } = req.params;
     const { transaction } = req.body;
     const prod = await product.findById(p_id);
     if (transaction["quantity"] <= 0 || transaction["quantity"] > prod.qty) {
-      return res.status(403).json({ error: "You have less Qty in Holdings"});
+      return res.status(403).json({ error: "You have less Qty in Holdings" });
     }
-    transaction["quantity"] = -transaction["quantity"];
     try {
       await productDetail.create({
         ...transaction,
         product: p_id,
+        type: "sell",
       });
-      return res.status(201).json({ success: "Sell Transaction Completed"});
+      return res.status(201).json({ success: "Sell Transaction Completed" });
     } catch (error) {
-      return res.status(500).json({ error: "Internal Server Error"});
+      return res.status(500).json({ error: "Internal Server Error" });
     }
   },
 };

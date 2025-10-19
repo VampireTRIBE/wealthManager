@@ -6,13 +6,14 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [userData, setUserData] = useState(() => {
+    // Load saved user data from localStorage
     const saved = localStorage.getItem("userData");
     return saved ? JSON.parse(saved) : null;
   });
 
   const navigate = useNavigate();
 
-  // 🔄 Keep localStorage synced with userData
+  // Save userData to localStorage whenever it changes
   useEffect(() => {
     if (userData) {
       localStorage.setItem("userData", JSON.stringify(userData));
@@ -21,28 +22,22 @@ export const UserProvider = ({ children }) => {
     }
   }, [userData]);
 
-  // 🧠 Verify login session once (and set user info)
+  // On mount, verify session with the backend
   useEffect(() => {
     const verifySession = async () => {
       try {
-        const res = await api.get("/islogedin");
-
-        // ✅ Expect structure from backend:
-        // { user: { _id, firstName, lastName, email }, ...otherData }
-        if (res.data) {
-          setUserData(res.data);
-        } else {
-          throw new Error("Invalid session");
-        }
+        const res = await api.get("/islogedin"); // backend returns logged-in user info
+        setUserData(res.data);
       } catch (err) {
-        console.error("Session verification failed:", err.message);
         setUserData(null);
         navigate("/login");
       }
     };
 
-    if (!userData) verifySession();
-  }, []); // run once on mount
+    if (!userData) {
+      verifySession();
+    }
+  }, []);
 
   return (
     <UserContext.Provider value={{ userData, setUserData }}>

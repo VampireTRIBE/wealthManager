@@ -17,7 +17,7 @@ export default function LoginPage() {
             {
               dis: 1,
               text: "Sign Up",
-              className: buttonStyle.nbutton,
+              className: buttonStyle.dnbutton,
               onClick: () => {
                 navigate("/signup");
               },

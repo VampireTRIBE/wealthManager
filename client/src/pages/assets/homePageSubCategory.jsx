@@ -20,6 +20,7 @@ import { useUser } from "../../hooks/userContext";
 import {
   buildAssetsDataFromCategory,
   buildAssetSectionsFromCategories,
+  buildSubAssetSectionsFromCategories,
   logoutUser,
   subCategoryBtns,
   topCategoryBtns,
@@ -27,8 +28,8 @@ import {
 } from "../../utills/helpers/funtions";
 import { useFormData } from "../../hooks/fromdata";
 
-export default function HomeAssets() {
-  const { u_id, dc_id } = useParams();
+export default function HomeAssetsSub() {
+  const { u_id, dc_id, sc_id } = useParams();
   const navigate = useNavigate();
   const { userData, setUserData } = useUser();
   const handleLogout = () => logoutUser(setUserData, navigate);
@@ -51,6 +52,9 @@ export default function HomeAssets() {
   });
 
   const assetsCategory = userData.categories.find((cat) => cat._id === dc_id);
+  const assetsSubCategory = assetsCategory?.subCategories?.find(
+    (cat) => cat._id === sc_id
+  );
 
   const subBtns = subCategoryBtns({
     category: assetsCategory,
@@ -73,11 +77,15 @@ export default function HomeAssets() {
     setEditCatId((prev) => (prev === catId ? null : catId));
   };
 
-  const assetsData = buildAssetsDataFromCategory(assetsCategory, currentDate);
-  const assetsSectionData = buildAssetSectionsFromCategories(
-    assetsCategory.subCategories || [],
+  const assetsData = buildAssetsDataFromCategory(
+    assetsSubCategory,
+    currentDate
+  );
+  const assetsSectionData = buildSubAssetSectionsFromCategories(
+    assetsSubCategory.subCategories || [],
     u_id,
     dc_id,
+    sc_id,
     handleDelete,
     toggleEdit,
     editCatId,

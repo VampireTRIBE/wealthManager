@@ -18,21 +18,23 @@ import imgStyle from "../../singleComponets/image/image.module.css";
 import inpStyle from "../../singleComponets/input/input.module.css";
 import api from "../../../servises/apis/apis";
 
-function SubNavbar({ d_btns, c_id }) {
-  const { id, c } = useParams();
-  // const { userData, setUserData } = useUser();
+function SubNavbar({ d_btns }) {
+  const { u_id, dc_id } = useParams();
+  const { userData, setUserData } = useUser();
   const [addcatToggle, setaddcatToggle] = useState(false);
   const handleAddcatClick = () => setaddcatToggle(!addcatToggle);
   const { formData, handleInputChange, resetForm } = useFormData({
-    n_category: "",
+    name: "",
+    description: "",
   });
   const scrollRef = useScroll("horizontal", 2);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post(`/home/${id}/${c_id}`, {
-        name: formData.n_category,
+      const res = await api.post(`/category/${u_id}/${dc_id}`, {
+        newCategory: formData,
       });
+  
       resetForm();
       setaddcatToggle(false);
       setUserData(res.data.Data);
@@ -57,14 +59,21 @@ function SubNavbar({ d_btns, c_id }) {
           addcatToggle ? subnavbarStyle.addcatTogleopen : ""
         }`}
         onSubmit={handleSubmit}>
-        <Input
-          className={inpStyle.primery}
-          placeholder="Add category"
-          name="n_category"
-          value={formData.n_category}
-          onChange={handleInputChange}
-        />
-        <Button className={btnStyle.snbtns} type="submit" text="Add" />
+          <Input
+            className={`${inpStyle.primery}`}
+            placeholder="name"
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
+          />
+          <Input
+            className={`${inpStyle.primery}`}
+            placeholder="Description"
+            name="description"
+            value={formData.description}
+            onChange={handleInputChange}
+          />
+        <Button className={`${btnStyle.snbtns} ${subnavbarStyle.fromdatabtn}`} type="submit" text="Add" />
       </form>
       <div className={subnavbarStyle.addcat}>
         <Button

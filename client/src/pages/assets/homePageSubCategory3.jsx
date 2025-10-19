@@ -20,15 +20,19 @@ import { useUser } from "../../hooks/userContext";
 import {
   buildAssetsDataFromCategory,
   buildAssetSectionsFromCategories,
+  buildSubAsset2SectionsFromCategories,
+  buildSubAsset3SectionsFromCategories,
+  buildSubAssetSectionsFromCategories,
   logoutUser,
   subCategoryBtns,
   topCategoryBtns,
   useLiveDateTime,
 } from "../../utills/helpers/funtions";
 import { useFormData } from "../../hooks/fromdata";
+import ProductSection from "../../componets/layoutComponets/pageSections/assets/productSection";
 
-export default function HomeAssets() {
-  const { u_id, dc_id } = useParams();
+export default function HomeAssetsSub3() {
+  const { u_id, dc_id, sc_id, ssc_id, sssc_id } = useParams();
   const navigate = useNavigate();
   const { userData, setUserData } = useUser();
   const handleLogout = () => logoutUser(setUserData, navigate);
@@ -51,6 +55,15 @@ export default function HomeAssets() {
   });
 
   const assetsCategory = userData.categories.find((cat) => cat._id === dc_id);
+  const assetsSubCategory = assetsCategory?.subCategories?.find(
+    (cat) => cat._id === sc_id
+  );
+  const assetsSubCategory2 = assetsSubCategory?.subCategories?.find(
+    (cat) => cat._id === ssc_id
+  );
+  const assetsSubCategory3 = assetsSubCategory2?.subCategories?.find(
+    (cat) => cat._id === sssc_id
+  );
 
   const subBtns = subCategoryBtns({
     category: assetsCategory,
@@ -59,30 +72,41 @@ export default function HomeAssets() {
     buttonStyle: buttonStyle.snbtns,
   });
 
-  const handleDelete = async (c_id) => {
-    try {
-      const res = await api.delete(`/category/${u_id}/${c_id}/delete`);
-      setUserData(res.data.Data);
-    } catch (error) {
-      console.error("Error in Deletion:", error);
-    }
-  };
-
-  const [editCatId, setEditCatId] = useState(null);
-  const toggleEdit = (catId) => {
-    setEditCatId((prev) => (prev === catId ? null : catId));
-  };
-
-  const assetsData = buildAssetsDataFromCategory(assetsCategory, currentDate);
-  const assetsSectionData = buildAssetSectionsFromCategories(
-    assetsCategory.subCategories || [],
-    u_id,
-    dc_id,
-    handleDelete,
-    toggleEdit,
-    editCatId,
-    navigate
+  const assetsData = buildAssetsDataFromCategory(
+    assetsSubCategory3,
+    currentDate
   );
+
+  const holdings = [
+    {
+      name: "GoldETF",
+      data: {
+        LTP: "1235",
+        Qty: "145",
+        price: "65",
+        invested: "655151",
+        current: "661161",
+        "P/L": "5000",
+        "p/l %": "8%",
+        "Irr %": "8%",
+        "realized gains": "51450",
+      },
+    },
+    {
+      name: "SilverETF",
+      data: {
+        LTP: "750",
+        Qty: "200",
+        price: "80",
+        invested: "40000",
+        current: "42000",
+        "P/L": "2000",
+        "p/l %": "5%",
+        "Irr %": "6%",
+        "realized gains": "1500",
+      },
+    },
+  ];
 
   return (
     <>
@@ -92,7 +116,7 @@ export default function HomeAssets() {
       </header>
       <main className={homePageStyle.main}>
         <AssetsSection1 data={assetsData} />
-        <AssetsSection2 sections={assetsSectionData} />
+        <ProductSection holdings={holdings} />
         <AssetsSection3 />
       </main>
       <footer></footer>

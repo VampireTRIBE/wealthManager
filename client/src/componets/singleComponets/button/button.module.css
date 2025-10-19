@@ -47,6 +47,19 @@
   padding: 4px;
 }
 
+.buy {
+  composes: snbtns;
+  background-color: #10b981;
+  border: 1px solid #000000;
+  font-size: 0.8rem !important;
+}
+.sell {
+  composes: snbtns;
+  background-color: orange;
+  border: 1px solid #000000;
+  font-size: 0.8rem !important;
+}
+
 .mainbtns {
   composes: dnbutton;
   display: block;

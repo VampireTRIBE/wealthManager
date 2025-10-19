@@ -36,7 +36,6 @@ function LoginFrom({ ...props }) {
         password: formData.password,
       });
       resetForm();
-      console.log(response.data);
       setUserData(response.data.Data);
       navigate(`/home/${response.data.userID}`);
     } catch (err) {

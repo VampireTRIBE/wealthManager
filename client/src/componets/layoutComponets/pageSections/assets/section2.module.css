@@ -16,7 +16,7 @@
   background-color: #3b82f6;
   border-radius: 1rem 1rem 0 0;
   display: flex;
-  gap: 1rem;
+  gap: 0.9rem;
 }
 
 .content {
@@ -39,17 +39,40 @@
   gap: 0.5rem;
 }
 
+.editcatToggle {
+  z-index: 5;
+  position: absolute;
+  transform: scale(0);
+  padding: 1rem;
+  height: fit-content;
+  background-color: #dbeafe;
+  border: 1px solid #000000;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.editcatTogleopen {
+  transform: scale(1);
+}
+
+.frombtndiv{
+  display: flex;
+  justify-content: space-between;
+}
+
+.fromdatabtn {
+  width: fit-content;
+  align-self: flex-end;
+}
+
 @media screen and (min-width: 400px) {
   .info_detail {
     font-size: 1rem;
   }
 }
 
-@media screen and (min-width: 500px) {
-  .info_detail {
-    font-size: 1rem;
-  }
-}
 
 @media screen and (min-width: 500px) {
   .section2 {
