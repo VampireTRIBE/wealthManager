@@ -14,15 +14,17 @@ export default function HomePage() {
         <Navbar
           d_btns={[
             {
+              dis: 1,
               text: "Login",
-              className: buttonStyle.nbutton,
+              className: buttonStyle.dnbutton,
               onClick: () => {
                 navigate("/login");
               },
             },
             {
+              dis: 2,
               text: "Sign Up",
-              className: buttonStyle.nbutton,
+              className: buttonStyle.dnbutton,
               onClick: () => {
                 navigate("/signup");
               },
@@ -30,6 +32,7 @@ export default function HomePage() {
           ]}
           m_btns={[
             {
+              dis: 1,
               text: "Login",
               className: buttonStyle.mnbtns,
               onClick: () => {
@@ -37,6 +40,7 @@ export default function HomePage() {
               },
             },
             {
+              dis: 2,
               text: "Sign Up",
               className: buttonStyle.mnbtns,
               onClick: () => {
@@ -48,7 +52,7 @@ export default function HomePage() {
         />
       </header>
       <>
-        <Home/>
+        <Home />
       </>
       <footer></footer>
     </>

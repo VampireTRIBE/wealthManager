@@ -30,14 +30,18 @@ const categoryController = {
         user: u_id,
       });
 
-      return res.status(200).json({ success: "Category Added" });
-
-      const u_data = await dbReq.userData(id);
+      const u_data = await dbReq.userData(u_id);
       if (!u_data) {
         return res.status(404).json({ error: "User data not found" });
       }
+      return res.status(200).json({
+        success: "successful",
+        userID: u_id,
+        Data: u_data,
+      });
     } catch (error) {
-      return res.status(500).json({ error: "Internal Server Error" });
+      console.log(error.message);
+      return res.status(500).json({ error: error.message });
     }
   },
 
@@ -50,15 +54,17 @@ const categoryController = {
         $set: newCategory,
       });
 
-      return res.status(200).json({
-        success: "✅ Category name updated successfully",
-      });
-
       const u_data = await dbReq.userData(u_id);
       if (!u_data) {
         return res.status(404).json({ error: "User data not found" });
       }
+      return res.status(200).json({
+        success: "successful",
+        userID: u_id,
+        Data: u_data,
+      });
     } catch (error) {
+      console.log(error.message);
       return res.status(500).json({ error: "Internal Server Error" });
     }
   },
@@ -68,17 +74,19 @@ const categoryController = {
       const { u_id, c_id } = req.params;
       const category = await Category.findById(c_id);
       if (category.parentCategory === null) {
-        return res.status(404).json({ error: "Can`t Delete Default Category"});
+        return res.status(404).json({ error: "Can`t Delete Default Category" });
       }
       await category.deleteOne();
-      return res.status(200).json({
-        success: "✅ Category Deleted successfully",
-      });
 
       const u_data = await dbReq.userData(u_id);
       if (!u_data) {
         return res.status(404).json({ error: "User data not found" });
       }
+      return res.status(200).json({
+        success: "successful",
+        userID: u_id,
+        Data: u_data,
+      });
     } catch (error) {
       return res.status(500).json({ error: "Internal Server Error" });
     }

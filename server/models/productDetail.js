@@ -3,10 +3,11 @@ const Schema = mongoose.Schema;
 
 const productDetailsSchema = new Schema(
   {
+    type: { type: String, required: true }, // 'buy' or 'sell'
     product: { type: Schema.Types.ObjectId, ref: "products", required: true },
-    quantity: { type: Number, required: true }, 
-    buyPrice: { type: Number, required: true },
-    buyDate: { type: Date, default: Date.now },
+    quantity: { type: Number, required: true },
+    Price: { type: Number, required: true }, // Use Price instead of buyPrice
+    Date: { type: Date, default: Date.now }, // Use Date instead of buyDate
   },
   { timestamps: true }
 );
@@ -17,10 +18,9 @@ productDetailsSchema.pre("save", async function (next) {
     const product = await Product.findById(this.product);
     if (!product) return next(new Error("Product not found"));
 
-    if (this.quantity > 0) {
+    if (this.type === "buy" && this.quantity > 0) {
       const totalQty = product.qty + this.quantity;
-      const totalCost =
-        product.buyAVG * product.qty + this.buyPrice * this.quantity;
+      const totalCost = product.buyAVG * product.qty + this.Price * this.quantity;
       const newAvg = totalQty === 0 ? 0 : totalCost / totalQty;
 
       product.qty = totalQty;
@@ -28,9 +28,9 @@ productDetailsSchema.pre("save", async function (next) {
       product.totalValue = totalQty * newAvg;
     }
 
-    if (this.quantity < 0) {
-      const sellQty = -this.quantity;
-      const gain = (this.buyPrice - product.buyAVG) * sellQty;
+    if (this.type === "sell" && this.quantity > 0) {
+      const sellQty = this.quantity;
+      const gain = (this.Price - product.buyAVG) * sellQty;
       product.realizedGain = (product.realizedGain || 0) + gain;
 
       product.qty -= sellQty;

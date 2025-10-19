@@ -1,0 +1,92 @@
+.main {
+  margin: auto auto;
+  margin-top: 0.5rem;
+  width: 90%;
+  background-color: #dbeafe;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #000000;
+}
+
+.head {
+  flex: 1;
+  padding: 0.6rem;
+  font-size: 1.3rem;
+  background-color: #3b82f6;
+  border-radius: 1rem 1rem 0 0;
+  display: flex;
+  gap: 0.9rem;
+}
+
+.content {
+  width: 100%;
+  padding: 0.5rem 1rem 0.5rem;
+  border-bottom: 2px solid #000000;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.info {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.infobtn {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+.title{
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+@media screen and (min-width: 400px) {
+  .info {
+    width: 45%;
+  }
+}
+@media screen and (min-width: 500px) {
+  .main {
+    width: 75%;
+  }
+}
+@media screen and (min-width: 800px) {
+  .main {
+    width: 90%;
+  }
+  .info {
+    width: 30%;
+  }
+}
+@media screen and (min-width: 1030px) {
+  .info {
+    width: 20%;
+  }
+}
+
+@media screen and (min-width: 1270px) {
+  .info {
+    width: 15%;
+  }
+}
+
+@media screen and (min-width: 1530px) {
+  .info {
+    width: 15%;
+  }
+}

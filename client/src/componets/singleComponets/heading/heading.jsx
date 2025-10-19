@@ -17,4 +17,13 @@ function H3({ text, children, ...props }) {
   );
 }
 
-export { H1, H3 };
+function H4({ text, children, ...props }) {
+  return (
+    <h4 {...props}>
+      {text}
+      {children}
+    </h4>
+  );
+}
+
+export { H1, H3, H4 };

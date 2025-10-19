@@ -46,12 +46,17 @@ const usersControllers = {
 
       req.login(new_user, async (err) => {
         if (err) return next();
-        return res.status(200).json({ success: "Login successful" });
 
         const u_data = await dbReq.userData(new_user._id);
         if (!u_data) {
           return res.status(404).json({ error: "User data not found" });
         }
+
+        return res.status(200).json({
+          success: "Login successful",
+          userID: new_user._id,
+          Data: u_data,
+        });
       });
     } catch (error) {
       return res.status(500).json({ error: "Internal Server Error" });
@@ -66,12 +71,16 @@ const usersControllers = {
 
       req.login(user, async (err) => {
         if (err) return next(err);
-        return res.status(200).json({ success: "Login successful" });
 
         const u_data = await dbReq.userData(user._id);
         if (!u_data) {
           return res.status(404).json({ error: "User data not found" });
         }
+        return res.status(200).json({
+          success: "Login successful",
+          userID: user._id,
+          Data: u_data,
+        });
       });
     })(req, res, next);
   },

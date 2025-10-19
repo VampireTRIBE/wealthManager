@@ -1,12 +1,14 @@
-import { H1 } from "../../../singleComponets/heading/heading";
+import AssetsSection from "../../pageSections/homeDashbord/assetsSctions";
+import MainSection from "../../pageSections/homeDashbord/mainSection";
 
 import homedashbordStyle from "./homedashbord.module.css";
 
-function HomeDashbord({ name, ...props }) {
+function HomeDashbord({ ...props }) {
   return (
     <main className={homedashbordStyle.main}>
-      <H1 className={homedashbordStyle.title} text={`Hi... ${name}`} />
-      <H1 className={homedashbordStyle.title} text={`Welcome to Wealth Manager`} />
+      {/* <MainSection />
+      <AssetsSection />
+      <AssetsSection /> */}
     </main>
   );
 }

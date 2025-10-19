@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useTitle from "../../hooks/useTitle";
 
@@ -16,8 +15,9 @@ export default function SingupPage() {
         <Navbar
           d_btns={[
             {
+              dis: 1,
               text: "Login",
-              className: buttonStyle.nbutton,
+              className: buttonStyle.dnbutton,
               onClick: () => {
                 navigate("/login");
               },
@@ -25,6 +25,7 @@ export default function SingupPage() {
           ]}
           m_btns={[
             {
+              dis: 1,
               text: "Login",
               className: buttonStyle.mnbtns,
               onClick: () => {

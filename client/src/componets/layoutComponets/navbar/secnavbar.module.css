@@ -25,9 +25,19 @@
   top: 6.5rem;
   right: 6%;
   transform: scale(0);
+  padding: 1rem;
   height: fit-content;
+  background-color: #dbeafe;
+  border: 1px solid #000000;
+  border-radius: 1rem;
   display: flex;
+  flex-direction: column;
   gap: 0.5rem;
+}
+
+.fromdatabtn{
+  width: fit-content;
+  align-self: flex-end;
 }
 
 .addcatTogleopen {
@@ -64,13 +74,6 @@
   height: 80%;
 }
 
-@media screen and (min-width: 400px) {
-  .addcatToggle{
-    top: 3.6rem;
-    right: 20%;
-  }
-}
-
 @media screen and (min-width: 500px) {
   .cat {
     display: block;
@@ -82,11 +85,6 @@
     height: 3.5rem;
   }
   .addcatToggle{
-    top: 5rem;
-  }
-}
-@media screen and (min-width: 860px) {
-  .addcatToggle{
-    right: 14%;
+    top: 8.5rem;
   }
 }

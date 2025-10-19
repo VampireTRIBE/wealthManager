@@ -9,7 +9,9 @@ const productsControllers = {
     try {
       const cat = await category.findById(c_id);
       if (cat.parentCategory === null) {
-        return res.status(400).json({ error: "Can`t Create Product in Default Category" });
+        return res
+          .status(400)
+          .json({ error: "Can`t Create Product in Default Category" });
       }
       const newProd = await product.create({
         ...newProduct,
@@ -25,6 +27,7 @@ const productsControllers = {
       const detail = await productDetail.create({
         ...transaction,
         product: newProd._id,
+        type: "buy",
       });
       if (!detail) {
         await product.deleteOne({ _id: newProd._id });
@@ -32,7 +35,7 @@ const productsControllers = {
       }
       return res.status(200).json({ success: "Buy Transaction Completed" });
     } catch (error) {
-      return res.status(500).json({ error: "Internal Server Error" });
+      return res.status(500).json({ error: error.message });
     }
   },
 

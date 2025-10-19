@@ -39,7 +39,6 @@ function SingupFrom({ ...props }) {
         password: formData.password,
       });
       resetForm();
-      console.log(response.data);
       setUserData(response.data.Data);
       navigate(`/home/${response.data.user_id}`);
     } catch (err) {

@@ -9,65 +9,37 @@ import Navbar from "../componets/layoutComponets/navbar/navbar";
 import HomeDashbord from "../componets/layoutComponets/main/dashbords/homedashbord";
 
 import buttonStyle from "../componets/singleComponets/button/button.module.css";
-
+import { logoutUser, topCategoryBtns } from "../utills/helpers/funtions";
 
 export default function HomeDashbordPage() {
-  useTitle("Wealth Manager - Home")
-  const { id } = useParams();
+  useTitle("Wealth Manager - Home");
+  const { u_id } = useParams();
   const navigate = useNavigate();
   const { userData, setUserData } = useUser();
-  console.log(userData)
-  if (!userData) return <p>Loading...</p>;
+  const handleLogout = () => logoutUser(setUserData, navigate);
+  const d_btns = topCategoryBtns({
+    userData,
+    u_id,
+    navigate,
+    handleLogout,
+    buttonStyle: buttonStyle.dnbutton,
+  });
 
-  const handleLogout = async (id) => {
-    try {
-      const res = await api.get("/logout");
-      setUserData(null);
-      navigate("/");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const categories = userData.categories || [];
-
-  const d_btns = [
-    ...categories.map((el,index) => ({
-      text: el.name,
-      className: buttonStyle.nbutton,
-      onClick: () => navigate(`/home/${id}/${el.name.toLowerCase()}`),
-      dis: index,
-    })),
-    {
-      text: "LogOut",
-      className: buttonStyle.nbutton,
-      onClick: () => handleLogout(id),
-      dis: categories.length,
-    },
-  ];
-
-  const m_btns = [
-    ...categories.map((el,index) => ({
-      text: el.name,
-      className: buttonStyle.mnbtns,
-      onClick: () => navigate(`/home/${id}/${el.name.toLowerCase()}`),
-      dis: index,
-    })),
-    {
-      text: "LogOut",
-      className: buttonStyle.mnbtns,
-      onClick: () => handleLogout(id),
-      dis: categories.length,
-    },
-  ];
+  const m_btns = topCategoryBtns({
+    userData,
+    u_id,
+    navigate,
+    handleLogout,
+    buttonStyle: buttonStyle.mnbtns,
+  });
 
   return (
     <>
       <header>
-        <Navbar d_btns={d_btns} m_btns={m_btns} path={`/home/${id}`} />
+        <Navbar d_btns={d_btns} m_btns={m_btns} path={`/home/${u_id}`} />
       </header>
       <>
-        <HomeDashbord name={userData.user.firstName} />
+        <HomeDashbord />
       </>
       <footer></footer>
     </>
