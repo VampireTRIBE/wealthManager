@@ -27,7 +27,7 @@ router
 router
   .route("/sell")
   .post(
-    // isLogedIn,
+    isLogedIn,
     checkID({ type: "user", paramName: "u_id" }),
     checkID({ type: "product", paramName: "p_id" }),
     checkExists({ type: "product", Param: "p_id" }),

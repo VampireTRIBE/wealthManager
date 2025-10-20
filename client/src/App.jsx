@@ -8,7 +8,6 @@ import LoginPage from "./pages/authentication/loginPage";
 import SingupPage from "./pages/authentication/SignupPage";
 import HomeDashbordPage from "./pages/homeDashbordPage";
 import HomeAssets from "./pages/assets/homePage";
-import IndividualAssets from "./pages/assets/individualDetails";
 import HomeAssetsSub from "./pages/assets/homePageSubCategory";
 import HomeAssetsSub2 from "./pages/assets/homePageSubCategory2";
 import HomeAssetsSub3 from "./pages/assets/homePageSubCategory3";
@@ -37,7 +36,6 @@ function App() {
               path="/home/:u_id/:dc_id/:sc_id/:ssc_id/:sssc_id"
               element={<HomeAssetsSub3 />}
             />
-
           </Routes>
         </UserProvider>
       </Router>

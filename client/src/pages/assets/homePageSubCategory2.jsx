@@ -22,12 +22,14 @@ import {
   buildAssetSectionsFromCategories,
   buildSubAsset2SectionsFromCategories,
   buildSubAssetSectionsFromCategories,
+  generateHoldings,
   logoutUser,
   subCategoryBtns,
   topCategoryBtns,
   useLiveDateTime,
 } from "../../utills/helpers/funtions";
 import { useFormData } from "../../hooks/fromdata";
+import ProductSection from "../../componets/layoutComponets/pageSections/assets/productSection";
 
 export default function HomeAssetsSub2() {
   const { u_id, dc_id, sc_id, ssc_id } = useParams();
@@ -96,7 +98,7 @@ export default function HomeAssetsSub2() {
     editCatId,
     navigate
   );
-
+  const holdings = generateHoldings(assetsSubCategory2);
   return (
     <>
       <header>
@@ -106,6 +108,7 @@ export default function HomeAssetsSub2() {
       <main className={homePageStyle.main}>
         <AssetsSection1 data={assetsData} />
         <AssetsSection2 sections={assetsSectionData} />
+        <ProductSection holdings={holdings} c_id={assetsSubCategory2._id} />
         <AssetsSection3 />
       </main>
       <footer></footer>

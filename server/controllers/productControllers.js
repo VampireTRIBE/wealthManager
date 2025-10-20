@@ -1,6 +1,7 @@
 const product = require("../models/product");
 const productDetail = require("../models/productDetail");
 const category = require("../models/category");
+const dbReq = require("../utills/databaseReq/dbReq");
 
 const productsControllers = {
   async addNewProduct(req, res, next) {
@@ -33,7 +34,15 @@ const productsControllers = {
         await product.deleteOne({ _id: newProd._id });
         return res.status(500).json({ error: "Internal Server Error" });
       }
-      return res.status(200).json({ success: "Buy Transaction Completed" });
+      const u_data = await dbReq.userData(u_id);
+      if (!u_data) {
+        return res.status(404).json({ error: "User data not found" });
+      }
+      return res.status(200).json({
+        success: "successful",
+        userID: u_id,
+        Data: u_data,
+      });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
@@ -47,7 +56,15 @@ const productsControllers = {
         $set: newProduct,
       });
 
-      return res.status(200).json({ success: "Product Edited" });
+      const u_data = await dbReq.userData(u_id);
+      if (!u_data) {
+        return res.status(404).json({ error: "User data not found" });
+      }
+      return res.status(200).json({
+        success: "successful",
+        userID: u_id,
+        Data: u_data,
+      });
     } catch (error) {
       return res.status(500).json({ error: "Internal Server Error" });
     }
