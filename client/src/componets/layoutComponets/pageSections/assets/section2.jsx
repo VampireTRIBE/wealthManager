@@ -102,19 +102,6 @@ function AssetsSection2({ sections = [] }) {
               </div>
             ))}
           </div>
-
-          <div className={section2Style.content}>
-            {data.rows?.map((row, i) => (
-              <div key={i} className={section2Style.info}>
-                {row.map((item, j) => (
-                  <div key={j} className={section2Style.info_detail}>
-                    <H4>{item.label}</H4>
-                    <H4>{item.value}</H4>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
         </div>
       ))}
     </div>

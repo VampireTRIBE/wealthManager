@@ -23,6 +23,7 @@ import {
   buildSubAsset2SectionsFromCategories,
   buildSubAsset3SectionsFromCategories,
   buildSubAssetSectionsFromCategories,
+  generateHoldings,
   logoutUser,
   subCategoryBtns,
   topCategoryBtns,
@@ -77,36 +78,7 @@ export default function HomeAssetsSub3() {
     currentDate
   );
 
-  const holdings = [
-    {
-      name: "GoldETF",
-      data: {
-        LTP: "1235",
-        Qty: "145",
-        price: "65",
-        invested: "655151",
-        current: "661161",
-        "P/L": "5000",
-        "p/l %": "8%",
-        "Irr %": "8%",
-        "realized gains": "51450",
-      },
-    },
-    {
-      name: "SilverETF",
-      data: {
-        LTP: "750",
-        Qty: "200",
-        price: "80",
-        invested: "40000",
-        current: "42000",
-        "P/L": "2000",
-        "p/l %": "5%",
-        "Irr %": "6%",
-        "realized gains": "1500",
-      },
-    },
-  ];
+  const holdings = generateHoldings(assetsSubCategory3);
 
   return (
     <>
@@ -116,7 +88,10 @@ export default function HomeAssetsSub3() {
       </header>
       <main className={homePageStyle.main}>
         <AssetsSection1 data={assetsData} />
-        <ProductSection holdings={holdings} />
+        <ProductSection
+          holdings={holdings}
+          c_id={assetsSubCategory3._id}
+        />
         <AssetsSection3 />
       </main>
       <footer></footer>

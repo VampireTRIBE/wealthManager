@@ -188,7 +188,8 @@ export const buildSubAsset2SectionsFromCategories = (
 
     return {
       title: cat.name,
-      onMainClick: () => navigate(`/home/${u_id}/${dc_id}/${sc_id}/${ssc_id}/${cat._id}`),
+      onMainClick: () =>
+        navigate(`/home/${u_id}/${dc_id}/${sc_id}/${ssc_id}/${cat._id}`),
       onEdit: () => handleEditToggle(cat._id),
       onDelete: () => handleDelete(cat._id),
       rows,
@@ -218,7 +219,10 @@ export const buildSubAsset3SectionsFromCategories = (
 
     return {
       title: cat.name,
-      onMainClick: () => navigate(`/home/${u_id}/${dc_id}/${sc_id}/${ssc_id}/${sssc_id}/${cat._id}`),
+      onMainClick: () =>
+        navigate(
+          `/home/${u_id}/${dc_id}/${sc_id}/${ssc_id}/${sssc_id}/${cat._id}`
+        ),
       onEdit: () => handleEditToggle(cat._id),
       onDelete: () => handleDelete(cat._id),
       rows,
@@ -226,3 +230,32 @@ export const buildSubAsset3SectionsFromCategories = (
       _id: cat._id,
     };
   });
+
+// Generate holdings array from a category or subcategory
+export function generateHoldings(category) {
+  if (!category || !category.products) return [];
+
+  return category.products.map((product) => {
+    const pl = product.currentValue - product.investmentValue;
+    const plPercent = ((pl / product.investmentValue) * 100).toFixed(2);
+    return {
+      name: product.name,
+      data: {
+        LTP:
+          product.currentValue && product.qty
+            ? (product.currentValue / product.qty).toFixed(2)
+            : "0.00",
+        Qty: (product.qty)?.toFixed(2) || "0.00",
+        price: product.buyAVG?.toFixed(2) || "0.00",
+        invested: product.investmentValue?.toFixed(2) || "0.00",
+        current: product.currentValue?.toFixed(2) || "0.00",
+        "P/L": pl.toFixed(2),
+        "p/l %": `${plPercent}%`,
+        "Irr %": `${product.xirrPercent?.toFixed(2) || "0.00"}%`,
+        "realized gains": product.realizedGain?.toFixed(2) || "0.00",
+      },
+      _id:product._id,
+    };
+  });
+}
+
