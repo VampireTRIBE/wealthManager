@@ -33,15 +33,13 @@ import { useFormData } from "../../hooks/fromdata";
 import ProductSection from "../../componets/layoutComponets/pageSections/assets/productSection";
 
 export default function HomeAssetsSub3() {
-  const { u_id, dc_id, sc_id, ssc_id, sssc_id } = useParams();
+  const { sc, ssc, sssc } = useParams();
   const navigate = useNavigate();
   const { userData, setUserData } = useUser();
   const handleLogout = () => logoutUser(setUserData, navigate);
-  const currentDate = useLiveDateTime();
 
   const d_btns = topCategoryBtns({
     userData,
-    u_id,
     navigate,
     handleLogout,
     buttonStyle: buttonStyle.dnbutton,
@@ -49,47 +47,49 @@ export default function HomeAssetsSub3() {
 
   const m_btns = topCategoryBtns({
     userData,
-    u_id,
     navigate,
     handleLogout,
     buttonStyle: buttonStyle.mnbtns,
   });
 
-  const assetsCategory = userData.categories.find((cat) => cat._id === dc_id);
+  const assetsCategory = userData.categories.find(
+    (cat) => cat.name === "ASSETS"
+  );
   const assetsSubCategory = assetsCategory?.subCategories?.find(
-    (cat) => cat._id === sc_id
+    (cat) => cat.name === sc
   );
   const assetsSubCategory2 = assetsSubCategory?.subCategories?.find(
-    (cat) => cat._id === ssc_id
+    (cat) => cat.name === ssc
   );
   const assetsSubCategory3 = assetsSubCategory2?.subCategories?.find(
-    (cat) => cat._id === sssc_id
+    (cat) => cat.name === sssc
   );
 
   const subBtns = subCategoryBtns({
     category: assetsCategory,
-    u_id,
     navigate,
     buttonStyle: buttonStyle.snbtns,
   });
 
-  const assetsData = buildAssetsDataFromCategory(
-    assetsSubCategory3,
-    currentDate
-  );
+  const assetsData = buildAssetsDataFromCategory(assetsSubCategory3);
 
   const holdings = generateHoldings(assetsSubCategory3);
 
   return (
     <>
       <header>
-        <Navbar d_btns={d_btns} m_btns={m_btns} path={`/home/${u_id}`} />
-        <SubNavbar d_btns={subBtns} />
+        <Navbar d_btns={d_btns} m_btns={m_btns} path={`/home`} />
+        <SubNavbar
+          d_btns={subBtns}
+          u_id={userData._id}
+          dc_id={assetsCategory._id}
+        />
       </header>
       <main className={homePageStyle.main}>
         <AssetsSection1 data={assetsData} />
         <ProductSection
           holdings={holdings}
+          u_id={userData._id}
           c_id={assetsSubCategory3._id}
         />
         <AssetsSection3 />

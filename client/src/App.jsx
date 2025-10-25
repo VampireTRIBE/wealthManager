@@ -22,20 +22,24 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SingupPage />} />
-            <Route path="/home/:u_id" element={<HomeDashbordPage />} />
-            <Route path="/home/:u_id/:dc_id" element={<HomeAssets />} />
+            <Route path="/home" element={<HomeDashbordPage />} />
+
+            {/* assets */}
+            <Route path="/assets" element={<HomeAssets />} />
             <Route
-              path="/home/:u_id/:dc_id/:sc_id"
+              path="/assets/:sc"
               element={<HomeAssetsSub />}
             />
             <Route
-              path="/home/:u_id/:dc_id/:sc_id/:ssc_id"
+              path="/assets/:sc/:ssc"
               element={<HomeAssetsSub2 />}
             />
             <Route
-              path="/home/:u_id/:dc_id/:sc_id/:ssc_id/:sssc_id"
+              path="/assets/:sc/:ssc/:sssc"
               element={<HomeAssetsSub3 />}
             />
+
+
           </Routes>
         </UserProvider>
       </Router>

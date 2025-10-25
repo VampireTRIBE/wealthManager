@@ -1,7 +1,17 @@
 var cors = require("cors");
 var corsOptions = {
-  origin: "http://localhost:5173",
-  method: "GET, POST, PUT, PATCH, DELETE",
+  origin: (origin, callback) => {
+    if (
+      !origin || 
+      origin.startsWith("http://192.168.") || 
+      origin.startsWith("http://localhost:5173")
+    ) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: "GET, POST, PUT, PATCH, DELETE", 
   credentials: true,
 };
 

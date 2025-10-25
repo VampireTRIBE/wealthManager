@@ -9,8 +9,7 @@ import Input from "../../../singleComponets/input/input";
 import inpStyle from "../../../singleComponets/input/input.module.css";
 import api from "../../../../servises/apis/apis";
 
-function ProductSection({ holdings = [], c_id }) {
-  const { u_id } = useParams();
+function ProductSection({ holdings = [], u_id, c_id }) {
   const { userData, setUserData } = useUser();
   const [activeForm, setActiveForm] = useState(null);
   const [newBuyFormData, setNewBuyFormData] = useState({});
@@ -171,6 +170,7 @@ function ProductSection({ holdings = [], c_id }) {
               <Input
                 type="Date"
                 name="Date"
+                placeholder="Date"
                 value={newBuyFormData?.Date || ""}
                 onChange={handleNewBuyInputChange}
                 className={inpStyle.primery}
@@ -269,6 +269,7 @@ function ProductSection({ holdings = [], c_id }) {
             <Input
               type="Date"
               name="Date"
+              placeholder="Date"
               value={buyFormDataMap[holding._id]?.Date || ""}
               onChange={(e) => handleBuyInputChange(holding._id, e)}
               className={inpStyle.primery}
@@ -315,6 +316,7 @@ function ProductSection({ holdings = [], c_id }) {
             </div>
             <Input
               type="Date"
+              placeholder="Date"
               name="Date"
               value={sellFormDataMap[holding._id]?.Date || ""}
               onChange={(e) => handleSellInputChange(holding._id, e)}

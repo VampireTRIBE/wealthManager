@@ -65,6 +65,7 @@ const usersControllers = {
 
   async loginUser(req, res, next) {
     passport.authenticate("local", (err, user, info) => {
+      console.log("request")
       if (err) return next(err);
       if (!user)
         return res.status(400).json({ error: info?.message || "Login failed" });
