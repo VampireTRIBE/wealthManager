@@ -25,21 +25,18 @@ import {
   logoutUser,
   subCategoryBtns,
   topCategoryBtns,
-  useLiveDateTime,
 } from "../../utills/helpers/funtions";
 import { useFormData } from "../../hooks/fromdata";
 import ProductSection from "../../componets/layoutComponets/pageSections/assets/productSection";
 
 export default function HomeAssetsSub() {
-  const { u_id, dc_id, sc_id } = useParams();
+  const { sc } = useParams();
   const navigate = useNavigate();
   const { userData, setUserData } = useUser();
   const handleLogout = () => logoutUser(setUserData, navigate);
-  const currentDate = useLiveDateTime();
 
   const d_btns = topCategoryBtns({
     userData,
-    u_id,
     navigate,
     handleLogout,
     buttonStyle: buttonStyle.dnbutton,
@@ -47,48 +44,34 @@ export default function HomeAssetsSub() {
 
   const m_btns = topCategoryBtns({
     userData,
-    u_id,
     navigate,
     handleLogout,
     buttonStyle: buttonStyle.mnbtns,
   });
 
-  const assetsCategory = userData.categories.find((cat) => cat._id === dc_id);
+  const assetsCategory = userData.categories.find(
+    (cat) => cat.name === "ASSETS"
+  );
+
   const assetsSubCategory = assetsCategory?.subCategories?.find(
-    (cat) => cat._id === sc_id
+    (cat) => cat.name === sc
   );
 
   const subBtns = subCategoryBtns({
     category: assetsCategory,
-    u_id,
     navigate,
     buttonStyle: buttonStyle.snbtns,
   });
-
-  const handleDelete = async (c_id) => {
-    try {
-      const res = await api.delete(`/category/${u_id}/${c_id}/delete`);
-      setUserData(res.data.Data);
-    } catch (error) {
-      console.error("Error in Deletion:", error);
-    }
-  };
 
   const [editCatId, setEditCatId] = useState(null);
   const toggleEdit = (catId) => {
     setEditCatId((prev) => (prev === catId ? null : catId));
   };
 
-  const assetsData = buildAssetsDataFromCategory(
-    assetsSubCategory,
-    currentDate
-  );
+  const assetsData = buildAssetsDataFromCategory(assetsSubCategory);
   const assetsSectionData = buildSubAssetSectionsFromCategories(
     assetsSubCategory.subCategories || [],
-    u_id,
-    dc_id,
-    sc_id,
-    handleDelete,
+    sc,
     toggleEdit,
     editCatId,
     navigate
@@ -98,13 +81,25 @@ export default function HomeAssetsSub() {
   return (
     <>
       <header>
-        <Navbar d_btns={d_btns} m_btns={m_btns} path={`/home/${u_id}`} />
-        <SubNavbar d_btns={subBtns} />
+        <Navbar d_btns={d_btns} m_btns={m_btns} path={`/home`} />
+        <SubNavbar
+          d_btns={subBtns}
+          u_id={userData._id}
+          dc_id={assetsCategory._id}
+        />
       </header>
       <main className={homePageStyle.main}>
-        <AssetsSection1 data={assetsData} />
-        <AssetsSection2 sections={assetsSectionData} />
-        <ProductSection holdings={holdings} c_id={assetsSubCategory._id} />
+        <AssetsSection1
+          data={assetsData}
+          u_id={userData._id}
+          id={assetsSubCategory._id}
+        />
+        <AssetsSection2 sections={assetsSectionData} u_id={userData._id} />
+        <ProductSection
+          holdings={holdings}
+          u_id={userData._id}
+          c_id={assetsSubCategory._id}
+        />
         <AssetsSection3 />
       </main>
       <footer></footer>

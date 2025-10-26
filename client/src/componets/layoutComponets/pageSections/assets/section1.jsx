@@ -12,10 +12,10 @@ import btnStyle from "../../../singleComponets/button/button.module.css";
 import Button from "../../../singleComponets/button/button";
 import { useUser } from "../../../../hooks/userContext";
 import api from "../../../../servises/apis/apis";
+import LiveClock from "../liveClock/liveClock";
 
-function AssetsSection1({ data }) {
+function AssetsSection1({ data, u_id, id }) {
   const paramsLength = Object.keys(useParams()).length;
-  const { u_id, sc_id, ssc_id, sssc_id } = useParams();
   const { userData, setUserData } = useUser();
 
   const [addCat, setaddCat] = useState(false);
@@ -31,8 +31,7 @@ function AssetsSection1({ data }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      let id = ssc_id ? ssc_id : sc_id;
-      const res = await api.post(`/category/${u_id}/${id}`, {
+      const res = await api.post(`/assets/${u_id}/${id}`, {
         newCategory: formData,
       });
       resetForm();
@@ -48,9 +47,9 @@ function AssetsSection1({ data }) {
       <div className={section1Style.head}>
         <div className={section1Style.headmain}>
           <H1>{data.title}</H1>
-          {paramsLength == 5 ? (
+          {paramsLength == 3 ? (
             ""
-          ) : paramsLength >= 3 ? (
+          ) : paramsLength >= 1 ? (
             <Image
               className={`${imgStyle.subimg} ${section1Style.addicon}`}
               src="/assets/medias/images/plus2.png"
@@ -93,7 +92,7 @@ function AssetsSection1({ data }) {
             />
           </div>
         </form>
-        <H3>{data.date}</H3>
+        <LiveClock/>
       </div>
       <div className={section1Style.main}>
         {data.content.map((item, i) => (

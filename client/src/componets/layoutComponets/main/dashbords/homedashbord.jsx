@@ -6,9 +6,6 @@ import homedashbordStyle from "./homedashbord.module.css";
 function HomeDashbord({ ...props }) {
   return (
     <main className={homedashbordStyle.main}>
-      {/* <MainSection />
-      <AssetsSection />
-      <AssetsSection /> */}
     </main>
   );
 }

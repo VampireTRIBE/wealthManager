@@ -13,13 +13,11 @@ import { logoutUser, topCategoryBtns } from "../utills/helpers/funtions";
 
 export default function HomeDashbordPage() {
   useTitle("Wealth Manager - Home");
-  const { u_id } = useParams();
   const navigate = useNavigate();
   const { userData, setUserData } = useUser();
   const handleLogout = () => logoutUser(setUserData, navigate);
   const d_btns = topCategoryBtns({
     userData,
-    u_id,
     navigate,
     handleLogout,
     buttonStyle: buttonStyle.dnbutton,
@@ -27,7 +25,6 @@ export default function HomeDashbordPage() {
 
   const m_btns = topCategoryBtns({
     userData,
-    u_id,
     navigate,
     handleLogout,
     buttonStyle: buttonStyle.mnbtns,
@@ -36,11 +33,9 @@ export default function HomeDashbordPage() {
   return (
     <>
       <header>
-        <Navbar d_btns={d_btns} m_btns={m_btns} path={`/home/${u_id}`} />
+        <Navbar d_btns={d_btns} m_btns={m_btns} path={`/home`} />
       </header>
-      <>
-        <HomeDashbord />
-      </>
+      
       <footer></footer>
     </>
   );

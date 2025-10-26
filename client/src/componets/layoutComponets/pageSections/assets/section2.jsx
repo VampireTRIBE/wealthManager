@@ -11,8 +11,7 @@ import Input from "../../../singleComponets/input/input";
 import inpStyle from "../../../singleComponets/input/input.module.css";
 import api from "../../../../servises/apis/apis";
 
-function AssetsSection2({ sections = [] }) {
-  const { u_id } = useParams();
+function AssetsSection2({ sections = [], u_id }) {
   const paramsLength = Object.keys(useParams()).length;
   const { userData, setUserData } = useUser();
   const { formData, handleInputChange, resetForm } = useFormData({
@@ -20,10 +19,19 @@ function AssetsSection2({ sections = [] }) {
     description: "",
   });
 
+  const handleDelete = async (c_id) => {
+    try {
+      const res = await api.delete(`/assets/${u_id}/${c_id}/delete`);
+      setUserData(res.data.Data);
+    } catch (error) {
+      console.error("Error in Deletion:", error);
+    }
+  };
+
   const handleSubmit = async (e, data) => {
     e.preventDefault();
     try {
-      const res = await api.patch(`/category/${u_id}/${data._id}/edit`, {
+      const res = await api.patch(`/assets/${u_id}/${data._id}/edit`, {
         newCategory: formData,
       });
       resetForm();
@@ -53,7 +61,7 @@ function AssetsSection2({ sections = [] }) {
               className={imgStyle.subimg}
               src="/assets/medias/images/trash.png"
               alt="Delete"
-              onClick={data.onDelete}
+              onClick={()=>{handleDelete(data._id)}}
             />
           </H3>
 

@@ -38,7 +38,6 @@ export const logoutUser = async (setUserData, navigate) => {
 
 export const topCategoryBtns = ({
   userData,
-  u_id,
   navigate,
   handleLogout,
   buttonStyle,
@@ -49,7 +48,7 @@ export const topCategoryBtns = ({
       text: cat.name.toUpperCase(),
       className: buttonStyle,
       dis: i,
-      onClick: () => navigate(`/home/${u_id}/${cat._id}`),
+      onClick: () => navigate(`/${cat.name.toLowerCase()}`),
     })),
     {
       text: "LogOut",
@@ -60,23 +59,17 @@ export const topCategoryBtns = ({
   ];
 };
 
-export const subCategoryBtns = ({ category, u_id, navigate, buttonStyle }) => {
+export const subCategoryBtns = ({ category, navigate, buttonStyle }) => {
   if (!category?.subCategories) return [];
 
   const buttons = category.subCategories.map((subCat) => ({
     text: subCat.name.toUpperCase(),
     className: buttonStyle,
-    onClick: () => navigate(`/home/${u_id}/${category._id}/${subCat._id}`),
+    onClick: () => navigate(`/assets/${subCat.name}`),
   }));
   return buttons;
 };
 
-// utils/assetHelpers.js
-
-/**
- * Convert any object to label/value array (ignores _id and nested objects)
- * Automatically formats numbers to 2 decimals
- */
 export const objectToLabelValue = (obj) =>
   Object.entries(obj)
     .filter(
@@ -101,23 +94,13 @@ export const objectToLabelValue = (obj) =>
       return { label, value };
     });
 
-export const buildAssetsDataFromCategory = (
-  category,
-  currentDate = new Date()
-) => ({
+export const buildAssetsDataFromCategory = (category) => ({
   title: category.name,
-  date: currentDate,
   content: objectToLabelValue(category),
 });
 
-/**
- * Build subcategory assets for AssetsSection2
- */
 export const buildAssetSectionsFromCategories = (
   categories,
-  u_id,
-  dc_id,
-  handleDelete,
   handleEditToggle,
   editCatId,
   navigate
@@ -131,9 +114,8 @@ export const buildAssetSectionsFromCategories = (
 
     return {
       title: cat.name,
-      onMainClick: () => navigate(`/home/${u_id}/${dc_id}/${cat._id}`),
+      onMainClick: () => navigate(`/assets/${cat.name}`),
       onEdit: () => handleEditToggle(cat._id),
-      onDelete: () => handleDelete(cat._id),
       rows,
       isEditing: editCatId === cat._id,
       _id: cat._id,
@@ -142,10 +124,7 @@ export const buildAssetSectionsFromCategories = (
 
 export const buildSubAssetSectionsFromCategories = (
   categories,
-  u_id,
-  dc_id,
-  sc_id,
-  handleDelete,
+  sc,
   handleEditToggle,
   editCatId,
   navigate
@@ -159,9 +138,8 @@ export const buildSubAssetSectionsFromCategories = (
 
     return {
       title: cat.name,
-      onMainClick: () => navigate(`/home/${u_id}/${dc_id}/${sc_id}/${cat._id}`),
+      onMainClick: () => navigate(`/assets/${sc}/${cat.name}`),
       onEdit: () => handleEditToggle(cat._id),
-      onDelete: () => handleDelete(cat._id),
       rows,
       isEditing: editCatId === cat._id,
       _id: cat._id,
@@ -170,11 +148,8 @@ export const buildSubAssetSectionsFromCategories = (
 
 export const buildSubAsset2SectionsFromCategories = (
   categories,
-  u_id,
-  dc_id,
-  sc_id,
-  ssc_id,
-  handleDelete,
+  sc,
+  ssc,
   handleEditToggle,
   editCatId,
   navigate
@@ -189,9 +164,8 @@ export const buildSubAsset2SectionsFromCategories = (
     return {
       title: cat.name,
       onMainClick: () =>
-        navigate(`/home/${u_id}/${dc_id}/${sc_id}/${ssc_id}/${cat._id}`),
+        navigate(`/assets/${sc}/${ssc}/${cat.name}`),
       onEdit: () => handleEditToggle(cat._id),
-      onDelete: () => handleDelete(cat._id),
       rows,
       isEditing: editCatId === cat._id,
       _id: cat._id,
@@ -245,7 +219,7 @@ export function generateHoldings(category) {
           product.currentValue && product.qty
             ? (product.currentValue / product.qty).toFixed(2)
             : "0.00",
-        Qty: (product.qty)?.toFixed(2) || "0.00",
+        Qty: product.qty?.toFixed(2) || "0.00",
         price: product.buyAVG?.toFixed(2) || "0.00",
         invested: product.investmentValue?.toFixed(2) || "0.00",
         current: product.currentValue?.toFixed(2) || "0.00",
@@ -254,8 +228,7 @@ export function generateHoldings(category) {
         "Irr %": `${product.xirrPercent?.toFixed(2) || "0.00"}%`,
         "realized gains": product.realizedGain?.toFixed(2) || "0.00",
       },
-      _id:product._id,
+      _id: product._id,
     };
   });
 }
-

@@ -1,5 +1,5 @@
-const category = require("../../models/category");
-const product = require("../../models/product");
+const category = require("../../models/assets/assetsCat");
+const product = require("../../models/assets/assetsProduct");
 const users = require("../../models/user");
 const mongoose = require("mongoose");
 

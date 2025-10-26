@@ -23,9 +23,10 @@ dataParser.bodyParser(app);
 app.use(Locals);
 
 const userRoute = require("./routes/user");
-const categoryRoute = require("./routes/category");
-const productRoute = require("./routes/product");
-const productDetailRoute = require("./routes/productDetail");
+const assetsCatRoute = require("./routes/assets/assetsCat");
+const assetsProductRoute = require("./routes/assets/assetsProduct");
+const assetsStatementRoute = require("./routes/assets/assetsStatement");
+const assetsTransactionRoute = require("./routes/assets/assetsTransaction");
 
 // for listning all requests
 app.listen(port, () => {
@@ -34,13 +35,14 @@ app.listen(port, () => {
 
 // Diffrent Routes
 app.use("/", userRoute);
-app.use("/category/:u_id/", categoryRoute);
-app.use("/product/:u_id/:c_id/", productRoute);
-app.use("/transaction/:u_id/:p_id/", productDetailRoute);
+app.use("/assets/:u_id/", assetsCatRoute);
+app.use("/assets/product/:u_id/:c_id/", assetsProductRoute);
+app.use("/assets/statement/:u_id/:c_id/", assetsStatementRoute);
+app.use("/assets/transaction/:u_id/:p_id/", assetsTransactionRoute);
 
 // error handling middleware
-app.use((err, req, res, next) => {
-  const { status = 500, message = "Some Error" } = err;
-  console.log(`Status Code : ${status}\nMessage : ${message}`);
-  res.send(`Status : ${status}\nMessage : ${message}`);
-});
+// app.use((err, req, res, next) => {
+//   const { status = 500, message = "Some Error" } = err;
+//   console.log(`Status Code : ${status}\nMessage : ${message}`);
+//   res.send(`Status : ${status}\nMessage : ${message}`);
+// });

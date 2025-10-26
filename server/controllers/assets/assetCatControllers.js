@@ -1,7 +1,7 @@
-const Category = require("../models/category");
-const dbReq = require("../utills/databaseReq/dbReq");
+const Category = require("../../models/assets/assetsCat");
+const dbReq = require("../../utills/databaseReq/dbReq");
 
-const categoryController = {
+const assetsCategoryController = {
   async addCategory(req, res, next) {
     try {
       const { u_id, pc_id } = req.params;
@@ -93,4 +93,4 @@ const categoryController = {
   },
 };
 
-module.exports = categoryController;
+module.exports = assetsCategoryController;
