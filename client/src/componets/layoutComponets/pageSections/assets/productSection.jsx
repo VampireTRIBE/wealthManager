@@ -80,7 +80,7 @@ function ProductSection({ holdings = [], u_id, c_id }) {
             Date: Date || new Date(),
           },
         };
-        url = `/product/${u_id}/${c_id}`;
+        url = `/assets/product/${u_id}/${c_id}`;
       } else if (type === "buy") {
         const { quantity, Price, Date } = buyFormDataMap[id] || {};
         formData = {
@@ -90,7 +90,7 @@ function ProductSection({ holdings = [], u_id, c_id }) {
             Date: Date || new Date(),
           },
         };
-        url = `/transaction/${u_id}/${id}`;
+        url = `/assets/transaction/${u_id}/${id}`;
       } else if (type === "sell") {
         const { quantity, Price, Date } = sellFormDataMap[id] || {};
         formData = {
@@ -100,7 +100,7 @@ function ProductSection({ holdings = [], u_id, c_id }) {
             Date: Date || new Date(),
           },
         };
-        url = `/transaction/${u_id}/${id}/sell`;
+        url = `/assets/transaction/${u_id}/${id}/sell`;
       }
       const res = await api.post(url, formData);
       if (type === "newBuy") setNewBuyFormData({});

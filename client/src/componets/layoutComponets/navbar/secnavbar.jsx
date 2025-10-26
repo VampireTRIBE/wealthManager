@@ -31,7 +31,7 @@ function SubNavbar({ d_btns, u_id, dc_id }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post(`/category/${u_id}/${dc_id}`, {
+      const res = await api.post(`/assets/${u_id}/${dc_id}`, {
         newCategory: formData,
       });
 

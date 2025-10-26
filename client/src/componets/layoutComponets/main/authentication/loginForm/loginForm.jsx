@@ -37,7 +37,7 @@ function LoginFrom({ ...props }) {
       });
       resetForm();
       setUserData(response.data.Data);
-      navigate(`/home/${response.data.userID}`);
+      navigate(`/home`);
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.error || "Server error. Please try again.");

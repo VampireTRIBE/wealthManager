@@ -31,7 +31,7 @@ function AssetsSection1({ data, u_id, id }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post(`/category/${u_id}/${id}`, {
+      const res = await api.post(`/assets/${u_id}/${id}`, {
         newCategory: formData,
       });
       resetForm();
@@ -92,7 +92,6 @@ function AssetsSection1({ data, u_id, id }) {
             />
           </div>
         </form>
-        {/* <H3>{data.date}</H3> */}
         <LiveClock/>
       </div>
       <div className={section1Style.main}>

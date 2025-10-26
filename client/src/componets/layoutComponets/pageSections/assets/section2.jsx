@@ -21,7 +21,7 @@ function AssetsSection2({ sections = [], u_id }) {
 
   const handleDelete = async (c_id) => {
     try {
-      const res = await api.delete(`/category/${u_id}/${c_id}/delete`);
+      const res = await api.delete(`/assets/${u_id}/${c_id}/delete`);
       setUserData(res.data.Data);
     } catch (error) {
       console.error("Error in Deletion:", error);
@@ -31,7 +31,7 @@ function AssetsSection2({ sections = [], u_id }) {
   const handleSubmit = async (e, data) => {
     e.preventDefault();
     try {
-      const res = await api.patch(`/category/${u_id}/${data._id}/edit`, {
+      const res = await api.patch(`/assets/${u_id}/${data._id}/edit`, {
         newCategory: formData,
       });
       resetForm();

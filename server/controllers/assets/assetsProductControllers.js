@@ -1,7 +1,7 @@
-const product = require("../models/product");
-const productDetail = require("../models/productDetail");
-const category = require("../models/category");
-const dbReq = require("../utills/databaseReq/dbReq");
+const product = require("../../models/assets/assetsProduct");
+const productDetail = require("../../models/assets/assetsTransactions");
+const category = require("../../models/assets/assetsCat");
+const dbReq = require("../../utills/databaseReq/dbReq");
 
 const productsControllers = {
   async addNewProduct(req, res, next) {
@@ -14,16 +14,22 @@ const productsControllers = {
           .status(400)
           .json({ error: "Can`t Create Product in Default Category" });
       }
+      if (
+        transaction["quantity"] * transaction["Price"] >
+        cat?.standaloneCash
+      ) {
+        return res.status(400).json({ error: "Insuffient Funds" });
+      }
+
+      if (!transaction || transaction.quantity <= 0) {
+        return res.status(400).json({ error: "Invalid transaction quantity" });
+      }
+
       const newProd = await product.create({
         ...newProduct,
         user: u_id,
         categories: c_id,
       });
-
-      if (!transaction || transaction.quantity <= 0) {
-        await product.deleteOne({ _id: newProd._id });
-        return res.status(400).json({ error: "Invalid transaction quantity" });
-      }
 
       const detail = await productDetail.create({
         ...transaction,
@@ -44,6 +50,7 @@ const productsControllers = {
         Data: u_data,
       });
     } catch (error) {
+      console.log(error.message);
       return res.status(500).json({ error: error.message });
     }
   },
