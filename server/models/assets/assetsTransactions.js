@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
+const { updateConsolidatedCash } = require("../../utills/agregations/assets/agregations");
 const Schema = mongoose.Schema;
+
 
 const assetsTransactionsSchema = new Schema(
   {
@@ -27,7 +29,6 @@ assetsTransactionsSchema.pre("save", async function (next) {
 
     const product = await Product.findById(this.product);
     if (!product) return next(new Error("Product not found"));
-
     if (!product.categories)
       return next(new Error("Product category not found"));
 
@@ -36,7 +37,6 @@ assetsTransactionsSchema.pre("save", async function (next) {
 
     const price = this.Price;
 
-    // ✅ Update product buy/sell
     if (this.type === "buy") {
       const newQty = product.qty + this.quantity;
       const totalCost = product.buyAVG * product.qty + price * this.quantity;
@@ -45,7 +45,6 @@ assetsTransactionsSchema.pre("save", async function (next) {
       product.qty = newQty;
       product.totalValue = newQty * product.buyAVG;
 
-      // Decrease standaloneCash for this category
       category.standaloneCash -= price * this.quantity;
     }
 
@@ -58,40 +57,13 @@ assetsTransactionsSchema.pre("save", async function (next) {
       product.qty -= this.quantity;
       product.totalValue = product.qty * product.buyAVG;
 
-      // Increase standaloneCash for this category
       category.standaloneCash += price * this.quantity;
     }
 
     await product.save();
     await category.save();
 
-    // ✅ Update consilidatedCash recursively
-    // ✅ Update consolidatedCash for entire parent chain
-    async function updateConsolidated(catId) {
-      const cat = await Category.findById(catId);
-      if (!cat) return;
-
-      const children = await Category.find({ parentCategory: catId });
-
-      let sum = cat.standaloneCash;
-
-      for (const child of children) {
-        await updateConsolidated(child._id); // ensure child is updated
-        const freshChild = await Category.findById(child._id).select(
-          "consolidatedCash"
-        );
-        sum += freshChild.consolidatedCash;
-      }
-
-      cat.consolidatedCash = sum;
-      await cat.save();
-
-      if (cat.parentCategory) {
-        await updateConsolidated(cat.parentCategory);
-      }
-    }
-
-    await updateConsolidated(category._id);
+    await updateConsolidatedCash(category._id);
 
     next();
   } catch (err) {

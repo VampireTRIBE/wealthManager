@@ -2,6 +2,8 @@ const user = require("../models/user");
 const passport = require("passport");
 const dbReq = require("../utills/databaseReq/dbReq");
 const assetsCat = require("../models/assets/assetsCat");
+const { getUserProductIds, updateProductValuations } = require("../utills/agregations/assets/updateProductData");
+const { updateIRR } = require("../utills/agregations/assets/poductirr");
 
 const usersControllers = {
   async registerUser(req, res, next) {
@@ -18,7 +20,6 @@ const usersControllers = {
 
       req.login(new_user, async (err) => {
         if (err) return next();
-
         const u_data = await dbReq.userData(new_user._id);
         if (!u_data) {
           return res.status(404).json({ error: "User data not found" });
@@ -44,6 +45,11 @@ const usersControllers = {
 
       req.login(user, async (err) => {
         if (err) return next(err);
+
+        const productIds = await getUserProductIds(user._id);
+        console.log(productIds);
+        await updateProductValuations(productIds);
+        await updateIRR(productIds[0]);
 
         const u_data = await dbReq.userData(user._id);
         if (!u_data) {

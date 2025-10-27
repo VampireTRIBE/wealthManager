@@ -24,6 +24,9 @@ const assetsSchema = new Schema(
 
     standaloneUnrealizedGain: { type: Number, default: 0 },
     consolidatedUnRealizedGain: { type: Number, default: 0 },
+    
+    standaloneCurrentYearGain: { type: Number, default: 0 }, //done
+    consolidatedCurrentYearGain: { type: Number, default: 0 }, //done
 
     standaloneCash: { type: Number, default: 0 },
     consolidatedCash: { type: Number, default: 0 },

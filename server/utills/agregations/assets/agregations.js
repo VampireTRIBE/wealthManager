@@ -1,87 +1,69 @@
-// utils/updateCashGraph.js
 const mongoose = require("mongoose");
-const Category = require("../../../models/assets/assetsCat"); 
 const { Types } = mongoose;
 
-async function updateConsolidatedCashUsingGraphLookup(categoryId) {
-  if (!categoryId) throw new Error("categoryId required");
-  const _id = Types.ObjectId(categoryId);
+const aggregations = {
+  updateConsolidatedCash: async function (categoryId) {
+    if (!categoryId) throw new Error("categoryId required");
 
-  const rootWithAncestors = await Category.aggregate([
-    { $match: { _id } },
-    {
-      $graphLookup: {
-        from: "assets",                
-        startWith: "$parentCategory", 
-        connectFromField: "parentCategory",
-        connectToField: "_id",
-        as: "ancestors",
-        depthField: "ancestorDepth"
-      }
-    },
-    {
-      $project: {
-        _id: 1,
-        ancestors: { _id: 1 }
-      }
-    }
-  ]);
+    // Lazy-load model to avoid circular dependency
+    const Category = require("../../../models/assets/assetsCat");
 
-  if (!rootWithAncestors || rootWithAncestors.length === 0) {
-    return;
-  }
+    const _id = new Types.ObjectId(categoryId);
 
-  const ancestors = rootWithAncestors[0].ancestors || [];
-  const affectedIds = [ _id, ...ancestors.map(a => a._id) ];
+    // 1️⃣ Get category + ancestors
+    const rootWithAncestors = await Category.aggregate([
+      { $match: { _id } },
+      {
+        $graphLookup: {
+          from: "assets",
+          startWith: "$parentCategory",
+          connectFromField: "parentCategory",
+          connectToField: "_id",
+          as: "ancestors",
+        },
+      },
+      { $project: { _id: 1, ancestors: { _id: 1 } } },
+    ]);
 
-  const sums = await Category.aggregate([
-    { $match: { _id: { $in: affectedIds } } },
-    {
-      $graphLookup: {
-        from: "assets",
-        startWith: "$_id",
-        connectFromField: "_id",
-        connectToField: "parentCategory",
-        as: "descendants",
-      }
-    },
+    if (!rootWithAncestors.length) return;
 
-    {
-      $addFields: {
-        descendantStandaloneArray: {
-          $map: {
-            input: "$descendants",
-            as: "d",
-            in: { $ifNull: ["$$d.standaloneCash", 0] }
-          }
-        }
-      }
-    },
-    {
-      $addFields: {
-        subtreeSum: {
-          $sum: {
-            $concatArrays: ["$descendantStandaloneArray", ["$standaloneCash"]]
-          }
-        }
-      }
-    },
+    const ancestors = rootWithAncestors[0].ancestors || [];
+    const affectedIds = [_id, ...ancestors.map((a) => a._id)];
 
-    { $project: { _id: 1, subtreeSum: 1 } }
-  ]);
+    // 2️⃣ Calculate consolidatedCash
+    const sums = await Category.aggregate([
+      { $match: { _id: { $in: affectedIds } } },
+      {
+        $graphLookup: {
+          from: "assets",
+          startWith: "$_id",
+          connectFromField: "_id",
+          connectToField: "parentCategory",
+          as: "descendants",
+        },
+      },
+      {
+        $addFields: {
+          allNodes: { $concatArrays: [["$$ROOT"], "$descendants"] },
+        },
+      },
+      {
+        $addFields: {
+          consolidatedCash: { $sum: "$allNodes.standaloneCash" },
+        },
+      },
+      { $project: { _id: 1, consolidatedCash: 1 } },
+    ]);
 
-  const bulkOps = sums.map(s => ({
-    updateOne: {
-      filter: { _id: s._id },
-      update: { $set: { consolidatedCash: s.subtreeSum } }
-    }
-  }));
+    // 3️⃣ Bulk update
+    const bulkOps = sums.map((s) => ({
+      updateOne: { filter: { _id: s._id }, update: { $set: { consolidatedCash: s.consolidatedCash } } },
+    }));
 
-  if (bulkOps.length) {
-    await Category.bulkWrite(bulkOps);
-  }
+    if (bulkOps.length) await Category.bulkWrite(bulkOps);
 
-  return sums;
-}
+    return sums;
+  },
+};
 
-module.exports = updateConsolidatedCashUsingGraphLookup;
+module.exports = aggregations;
