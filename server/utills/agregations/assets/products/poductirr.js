@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
-require("../../../models/assets/assetsProduct");
-require("../../../models/assets/assetsTransactions");
+require("../../../../models/assets/assetsProduct");
+require("../../../../models/assets/assetsTransactions");
 const Product = mongoose.model("assetsproducts");
 const Transactions = mongoose.model("assetstransactions");
 
@@ -38,13 +38,12 @@ function computeIRR(cashflows, guess = 0.1) {
 }
 
 async function updateIRR(productId) {
+  console.log("<----- IRR ----->");
   const product = await Product.findById(productId)
     .select("currentValue qty")
     .lean();
 
   if (!product) return;
-
-  // ✅ If user sold everything or no value → IRR irrelevant
   if (product.currentValue <= 0) {
     await Product.updateOne({ _id: productId }, { $set: { IRR: 0 } });
     return;
@@ -73,16 +72,9 @@ async function updateIRR(productId) {
   });
 
   const irr = computeIRR(cashflows);
-  // ✅ If NaN or null → fallback 0
   const safeIRR = isFinite(irr) ? irr : 0;
 
   await Product.updateOne({ _id: productId }, { $set: { IRR: safeIRR } });
-
-  if (safeIRR !== null && !isNaN(safeIRR)) {
-    console.log(`✅ IRR updated: ${safeIRR.toFixed(2)}% for ${productId}`);
-  } else {
-    console.log(`⚠️ IRR unavailable for ${productId}, stored as null`);
-  }
 }
 
 module.exports = { updateIRR };

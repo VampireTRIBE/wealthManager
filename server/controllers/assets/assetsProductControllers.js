@@ -30,6 +30,7 @@ const productsControllers = {
         user: u_id,
         categories: c_id,
         dateADDED: transaction["Date"],
+        symbol: newProduct["name"],
       });
 
       const detail = await productDetail.create({

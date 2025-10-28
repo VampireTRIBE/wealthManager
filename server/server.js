@@ -2,7 +2,6 @@ if (process.env.NODE_ENV != "production") {
   require("dotenv").config();
 }
 
-const axios = require("axios");
 const express = require("express");
 const corAuth = require("./middlewares/cors");
 const DB_connect = require("./config/connectDB");
@@ -30,21 +29,25 @@ const assetsStatementRoute = require("./routes/assets/assetsStatement");
 const assetsTransactionRoute = require("./routes/assets/assetsTransaction");
 const assetsLiveLTP = require("./routes/assets/marketPrice");
 
+const { updateLivePrices } = require("./controllers/assets/marketPrice");
+
 // for listning all requests
 app.listen(port, async () => {
-  console.log(`Server Running : port : ${port}`);
+  console.log(`<----- Server Running : port : ${port} ----->`);
   try {
-    await axios.post("http://localhost:3000/live/ltp");
-    console.log("✅ Initial update done");
+    console.log("<----- Performing initial live price update ----->");
+    await updateLivePrices();
+    console.log("<----- Initial update completed ----->");
   } catch (err) {
-    console.error("❌ Initial update failed:", err.message);
+    console.error("<----- Initial update failed ----->", err.message);
   }
   setTimeout(() => {
     setInterval(async () => {
       try {
-        await axios.post("http://localhost:3000/live/ltp");
+        await updateLivePrices();
+        console.log("<----- Auto update successful ----->");
       } catch (err) {
-        console.error("❌ Auto update failed:", err.message);
+        console.error("<----- Auto update failed ----->", err.message);
       }
     }, 60 * 1000);
   }, 5000);
@@ -52,8 +55,8 @@ app.listen(port, async () => {
 
 // Diffrent Routes
 app.use("/", userRoute);
-app.use("/assets/:u_id/", assetsCatRoute);
 app.use("/live/", assetsLiveLTP);
+app.use("/assets/:u_id/", assetsCatRoute);
 app.use("/assets/product/:u_id/:c_id/", assetsProductRoute);
 app.use("/assets/statement/:u_id/:c_id/", assetsStatementRoute);
 app.use("/assets/transaction/:u_id/:p_id/", assetsTransactionRoute);

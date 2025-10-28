@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
-const Product = require("./assetsProduct");
-const ProductDetails = require("./assetsTransactions");
 
 const assetsSchema = new Schema(
   {
@@ -24,9 +22,9 @@ const assetsSchema = new Schema(
 
     standaloneUnrealizedGain: { type: Number, default: 0 },
     consolidatedUnRealizedGain: { type: Number, default: 0 },
-    
-    standaloneCurrentYearGain: { type: Number, default: 0 }, //done
-    consolidatedCurrentYearGain: { type: Number, default: 0 }, //done
+
+    standaloneCurrentYearGain: { type: Number, default: 0 },
+    consolidatedCurrentYearGain: { type: Number, default: 0 },
 
     standaloneCash: { type: Number, default: 0 },
     consolidatedCash: { type: Number, default: 0 },
@@ -77,6 +75,8 @@ assetsSchema.pre(
   "deleteOne",
   { document: true, query: false },
   async function (next) {
+    const Product = require("./assetsProduct");
+    const ProductDetails = require("./assetsTransactions");
     try {
       const categoryId = this._id;
 
