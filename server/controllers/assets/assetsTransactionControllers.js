@@ -13,12 +13,28 @@ const transactionControllers = {
       }
       const categoryId = await productModel
         .findById(p_id)
-        .select("categories -_id")
+        .select("categories dateADDED -_id")
         .lean();
       const category = await assetsCatModel
         .findById(categoryId?.categories)
         .select("standaloneCash -_id")
         .lean();
+
+      const txnDate = new Date(transaction["Date"]);
+      if (isNaN(txnDate.getTime())) {
+        return res.status(400).json({ error: "Invalid transaction date" });
+      }
+
+      const now = new Date();
+      if (txnDate > now) {
+        return res.status(400).json({ error: "Can't buy in a future date" });
+      }
+
+      if (txnDate < new Date(categoryId.dateADDED)) {
+        return res.status(400).json({
+          error: "Transaction date can't be before product creation date",
+        });
+      }
 
       if (
         transaction["quantity"] * transaction["Price"] >

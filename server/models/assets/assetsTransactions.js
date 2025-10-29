@@ -1,9 +1,4 @@
 const mongoose = require("mongoose");
-const updateCurrentValuesByFilter = require("../../utills/agregations/assets/products/updateCurrentValueUnrealizedGainFilter");
-const updateCurrentYearGains = require("../../utills/agregations/assets/products/updateCurrentYearGains");
-const updateBuySellTransaction = require("../../utills/agregations/assets/products/updateQtyAvgTotalValue");
-const updateStandaloneGains = require("../../utills/agregations/assets/categories/standaloneStats/updateCurrentvalueUnrealizedGainCurrentYearGain");
-const updateConsolidatedValues = require("../../utills/agregations/assets/categories/consolidated/updateConsolidatedValues");
 const Schema = mongoose.Schema;
 
 const assetsTransactionsSchema = new Schema(
@@ -25,14 +20,42 @@ const assetsTransactionsSchema = new Schema(
   { timestamps: true }
 );
 
+assetsTransactionsSchema.pre("save", async function (next) {
+  try {
+    if (this.type === "buy") {
+      const lastBuy = await this.constructor
+        .findOne({
+          product: this.product,
+          type: "buy",
+        })
+        .sort({ Date: -1 })
+        .select("Date")
+        .lean();
+
+      if (lastBuy && this.Date < lastBuy.Date) {
+        return next(
+          new Error(
+            `Buy transaction date (${this.Date.toDateString()}) cannot be before the last buy date (${new Date(
+              lastBuy.Date
+            ).toDateString()}).`
+          )
+        );
+      }
+    }
+
+    const updateBuySellTransaction = require("../../utills/agregations/assets/products/updateQtyAvgTotalValue");
+    await updateBuySellTransaction(this, { validateOnly: true });
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
 assetsTransactionsSchema.post("save", async function () {
+  const updateBuySellTransaction = require("../../utills/agregations/assets/products/updateQtyAvgTotalValue");
+
+  // ✅ Apply real effects
   await updateBuySellTransaction(this);
-  await updateCurrentValuesByFilter({ productIds: [this.product] });
-  await updateCurrentYearGains({ productIds: [this.product] });
-  const AssetsProduct = require("./assetsProduct");
-  const res = await AssetsProduct.findById(this.product, { categories: 1 });
-  await updateStandaloneGains([res.categories]);
-  await updateConsolidatedValues([res.categories]);
 });
 
 module.exports = mongoose.model("assetstransactions", assetsTransactionsSchema);

@@ -2,6 +2,15 @@ const user = require("../models/user");
 const passport = require("passport");
 const dbReq = require("../utills/databaseReq/dbReq");
 const assetsCat = require("../models/assets/assetsCat");
+const updateCurrentValuesByFilter = require("../utills/agregations/assets/products/updateCurrentValueUnrealizedGainFilter");
+const updateConsolidatedValues = require("../utills/agregations/assets/categories/consolidated/updateConsolidatedValues");
+const updateCurrentYearGains = require("../utills/agregations/assets/products/updateCurrentYearGains");
+const updateStandaloneGains = require("../utills/agregations/assets/categories/standaloneStats/updateCurrentvalueUnrealizedGainCurrentYearGain");
+const {
+  getAllSubCategoryIds,
+  getLeafCategoryIds,
+} = require("../utills/agregations/assets/findsAllCategoryIDs");
+const updateConsolidatedIRR = require("../utills/agregations/assets/categories/consolidated/updateConsolidatedIRR");
 
 const usersControllers = {
   async registerUser(req, res, next) {
@@ -43,6 +52,24 @@ const usersControllers = {
 
       req.login(user, async (err) => {
         if (err) return next(err);
+
+        await updateCurrentValuesByFilter({ userId: user._id });
+        await updateCurrentYearGains({ userId: user._id });
+        await updateStandaloneGains(await getAllSubCategoryIds(user._id));
+        const leafcategorys = await getLeafCategoryIds(user._id);
+        console.log(leafcategorys);
+        for (const catid of leafcategorys) {
+          await updateConsolidatedValues(catid);
+        }
+
+        const rootAssetsCategoryId = await assetsCat
+          .findOne({ name: "ASSETS", parentCategory: null }, { _id: 1 })
+          .lean();
+        await updateConsolidatedValues(rootAssetsCategoryId?._id);
+        await updateConsolidatedIRR(rootAssetsCategoryId?._id);
+
+        console.log("<----- LOGIN Data ----->");
+        console.log(await assetsCat.findById(rootAssetsCategoryId?._id));
 
         const u_data = await dbReq.userData(user._id);
         if (!u_data) {

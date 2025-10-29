@@ -14,6 +14,15 @@ const productsControllers = {
           .status(400)
           .json({ error: "Can`t Create Product in Default Category" });
       }
+      const txnDate = new Date(transaction["Date"]);
+
+      if (isNaN(txnDate.getTime())) {
+        return res.status(400).json({ error: "Invalid transaction date" });
+      }
+
+      if (txnDate > new Date()) {
+        return res.status(400).json({ error: "Can't buy in a future date" });
+      }
       if (
         transaction["quantity"] * transaction["Price"] >
         cat?.standaloneCash

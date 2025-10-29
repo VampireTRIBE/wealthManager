@@ -22,7 +22,7 @@ async function updateLivePrices() {
         headers: {
           Authorization: `Bearer ${process.env.GOOGLE_SCRIPT_API_KEY}`,
         },
-        timeout: 10000,
+        timeout: 20000,
       })
       .catch((err) => {
         console.warn(" -> Error fetching live prices:", err.message);
@@ -69,18 +69,11 @@ async function updateLivePrices() {
 
     if (bulkPriceOps.length > 0) {
       await MarketPrice.bulkWrite(bulkPriceOps, { ordered: false });
-    }
-
-    if (changedSymbols.length > 0) {
-      const result = await updateAllCurrentValues(changedSymbols);
-      console.log(` -> Updated ${changedSymbols.length} symbols`);
       return {
         success: true,
-        updatedSymbols: changedSymbols.length,
-        totalReceived: normalized.length,
-        updateSummary: result,
       };
     }
+
     console.log(" -> No LTP changes detected");
     return {
       success: true,
