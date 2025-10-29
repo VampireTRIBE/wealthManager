@@ -1,6 +1,5 @@
 const axios = require("axios");
 const MarketPrice = require("../../models/assets/marketPrice");
-const updateAllCurrentValues = require("../../utills/agregations/assets/products/updateCurrentValueUnrealizedGain");
 
 const marketPriceControllers = {
   async updateLTP(req, res, next) {
@@ -16,7 +15,7 @@ const marketPriceControllers = {
 
 async function updateLivePrices() {
   try {
-    console.log(" -> Running background live price update...");
+    console.log(" <----- Running background live price update ----->");
     const { data: livePrices } = await axios
       .post(process.env.GOOGLE_SCRIPT_URL, {
         headers: {
@@ -25,12 +24,12 @@ async function updateLivePrices() {
         timeout: 20000,
       })
       .catch((err) => {
-        console.warn(" -> Error fetching live prices:", err.message);
+        console.warn("<----- Error fetching live prices ----->", err.message);
         return { data: [] };
       });
 
     if (!Array.isArray(livePrices) || livePrices.length === 0) {
-      console.warn(" -> No price data received");
+      console.warn("<----- No price data receive ----->");
       return { success: false, message: "No price data received" };
     }
 
@@ -74,7 +73,7 @@ async function updateLivePrices() {
       };
     }
 
-    console.log(" -> No LTP changes detected");
+    console.log("<----- No LTP changes detected ----->");
     return {
       success: true,
       message: "Market prices updated (no LTP changes)",
@@ -82,7 +81,7 @@ async function updateLivePrices() {
       totalReceived: normalized.length,
     };
   } catch (error) {
-    console.error(" -> updateLivePrices() Error:", error);
+    console.error("<----- updateLivePrices() Error:", error);
     return { success: false, error: error.message };
   }
 }

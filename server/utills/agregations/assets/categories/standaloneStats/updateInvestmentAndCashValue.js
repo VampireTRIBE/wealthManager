@@ -24,7 +24,6 @@ async function incrementStandaloneInvestmentAndCash(tx, mode = "add") {
 
     let update = {};
 
-    // 💰 Deposit → Increase both investment value and cash
     if (tx.type === "deposit") {
       update = {
         $inc: {
@@ -34,7 +33,6 @@ async function incrementStandaloneInvestmentAndCash(tx, mode = "add") {
       };
     }
 
-    // 💸 Withdrawal → Decrease both investment value and cash
     else if (tx.type === "withdrawal") {
       update = {
         $inc: {
@@ -53,13 +51,8 @@ async function incrementStandaloneInvestmentAndCash(tx, mode = "add") {
       update
     );
 
-    console.log(
-      `✅ [${tx.type.toUpperCase()}] ${mode === "add" ? "Applied" : "Reverted"} | Category ${categoryId} | Δ ${JSON.stringify(update.$inc)}`
-    );
-
     return { ok: true, result };
   } catch (err) {
-    console.error("❌ Error in incrementStandaloneInvestmentAndCash:", err);
     return { ok: false, error: err.message };
   }
 }

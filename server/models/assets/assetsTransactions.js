@@ -8,6 +8,11 @@ const assetsTransactionsSchema = new Schema(
       enum: ["buy", "sell"],
       required: true,
     },
+    category_id: {
+      type: Schema.Types.ObjectId,
+      ref: "assetscategories",
+      required: true,
+    },
     product: {
       type: Schema.Types.ObjectId,
       ref: "assetsproducts",
@@ -19,6 +24,8 @@ const assetsTransactionsSchema = new Schema(
   },
   { timestamps: true }
 );
+
+assetsTransactionsSchema.index({ category_id: 1, Date: 1 });
 
 assetsTransactionsSchema.pre("save", async function (next) {
   try {
@@ -53,8 +60,6 @@ assetsTransactionsSchema.pre("save", async function (next) {
 
 assetsTransactionsSchema.post("save", async function () {
   const updateBuySellTransaction = require("../../utills/agregations/assets/products/updateQtyAvgTotalValue");
-
-  // ✅ Apply real effects
   await updateBuySellTransaction(this);
 });
 

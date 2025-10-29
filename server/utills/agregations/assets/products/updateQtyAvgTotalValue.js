@@ -5,7 +5,6 @@ const AssetsTransaction = require("../../../../models/assets/assetsTransactions"
 
 /**
  * Handles buy/sell FIFO updates and validation.
- *
  * @param {Object} txn - Transaction document or plain object
  * @param {Object} [options]
  * @param {"add"|"remove"} [options.mode="add"] - Apply or revert
@@ -30,14 +29,10 @@ async function updateBuySellTransaction(txn, { mode = "add", validateOnly = fals
     if (isNaN(txnDate.getTime())) throw new Error("Invalid transaction date");
     const tradeValue = quantity * Price;
 
-    // ============================================================
-    // ✅ FIFO VALIDATION SECTION
-    // ============================================================
     const allTxns = await AssetsTransaction.find({ product: productId })
-      .sort({ Date: 1, createdAt: 1, _id: 1 }) // 💡 Tiebreaker: ensures stable FIFO order
+      .sort({ Date: 1, type: 1, createdAt: 1, _id: 1 })
       .lean();
 
-    // --- Simulate existing ledger ---
     let runningQty = 0;
     for (const t of allTxns) {
       if (t.type === "buy") runningQty += t.quantity;
@@ -47,7 +42,6 @@ async function updateBuySellTransaction(txn, { mode = "add", validateOnly = fals
         throw new Error("Invalid history: more sells than buys detected");
     }
 
-    // --- Pre-validation (for pre-save hook) ---
     if (validateOnly) {
       const hypotheticalTxns = [...allTxns, txn].sort(
         (a, b) => new Date(a.Date) - new Date(b.Date)
@@ -57,31 +51,29 @@ async function updateBuySellTransaction(txn, { mode = "add", validateOnly = fals
       for (const t of hypotheticalTxns) {
         tempQty += t.type === "buy" ? t.quantity : -t.quantity;
         if (tempQty < 0)
-          throw new Error(`FIFO check failed: attempting to sell before enough buys`);
+          throw new Error("FIFO check failed: attempting to sell before enough buys");
       }
 
-      return true; // ✅ Valid transaction
+      return true;
     }
 
-    // ============================================================
-    // 🧮 APPLY UPDATES (only for post-save)
-    // ============================================================
     let realizedGain = 0;
 
     if (type === "buy") {
-      // Weighted average buy update
       const totalCost = product.buyAVG * product.qty + tradeValue * (mode === "add" ? 1 : -1);
       const newQty = product.qty + (mode === "add" ? quantity : -quantity);
       product.buyAVG = newQty > 0 ? totalCost / newQty : 0;
       product.qty = newQty;
     } else if (type === "sell") {
-      // --- FIFO Sell Logic ---
+      const endOfDay = new Date(txnDate);
+      endOfDay.setHours(23, 59, 59, 999);
+
       const buyTxns = await AssetsTransaction.find({
         product: productId,
         type: "buy",
-        Date: { $lte: txnDate },
+        Date: { $lte: endOfDay },
       })
-        .sort({ Date: 1, createdAt: 1, _id: 1 }) // 💡 stable FIFO order
+        .sort({ Date: 1, type: 1, createdAt: 1, _id: 1 })
         .lean();
 
       let remainingSellQty = quantity;
@@ -102,10 +94,8 @@ async function updateBuySellTransaction(txn, { mode = "add", validateOnly = fals
       product.qty -= quantity;
     }
 
-    // --- Update total value ---
     product.totalValue = product.qty * product.buyAVG;
 
-    // --- Reset metadata if holdings cleared ---
     if (product.qty === 0) {
       product.description = "";
       product.industry = "";
@@ -119,11 +109,7 @@ async function updateBuySellTransaction(txn, { mode = "add", validateOnly = fals
 
     await product.save();
 
-    // ============================================================
-    // 💰 CATEGORY-LEVEL UPDATES
-    // ============================================================
     const update = { $inc: {} };
-
     if (type === "buy") {
       update.$inc.standaloneCash = -tradeValue;
     } else if (type === "sell") {
@@ -133,15 +119,8 @@ async function updateBuySellTransaction(txn, { mode = "add", validateOnly = fals
 
     await AssetsCategory.updateOne({ _id: categoryId }, update);
 
-    console.log(
-      `✅ ${validateOnly ? "Validated" : "Applied"} ${type.toUpperCase()} txn | 
-       Product: ${product.symbol || product._id} | Qty: ${quantity} | 
-       ΔCash: ${update.$inc.standaloneCash.toFixed(2)}`
-    );
-
     return { ok: true };
   } catch (err) {
-    console.error("❌ updateBuySellTransaction Error:", err.message);
     if (validateOnly) throw err;
     return { ok: false, error: err.message };
   }

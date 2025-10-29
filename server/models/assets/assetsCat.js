@@ -69,40 +69,32 @@ assetsSchema.pre("save", async function (next) {
     next(err);
   }
 });
-// ✅ Cascade delete (categories → products → transactions → statements)
+
+// Cascade delete (categories → products → transactions → statements)
 assetsSchema.pre(
   "deleteOne",
   { document: true, query: false },
   async function (next) {
     const Product = require("./assetsProduct");
     const ProductDetails = require("./assetsTransactions");
-    const AssetsStatement = require("./assetsStatements"); // ✅ Add this
+    const AssetsStatement = require("./assetsStatements");
 
     try {
       const categoryId = this._id;
-
-      // --- Delete child categories recursively ---
       const childCategories = await this.constructor.find({
         parentCategory: categoryId,
       });
       for (const child of childCategories) {
-        await child.deleteOne(); // recursion – triggers this hook again
+        await child.deleteOne();
       }
 
-      // --- Delete related products, transactions, and statements ---
       const products = await Product.find({ categories: categoryId });
 
       for (const product of products) {
-        // 1️⃣ Delete all product transactions
         await ProductDetails.deleteMany({ product: product._id });
-
-        // 2️⃣ Delete product itself
         await product.deleteOne();
       }
-
-      // 3️⃣ ✅ Delete all category-linked statements
       await AssetsStatement.deleteMany({ category_id: categoryId });
-
       next();
     } catch (err) {
       next(err);

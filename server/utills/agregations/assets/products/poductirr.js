@@ -38,7 +38,6 @@ function computeIRR(cashflows, guess = 0.1) {
 }
 
 async function updateIRR(productId) {
-  console.log("<----- IRR ----->");
   const product = await Product.findById(productId)
     .select("currentValue qty")
     .lean();
@@ -76,5 +75,4 @@ async function updateIRR(productId) {
 
   await Product.updateOne({ _id: productId }, { $set: { IRR: safeIRR } });
 }
-
 module.exports = { updateIRR };

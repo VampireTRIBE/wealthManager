@@ -6,7 +6,7 @@ async function getAllSubCategoryIds(userId) {
     {
       $match: {
         user: new mongoose.Types.ObjectId(userId),
-        parentCategory: { $ne: null }, // exclude root-level
+        parentCategory: { $ne: null },
       },
     },
     {
@@ -51,7 +51,7 @@ async function getLeafCategoryIds(userId) {
     },
     {
       $lookup: {
-        from: "assets", // ✅ ensure this matches the actual MongoDB collection name
+        from: "assets", 
         localField: "_id",
         foreignField: "parentCategory",
         as: "children",
@@ -59,7 +59,7 @@ async function getLeafCategoryIds(userId) {
     },
     {
       $match: {
-        "children.0": { $exists: false }, // ✅ no subcategories → leaf
+        "children.0": { $exists: false },
       },
     },
     {

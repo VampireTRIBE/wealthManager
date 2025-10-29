@@ -22,14 +22,10 @@ async function updateCurrentValuesByFilter(options = {}, debug = false) {
       };
     }
 
-    console.log("⚙️ Running updateCurrentValuesByFilter with filter:", match);
-
     try {
       await AssetsProduct.collection.createIndex({ symbol: 1 });
       await AssetsProduct.collection.createIndex({ user: 1 });
-    } catch (idxErr) {
-      console.warn("⚠️ Index already exists or failed:", idxErr.message);
-    }
+    } catch (idxErr) {}
 
     const pipeline = [
       { $match: match },
@@ -86,8 +82,6 @@ async function updateCurrentValuesByFilter(options = {}, debug = false) {
     await AssetsProduct.aggregate(pipeline, { allowDiskUse: true });
     const duration = Date.now() - t0;
 
-    console.log(`✅ Updated current values in ${duration}ms`);
-
     if (debug) {
       const updated = await AssetsProduct.find(match)
         .select("symbol currentValue unRealizedGain buyAVG qty updatedAt")
@@ -97,7 +91,6 @@ async function updateCurrentValuesByFilter(options = {}, debug = false) {
 
     return { ok: true, updatedAt: new Date(), duration };
   } catch (err) {
-    console.error("🔥 updateCurrentValuesByFilter error:", err);
     throw err;
   }
 }

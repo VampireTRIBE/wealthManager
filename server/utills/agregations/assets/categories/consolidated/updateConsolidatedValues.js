@@ -73,13 +73,10 @@ async function updateConsolidatedValues(categoryId) {
       };
 
       await AssetsCategory.updateOne({ _id: catId }, { $set: updatedValues });
-
-      console.log(`✅ Updated consolidated values for ${category.name}`);
     }
 
-    console.log("✅ Consolidated updates applied successfully");
   } catch (err) {
-    console.error("❌ Error in updateConsolidatedValues:", err);
+    console.error("<----- Error in updateConsolidatedValues ----->", err);
   }
 }
 

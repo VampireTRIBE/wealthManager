@@ -5,11 +5,7 @@ const AssetsCategory = require("../../../../../models/assets/assetsCat");
 const AssetsProduct = require("../../../../../models/assets/assetsProduct");
 
 /**
- * Incrementally updates standaloneUnrealizedGain, standaloneCurrentYearGain,
- * and standaloneCurrentValue for categories that have products updated recently.
- *
  * @param {mongoose.Types.ObjectId[]|string[]} [categoryIds=null]
- *   Optional: update only these category IDs.
  */
 async function updateStandaloneGains(categoryIds = null) {
   try {
@@ -21,7 +17,6 @@ async function updateStandaloneGains(categoryIds = null) {
       };
     }
 
-    // 🔹 Step 1: Find categories whose related products were updated after the category
     const categoriesToUpdate = await AssetsCategory.aggregate([
       {
         $lookup: {
@@ -42,13 +37,10 @@ async function updateStandaloneGains(categoryIds = null) {
     ]);
 
     if (!categoriesToUpdate.length) {
-      console.log("✅ No category changes detected — already up to date.");
       return { ok: true, updated: 0, skipped: true };
     }
 
     const categoryIdsToUpdate = categoriesToUpdate.map((c) => c._id);
-
-    // 🔹 Step 2: Aggregate new gain values from their products
     const agg = await AssetsProduct.aggregate([
       { $match: { categories: { $in: categoryIdsToUpdate } } },
       {
@@ -60,7 +52,6 @@ async function updateStandaloneGains(categoryIds = null) {
       },
     ]);
 
-    // 🔹 Step 3: Prepare bulk update operations
     const bulkOps = agg.map((cat) => ({
       updateOne: {
         filter: { _id: cat._id },
@@ -76,7 +67,7 @@ async function updateStandaloneGains(categoryIds = null) {
                   cat.totalUnrealized,
                 ],
               },
-              updatedAt: new Date(), // refresh update time
+              updatedAt: new Date(),
             },
           },
         ],
@@ -84,11 +75,8 @@ async function updateStandaloneGains(categoryIds = null) {
     }));
 
     const result = await AssetsCategory.bulkWrite(bulkOps);
-
-    console.log(`✅ Incrementally updated ${result.modifiedCount} categories`);
     return { ok: true, updated: result.modifiedCount, skipped: false };
   } catch (err) {
-    console.error("❌ Error in incremental updateStandaloneGains:", err);
     return { ok: false, error: err.message };
   }
 }

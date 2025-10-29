@@ -125,13 +125,10 @@ async function updateAllCurrentValues(changedSymbols = [], options = {}) {
 
       batchesProcessed++;
     }
-
     const durationMs = Date.now() - t0;
-    console.log(`updateAllCurrentValues: processed ${batchesProcessed}/${symbolBatches.length} batches in ${durationMs}ms`);
     await releaseLock(db);
     return { ok: true, totalBatches: symbolBatches.length, batchesProcessed, durationMs };
   } catch (err) {
-    console.error("🔥 updateAllCurrentValues error:", err);
     try { await releaseLock(db); } catch (_) {}
     throw err;
   }

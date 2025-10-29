@@ -30,6 +30,7 @@ const assetsTransactionRoute = require("./routes/assets/assetsTransaction");
 const assetsLiveLTP = require("./routes/assets/marketPrice");
 
 const { updateLivePrices } = require("./controllers/assets/marketPrice");
+const updateStandaloneIRR = require("./utills/agregations/assets/categories/standaloneStats/updateStandaloneIRR");
 
 // for listning all requests
 app.listen(port, async () => {
@@ -49,7 +50,7 @@ app.listen(port, async () => {
       } catch (err) {
         console.error("<----- Auto update failed ----->", err.message);
       }
-    }, 60 * 1000);
+    }, 2 * 60 * 1000);
   }, 5000);
 });
 
@@ -62,8 +63,8 @@ app.use("/assets/statement/:u_id/:c_id/", assetsStatementRoute);
 app.use("/assets/transaction/:u_id/:p_id/", assetsTransactionRoute);
 
 // error handling middleware
-// app.use((err, req, res, next) => {
-//   const { status = 500, message = "Some Error" } = err;
-//   console.log(`Status Code : ${status}\nMessage : ${message}`);
-//   res.send(`Status : ${status}\nMessage : ${message}`);
-// });
+app.use((err, req, res, next) => {
+  const { status = 500, message = "Some Error" } = err;
+  console.log(`Status Code : ${status}\nMessage : ${message}`);
+  res.send(`Status : ${status}\nMessage : ${message}`);
+});

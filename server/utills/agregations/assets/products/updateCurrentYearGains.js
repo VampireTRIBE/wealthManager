@@ -27,8 +27,6 @@ async function updateCurrentYearGains(options = {}, debug = false) {
       };
     }
 
-    console.log("⚙️ Running updateCurrentYearGains with filter:", matchStage);
-
     const pipeline = [
       { $match: matchStage },
       {
@@ -166,7 +164,6 @@ async function updateCurrentYearGains(options = {}, debug = false) {
 
     return { ok: true, updatedAt: new Date(), duration };
   } catch (err) {
-    console.error("❌ Error updating current year gains:", err);
     throw err;
   }
 }

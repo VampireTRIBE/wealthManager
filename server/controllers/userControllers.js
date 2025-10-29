@@ -39,13 +39,12 @@ const usersControllers = {
         });
       });
     } catch (error) {
-      return res.status(500).json({ error: "Internal Server Error" });
+      return res.status(500).json({ error: error.message });
     }
   },
 
   async loginUser(req, res, next) {
     passport.authenticate("local", (err, user, info) => {
-      console.log("request");
       if (err) return next(err);
       if (!user)
         return res.status(400).json({ error: info?.message || "Login failed" });
@@ -57,19 +56,14 @@ const usersControllers = {
         await updateCurrentYearGains({ userId: user._id });
         await updateStandaloneGains(await getAllSubCategoryIds(user._id));
         const leafcategorys = await getLeafCategoryIds(user._id);
-        console.log(leafcategorys);
         for (const catid of leafcategorys) {
           await updateConsolidatedValues(catid);
         }
-
         const rootAssetsCategoryId = await assetsCat
           .findOne({ name: "ASSETS", parentCategory: null }, { _id: 1 })
           .lean();
         await updateConsolidatedValues(rootAssetsCategoryId?._id);
         await updateConsolidatedIRR(rootAssetsCategoryId?._id);
-
-        console.log("<----- LOGIN Data ----->");
-        console.log(await assetsCat.findById(rootAssetsCategoryId?._id));
 
         const u_data = await dbReq.userData(user._id);
         if (!u_data) {
