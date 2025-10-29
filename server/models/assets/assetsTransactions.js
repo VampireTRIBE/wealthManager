@@ -8,6 +8,11 @@ const assetsTransactionsSchema = new Schema(
       enum: ["buy", "sell"],
       required: true,
     },
+    category_id: {
+      type: Schema.Types.ObjectId,
+      ref: "assetscategories",
+      required: true,
+    },
     product: {
       type: Schema.Types.ObjectId,
       ref: "assetsproducts",
@@ -20,83 +25,42 @@ const assetsTransactionsSchema = new Schema(
   { timestamps: true }
 );
 
+assetsTransactionsSchema.index({ category_id: 1, Date: 1 });
+
 assetsTransactionsSchema.pre("save", async function (next) {
   try {
-    const Product = mongoose.model("assetsproducts");
-    const Category = mongoose.model("assets");
-
-    const product = await Product.findById(this.product);
-    if (!product) return next(new Error("Product not found"));
-
-    if (!product.categories)
-      return next(new Error("Product category not found"));
-
-    const category = await Category.findById(product.categories);
-    if (!category) return next(new Error("Product category not found"));
-
-    const price = this.Price;
-
-    // ✅ Update product buy/sell
     if (this.type === "buy") {
-      const newQty = product.qty + this.quantity;
-      const totalCost = product.buyAVG * product.qty + price * this.quantity;
+      const lastBuy = await this.constructor
+        .findOne({
+          product: this.product,
+          type: "buy",
+        })
+        .sort({ Date: -1 })
+        .select("Date")
+        .lean();
 
-      product.buyAVG = newQty === 0 ? 0 : totalCost / newQty;
-      product.qty = newQty;
-      product.totalValue = newQty * product.buyAVG;
-
-      // Decrease standaloneCash for this category
-      category.standaloneCash -= price * this.quantity;
-    }
-
-    if (this.type === "sell") {
-      if (this.quantity > product.qty)
-        return next(new Error("Not enough quantity to sell"));
-
-      const gain = (price - product.buyAVG) * this.quantity;
-      product.realizedGain += gain;
-      product.qty -= this.quantity;
-      product.totalValue = product.qty * product.buyAVG;
-
-      // Increase standaloneCash for this category
-      category.standaloneCash += price * this.quantity;
-    }
-
-    await product.save();
-    await category.save();
-
-    // ✅ Update consilidatedCash recursively
-    // ✅ Update consolidatedCash for entire parent chain
-    async function updateConsolidated(catId) {
-      const cat = await Category.findById(catId);
-      if (!cat) return;
-
-      const children = await Category.find({ parentCategory: catId });
-
-      let sum = cat.standaloneCash;
-
-      for (const child of children) {
-        await updateConsolidated(child._id); // ensure child is updated
-        const freshChild = await Category.findById(child._id).select(
-          "consolidatedCash"
+      if (lastBuy && this.Date < lastBuy.Date) {
+        return next(
+          new Error(
+            `Buy transaction date (${this.Date.toDateString()}) cannot be before the last buy date (${new Date(
+              lastBuy.Date
+            ).toDateString()}).`
+          )
         );
-        sum += freshChild.consolidatedCash;
-      }
-
-      cat.consolidatedCash = sum;
-      await cat.save();
-
-      if (cat.parentCategory) {
-        await updateConsolidated(cat.parentCategory);
       }
     }
 
-    await updateConsolidated(category._id);
-
+    const updateBuySellTransaction = require("../../utills/agregations/assets/products/updateQtyAvgTotalValue");
+    await updateBuySellTransaction(this, { validateOnly: true });
     next();
   } catch (err) {
     next(err);
   }
+});
+
+assetsTransactionsSchema.post("save", async function () {
+  const updateBuySellTransaction = require("../../utills/agregations/assets/products/updateQtyAvgTotalValue");
+  await updateBuySellTransaction(this);
 });
 
 module.exports = mongoose.model("assetstransactions", assetsTransactionsSchema);

@@ -11,7 +11,7 @@ function sessionConfig(app) {
   });
 
   store.on("error", () => {
-    console.log("Error in mongo sesson store ", err);
+    console.log("<----- Error in mongo sesson store ----->", err);
   });
 
   const sessionOptions = {
@@ -26,7 +26,7 @@ function sessionConfig(app) {
     },
   };
   app.use(session(sessionOptions));
-  console.log("✅ Session connected successfully with MongoDB");
+  console.log("<----- Session connected successfully with MongoDB ----->");
 }
 
 module.exports = sessionConfig;

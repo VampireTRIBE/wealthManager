@@ -2,6 +2,7 @@ const product = require("../../models/assets/assetsProduct");
 const productDetail = require("../../models/assets/assetsTransactions");
 const category = require("../../models/assets/assetsCat");
 const dbReq = require("../../utills/databaseReq/dbReq");
+const validateStandaloneCashOnDate = require("../../utills/agregations/assets/categories/standaloneStats/validateStandaloneCashOnDate");
 
 const productsControllers = {
   async addNewProduct(req, res, next) {
@@ -14,11 +15,30 @@ const productsControllers = {
           .status(400)
           .json({ error: "Can`t Create Product in Default Category" });
       }
+      const txnDate = new Date(transaction["Date"]);
+
+      if (isNaN(txnDate.getTime())) {
+        return res.status(400).json({ error: "Invalid transaction date" });
+      }
+
+      if (txnDate > new Date()) {
+        return res.status(400).json({ error: "Can't buy in a future date" });
+      }
       if (
         transaction["quantity"] * transaction["Price"] >
         cat?.standaloneCash
       ) {
         return res.status(400).json({ error: "Insuffient Funds" });
+      }
+      const requiredAmount = transaction["Price"] * transaction["quantity"];
+      const availableCash = await validateStandaloneCashOnDate({
+        category_id: c_id,
+        date: txnDate,
+      });
+      if (availableCash < requiredAmount) {
+        return res.status(400).json({
+          error: `Insufficient standalone cash on ${txnDate.toDateString()}. Available: ${availableCash}, Required: ${requiredAmount}`,
+        });
       }
 
       if (!transaction || transaction.quantity <= 0) {
@@ -29,12 +49,15 @@ const productsControllers = {
         ...newProduct,
         user: u_id,
         categories: c_id,
+        dateADDED: transaction["Date"],
+        symbol: newProduct["name"],
       });
 
       const detail = await productDetail.create({
         ...transaction,
         product: newProd._id,
         type: "buy",
+        category_id:c_id,
       });
       if (!detail) {
         await product.deleteOne({ _id: newProd._id });
@@ -50,7 +73,6 @@ const productsControllers = {
         Data: u_data,
       });
     } catch (error) {
-      console.log(error.message);
       return res.status(500).json({ error: error.message });
     }
   },
@@ -73,7 +95,7 @@ const productsControllers = {
         Data: u_data,
       });
     } catch (error) {
-      return res.status(500).json({ error: "Internal Server Error" });
+      return res.status(500).json({ error: error.message });
     }
   },
 };

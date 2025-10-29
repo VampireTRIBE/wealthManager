@@ -87,7 +87,7 @@ const dbReq = {
 
     // 3.5️⃣ Fetch live market prices (once)
     const livePrices = await fetchLivePrices();
-    console.log(livePrices);
+    // console.log(livePrices);
 
     // 4️⃣ Group products by category
     const productsByCategory = {};

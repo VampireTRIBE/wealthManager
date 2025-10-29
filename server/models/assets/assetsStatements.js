@@ -1,5 +1,5 @@
-
 const mongoose = require("mongoose");
+const incrementStandaloneInvestmentAndCash = require("../../utills/agregations/assets/categories/standaloneStats/updateInvestmentAndCashValue");
 const Schema = mongoose.Schema;
 
 const assetsStatementSchema = new Schema(
@@ -16,44 +16,11 @@ const assetsStatementSchema = new Schema(
 
 assetsStatementSchema.post("save", async function (doc, next) {
   try {
-    const Category = mongoose.model("assets");
-    const category = await Category.findById(doc.category_id);
-
-    if (!category) return next(new Error("Category not found"));
-
-    // ✅ Update standalone Cash
-    let change = doc.amount;
-    if (doc.type === "withdrawal") change = -Math.abs(change);
-
-    category.standaloneCash += change;
-    await category.save();
-
-    // ✅ Update Consolidated Cash of entire tree
-    async function updateConsolidated(catId) {
-      const current = await Category.findById(catId);
-      if (!current) return;
-
-      // Find all subcategories
-      const subs = await Category.find({ parentCategory: catId });
-
-      let total = current.standaloneCash;
-      for (const sub of subs) {
-        await updateConsolidated(sub._id); // recursive update
-        const freshSub = await Category.findById(sub._id);
-        total += freshSub.consolidatedCash;
-      }
-
-      current.consolidatedCash = total;
-      await current.save();
-    }
-
-    // Recalculate from root
-    let start = category;
-    while (start.parentCategory) {
-      start = await Category.findById(start.parentCategory);
-    }
-    await updateConsolidated(start._id);
-
+    await incrementStandaloneInvestmentAndCash({
+      type: doc.type,
+      category_id: doc.category_id,
+      amount: doc.amount,
+    });
     next();
   } catch (err) {
     next(err);

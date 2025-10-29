@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
-const Product = require("./assetsProduct");
-const ProductDetails = require("./assetsTransactions");
 
 const assetsSchema = new Schema(
   {
@@ -24,6 +22,9 @@ const assetsSchema = new Schema(
 
     standaloneUnrealizedGain: { type: Number, default: 0 },
     consolidatedUnRealizedGain: { type: Number, default: 0 },
+
+    standaloneCurrentYearGain: { type: Number, default: 0 },
+    consolidatedCurrentYearGain: { type: Number, default: 0 },
 
     standaloneCash: { type: Number, default: 0 },
     consolidatedCash: { type: Number, default: 0 },
@@ -69,15 +70,17 @@ assetsSchema.pre("save", async function (next) {
   }
 });
 
-// ✅ Cascade delete (categories → products → transactions)
+// Cascade delete (categories → products → transactions → statements)
 assetsSchema.pre(
   "deleteOne",
   { document: true, query: false },
   async function (next) {
+    const Product = require("./assetsProduct");
+    const ProductDetails = require("./assetsTransactions");
+    const AssetsStatement = require("./assetsStatements");
+
     try {
       const categoryId = this._id;
-
-      // Delete child categories
       const childCategories = await this.constructor.find({
         parentCategory: categoryId,
       });
@@ -85,13 +88,13 @@ assetsSchema.pre(
         await child.deleteOne();
       }
 
-      // Delete related products and product details
       const products = await Product.find({ categories: categoryId });
+
       for (const product of products) {
         await ProductDetails.deleteMany({ product: product._id });
         await product.deleteOne();
       }
-
+      await AssetsStatement.deleteMany({ category_id: categoryId });
       next();
     } catch (err) {
       next(err);

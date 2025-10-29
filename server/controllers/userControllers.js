@@ -2,6 +2,15 @@ const user = require("../models/user");
 const passport = require("passport");
 const dbReq = require("../utills/databaseReq/dbReq");
 const assetsCat = require("../models/assets/assetsCat");
+const updateCurrentValuesByFilter = require("../utills/agregations/assets/products/updateCurrentValueUnrealizedGainFilter");
+const updateConsolidatedValues = require("../utills/agregations/assets/categories/consolidated/updateConsolidatedValues");
+const updateCurrentYearGains = require("../utills/agregations/assets/products/updateCurrentYearGains");
+const updateStandaloneGains = require("../utills/agregations/assets/categories/standaloneStats/updateCurrentvalueUnrealizedGainCurrentYearGain");
+const {
+  getAllSubCategoryIds,
+  getLeafCategoryIds,
+} = require("../utills/agregations/assets/findsAllCategoryIDs");
+const updateConsolidatedIRR = require("../utills/agregations/assets/categories/consolidated/updateConsolidatedIRR");
 
 const usersControllers = {
   async registerUser(req, res, next) {
@@ -18,7 +27,6 @@ const usersControllers = {
 
       req.login(new_user, async (err) => {
         if (err) return next();
-
         const u_data = await dbReq.userData(new_user._id);
         if (!u_data) {
           return res.status(404).json({ error: "User data not found" });
@@ -31,19 +39,31 @@ const usersControllers = {
         });
       });
     } catch (error) {
-      return res.status(500).json({ error: "Internal Server Error" });
+      return res.status(500).json({ error: error.message });
     }
   },
 
   async loginUser(req, res, next) {
     passport.authenticate("local", (err, user, info) => {
-      console.log("request");
       if (err) return next(err);
       if (!user)
         return res.status(400).json({ error: info?.message || "Login failed" });
 
       req.login(user, async (err) => {
         if (err) return next(err);
+
+        await updateCurrentValuesByFilter({ userId: user._id });
+        await updateCurrentYearGains({ userId: user._id });
+        await updateStandaloneGains(await getAllSubCategoryIds(user._id));
+        const leafcategorys = await getLeafCategoryIds(user._id);
+        for (const catid of leafcategorys) {
+          await updateConsolidatedValues(catid);
+        }
+        const rootAssetsCategoryId = await assetsCat
+          .findOne({ name: "ASSETS", parentCategory: null }, { _id: 1 })
+          .lean();
+        await updateConsolidatedValues(rootAssetsCategoryId?._id);
+        await updateConsolidatedIRR(rootAssetsCategoryId?._id);
 
         const u_data = await dbReq.userData(user._id);
         if (!u_data) {

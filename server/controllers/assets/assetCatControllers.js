@@ -40,7 +40,6 @@ const assetsCategoryController = {
         Data: u_data,
       });
     } catch (error) {
-      console.log(error.message);
       return res.status(500).json({ error: error.message });
     }
   },
@@ -64,8 +63,7 @@ const assetsCategoryController = {
         Data: u_data,
       });
     } catch (error) {
-      console.log(error.message);
-      return res.status(500).json({ error: "Internal Server Error" });
+      return res.status(500).json({ error: error.message });
     }
   },
 
@@ -88,7 +86,8 @@ const assetsCategoryController = {
         Data: u_data,
       });
     } catch (error) {
-      return res.status(500).json({ error: "Internal Server Error" });
+      console.log(error);
+      return res.status(500).json({ error: error.message });
     }
   },
 };
