@@ -2,33 +2,28 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-import api from "../../servises/apis/apis";
+import { useUser } from "../../hooks/userContext";
 
 import Navbar from "../../componets/layoutComponets/navbar/navbar";
 import SubNavbar from "../../componets/layoutComponets/navbar/secnavbar";
-import Home from "../../componets/layoutComponets/main/dashbords/assets/home";
-import Button from "../../componets/singleComponets/button/button";
-import Image from "../../componets/singleComponets/image/image";
-
-import buttonStyle from "../../componets/singleComponets/button/button.module.css";
-import imgStyle from "../../componets/singleComponets/image/image.module.css";
 import AssetsSection1 from "../../componets/layoutComponets/pageSections/assets/section1";
 import AssetsSection2 from "../../componets/layoutComponets/pageSections/assets/section2";
-import homePageStyle from "./homePage.module.css";
 import AssetsSection3 from "../../componets/layoutComponets/pageSections/assets/section3";
-import { useUser } from "../../hooks/userContext";
-import {
-  buildAssetsDataFromCategory,
-  buildAssetSectionsFromCategories,
-  buildSubAsset2SectionsFromCategories,
-  buildSubAssetSectionsFromCategories,
-  generateHoldings,
-  logoutUser,
-  subCategoryBtns,
-  topCategoryBtns,
-} from "../../utills/helpers/funtions";
-import { useFormData } from "../../hooks/fromdata";
 import ProductSection from "../../componets/layoutComponets/pageSections/assets/productSection";
+
+import homePageStyle from "./homePage.module.css";
+import buttonStyle from "../../componets/singleComponets/button/button.module.css";
+
+import { logoutUser } from "../../utills/helpers/funtions";
+import {
+  navbarBtns,
+  subnavbarBtns,
+} from "../../utills/helpers/navbars/navbarBtns";
+import {
+  AssetsData,
+  HoldingsData,
+  SubAssetData2,
+} from "../../utills/helpers/assets/assets";
 
 export default function HomeAssetsSub2() {
   const { sc, ssc } = useParams();
@@ -36,14 +31,14 @@ export default function HomeAssetsSub2() {
   const { userData, setUserData } = useUser();
   const handleLogout = () => logoutUser(setUserData, navigate);
 
-  const d_btns = topCategoryBtns({
+  const d_btns = navbarBtns({
     userData,
     navigate,
     handleLogout,
     buttonStyle: buttonStyle.dnbutton,
   });
 
-  const m_btns = topCategoryBtns({
+  const m_btns = navbarBtns({
     userData,
     navigate,
     handleLogout,
@@ -51,16 +46,16 @@ export default function HomeAssetsSub2() {
   });
 
   const assetsCategory = userData.categories.find(
-    (cat) => cat.name === "ASSETS"
+    (cat) => cat.Name === "ASSETS"
   );
   const assetsSubCategory = assetsCategory?.subCategories?.find(
-    (cat) => cat.name === sc
+    (cat) => cat.Name === sc
   );
   const assetsSubCategory2 = assetsSubCategory?.subCategories?.find(
-    (cat) => cat.name === ssc
+    (cat) => cat.Name === ssc
   );
 
-  const subBtns = subCategoryBtns({
+  const subBtns = subnavbarBtns({
     category: assetsCategory,
     navigate,
     buttonStyle: buttonStyle.snbtns,
@@ -71,36 +66,37 @@ export default function HomeAssetsSub2() {
     setEditCatId((prev) => (prev === catId ? null : catId));
   };
 
-  const assetsData = buildAssetsDataFromCategory(assetsSubCategory2);
-  const assetsSectionData = buildSubAsset2SectionsFromCategories(
+  const assetsData = AssetsData(assetsSubCategory2, "consolidated");
+  const assetsSectionData = SubAssetData2(
     assetsSubCategory2.subCategories || [],
+    "consolidated",
     sc,
     ssc,
     toggleEdit,
     editCatId,
     navigate
   );
-  const holdings = generateHoldings(assetsSubCategory2);
+  const holdings = HoldingsData(assetsSubCategory2);
   return (
     <>
       <header>
         <Navbar d_btns={d_btns} m_btns={m_btns} path={`/home`} />
         <SubNavbar
           d_btns={subBtns}
-          u_id={userData._id}
+          u_id={userData.user._id}
           dc_id={assetsCategory._id}
         />
       </header>
       <main className={homePageStyle.main}>
         <AssetsSection1
           data={assetsData}
-          u_id={userData._id}
+          u_id={userData.user._id}
           id={assetsSubCategory2._id}
         />
-        <AssetsSection2 sections={assetsSectionData} u_id={userData._id} />
+        <AssetsSection2 sections={assetsSectionData} u_id={userData.user._id} />
         <ProductSection
           holdings={holdings}
-          u_id={userData._id}
+          u_id={userData.user._id}
           c_id={assetsSubCategory2._id}
         />
         <AssetsSection3 />

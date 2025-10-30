@@ -40,11 +40,12 @@ const productsControllers = {
           error: `Insufficient standalone cash on ${txnDate.toDateString()}. Available: ${availableCash}, Required: ${requiredAmount}`,
         });
       }
-
+      
       if (!transaction || transaction.quantity <= 0) {
         return res.status(400).json({ error: "Invalid transaction quantity" });
       }
-
+      
+      
       const newProd = await product.create({
         ...newProduct,
         user: u_id,
@@ -52,7 +53,7 @@ const productsControllers = {
         dateADDED: transaction["Date"],
         symbol: newProduct["name"],
       });
-
+      
       const detail = await productDetail.create({
         ...transaction,
         product: newProd._id,
@@ -95,6 +96,7 @@ const productsControllers = {
         Data: u_data,
       });
     } catch (error) {
+      console.log(error)
       return res.status(500).json({ error: error.message });
     }
   },

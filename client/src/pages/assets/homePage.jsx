@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import api from "../../servises/apis/apis";
 import { useUser } from "../../hooks/userContext";
 
 import Navbar from "../../componets/layoutComponets/navbar/navbar";
@@ -13,27 +12,29 @@ import AssetsSection3 from "../../componets/layoutComponets/pageSections/assets/
 import homePageStyle from "./homePage.module.css";
 import buttonStyle from "../../componets/singleComponets/button/button.module.css";
 
+import { logoutUser } from "../../utills/helpers/funtions";
 import {
-  buildAssetsDataFromCategory,
-  buildAssetSectionsFromCategories,
-  logoutUser,
-  subCategoryBtns,
-  topCategoryBtns,
-} from "../../utills/helpers/funtions";
+  navbarBtns,
+  subnavbarBtns,
+} from "../../utills/helpers/navbars/navbarBtns";
+import {
+  AssetsData,
+  AssetSectionsData,
+} from "../../utills/helpers/assets/assets";
 
 export default function HomeAssets() {
   const navigate = useNavigate();
   const { userData, setUserData } = useUser();
   const handleLogout = () => logoutUser(setUserData, navigate);
 
-  const d_btns = topCategoryBtns({
+  const d_btns = navbarBtns({
     userData,
     navigate,
     handleLogout,
     buttonStyle: buttonStyle.dnbutton,
   });
 
-  const m_btns = topCategoryBtns({
+  const m_btns = navbarBtns({
     userData,
     navigate,
     handleLogout,
@@ -41,10 +42,10 @@ export default function HomeAssets() {
   });
 
   const assetsCategory = userData.categories.find(
-    (cat) => cat.name === "ASSETS"
+    (cat) => cat.Name === "ASSETS"
   );
 
-  const subBtns = subCategoryBtns({
+  const subBtns = subnavbarBtns({
     category: assetsCategory,
     navigate,
     buttonStyle: buttonStyle.snbtns,
@@ -55,27 +56,27 @@ export default function HomeAssets() {
     setEditCatId((prev) => (prev === catId ? null : catId));
   };
 
-  const assetsData = buildAssetsDataFromCategory(assetsCategory);
-  const assetsSectionData = buildAssetSectionsFromCategories(
+  const assetsData = AssetsData(assetsCategory, "consolidated");
+  const assetsSectionData = AssetSectionsData(
     assetsCategory.subCategories || [],
+    "consolidated",
     toggleEdit,
     editCatId,
     navigate
   );
-
   return (
     <>
       <header>
         <Navbar d_btns={d_btns} m_btns={m_btns} path={`/home`} />
         <SubNavbar
           d_btns={subBtns}
-          u_id={userData._id}
+          u_id={userData.user._id}
           dc_id={assetsCategory._id}
         />
       </header>
       <main className={homePageStyle.main}>
-        <AssetsSection1 data={assetsData} />
-        <AssetsSection2 sections={assetsSectionData} u_id={userData._id} />
+        <AssetsSection1 data={assetsData} categoryDetails={assetsCategory}/>
+        <AssetsSection2 sections={assetsSectionData} u_id={userData.user._id} />
         <AssetsSection3 />
       </main>
       <footer></footer>

@@ -13,8 +13,9 @@ import Button from "../../../singleComponets/button/button";
 import { useUser } from "../../../../hooks/userContext";
 import api from "../../../../servises/apis/apis";
 import LiveClock from "../liveClock/liveClock";
+import HeadContent from "./SubSections/headDiscription";
 
-function AssetsSection1({ data, u_id, id }) {
+function AssetsSection1({ data, u_id, id, categoryDetails }) {
   const paramsLength = Object.keys(useParams()).length;
   const { userData, setUserData } = useUser();
 
@@ -92,7 +93,7 @@ function AssetsSection1({ data, u_id, id }) {
             />
           </div>
         </form>
-        <LiveClock/>
+        <LiveClock />
       </div>
       <div className={section1Style.main}>
         {data.content.map((item, i) => (
