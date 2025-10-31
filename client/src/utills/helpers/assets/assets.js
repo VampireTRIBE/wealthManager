@@ -27,29 +27,15 @@ export const AssetsData = (category, type) => ({
   content: objectToLabelValue(category[type]),
 });
 
-export const AssetSectionsData = (
-  categories,
-  type,
-  handleEditToggle,
-  editCatId,
-  navigate
-) =>
-  categories.map((cat) => {
-    const items = objectToLabelValue(cat[type]);
-    const rows = [];
-    for (let i = 0; i < items.length; i += 2) {
-      rows.push(items.slice(i, i + 2));
-    }
-
-    return {
-      title: cat.Name,
-      onMainClick: () => navigate(`/assets/${cat.Name}`),
-      onEdit: () => handleEditToggle(cat._id),
-      rows,
-      isEditing: editCatId === cat._id,
-      _id: cat._id,
-    };
-  });
+export const S2DiscriptionData = (category, type) => {
+  const stats = category[type];
+  const items = objectToLabelValue(stats);
+  const rows = [];
+  for (let i = 0; i < items.length; i += 2) {
+    rows.push(items.slice(i, i + 2));
+  }
+  return { rows };
+};
 
 export const SubAssetData = (
   categories,
@@ -101,7 +87,6 @@ export const SubAssetData2 = (
       _id: cat._id,
     };
   });
-
 
 export function HoldingsData(category) {
   if (!category || !category.products) return [];
