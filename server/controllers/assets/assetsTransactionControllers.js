@@ -55,7 +55,6 @@ const transactionControllers = {
           error: `Insufficient standalone cash on ${txnDate.toDateString()}. Available: ${availableCash}, Required: ${requiredAmount}`,
         });
       }
-
       await transactionModel.create({
         ...transaction,
         product: p_id,
@@ -72,6 +71,7 @@ const transactionControllers = {
         Data: u_data,
       });
     } catch (error) {
+      console.log(error)
       return res.status(500).json({ error: error.message });
     }
   },

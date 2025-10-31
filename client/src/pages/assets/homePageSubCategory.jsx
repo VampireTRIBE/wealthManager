@@ -1,106 +1,45 @@
-import { useState } from "react";
+import { useUser } from "../../hooks/userContext";
 import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 
-import api from "../../servises/apis/apis";
-
-import Navbar from "../../componets/layoutComponets/navbar/navbar";
-import SubNavbar from "../../componets/layoutComponets/navbar/secnavbar";
-import Home from "../../componets/layoutComponets/main/dashbords/assets/home";
-import Button from "../../componets/singleComponets/button/button";
-import Image from "../../componets/singleComponets/image/image";
-
-import buttonStyle from "../../componets/singleComponets/button/button.module.css";
-import imgStyle from "../../componets/singleComponets/image/image.module.css";
+import AssetsNavbar from "../../componets/layoutComponets/pageSections/assets/SubSections/assetsNavbar";
 import AssetsSection1 from "../../componets/layoutComponets/pageSections/assets/section1";
 import AssetsSection2 from "../../componets/layoutComponets/pageSections/assets/section2";
-import homePageStyle from "./homePage.module.css";
 import AssetsSection3 from "../../componets/layoutComponets/pageSections/assets/section3";
-import { useUser } from "../../hooks/userContext";
-import {
-  buildAssetsDataFromCategory,
-  buildAssetSectionsFromCategories,
-  buildSubAssetSectionsFromCategories,
-  generateHoldings,
-  logoutUser,
-  subCategoryBtns,
-  topCategoryBtns,
-} from "../../utills/helpers/funtions";
-import { useFormData } from "../../hooks/fromdata";
 import ProductSection from "../../componets/layoutComponets/pageSections/assets/productSection";
+
+import homePageStyle from "./homePage.module.css";
+import { HoldingsData } from "../../utills/helpers/assets/assets";
 
 export default function HomeAssetsSub() {
   const { sc } = useParams();
-  const navigate = useNavigate();
   const { userData, setUserData } = useUser();
-  const handleLogout = () => logoutUser(setUserData, navigate);
-
-  const d_btns = topCategoryBtns({
-    userData,
-    navigate,
-    handleLogout,
-    buttonStyle: buttonStyle.dnbutton,
-  });
-
-  const m_btns = topCategoryBtns({
-    userData,
-    navigate,
-    handleLogout,
-    buttonStyle: buttonStyle.mnbtns,
-  });
 
   const assetsCategory = userData.categories.find(
-    (cat) => cat.name === "ASSETS"
+    (cat) => cat.Name === "ASSETS"
   );
-
   const assetsSubCategory = assetsCategory?.subCategories?.find(
-    (cat) => cat.name === sc
+    (cat) => cat.Name === sc
   );
 
-  const subBtns = subCategoryBtns({
-    category: assetsCategory,
-    navigate,
-    buttonStyle: buttonStyle.snbtns,
-  });
-
-  const [editCatId, setEditCatId] = useState(null);
-  const toggleEdit = (catId) => {
-    setEditCatId((prev) => (prev === catId ? null : catId));
-  };
-
-  const assetsData = buildAssetsDataFromCategory(assetsSubCategory);
-  const assetsSectionData = buildSubAssetSectionsFromCategories(
-    assetsSubCategory.subCategories || [],
-    sc,
-    toggleEdit,
-    editCatId,
-    navigate
-  );
-  const holdings = generateHoldings(assetsSubCategory);
-
+  const holdings = HoldingsData(assetsSubCategory);
   return (
     <>
-      <header>
-        <Navbar d_btns={d_btns} m_btns={m_btns} path={`/home`} />
-        <SubNavbar
-          d_btns={subBtns}
-          u_id={userData._id}
-          dc_id={assetsCategory._id}
-        />
-      </header>
+      <AssetsNavbar categoryName={"ASSETS"} />
       <main className={homePageStyle.main}>
         <AssetsSection1
-          data={assetsData}
-          u_id={userData._id}
-          id={assetsSubCategory._id}
+          categoryDetails={assetsSubCategory}
+          topCat={"false"}
+          u_id={userData.user._id}
         />
-        <AssetsSection2 sections={assetsSectionData} u_id={userData._id} />
+        <AssetsSection2
+          categoryDetails={assetsSubCategory?.subCategories}
+          u_id={userData.user._id}
+        />
         <ProductSection
           holdings={holdings}
-          u_id={userData._id}
+          u_id={userData.user._id}
           c_id={assetsSubCategory._id}
         />
-        <AssetsSection3 />
       </main>
       <footer></footer>
     </>

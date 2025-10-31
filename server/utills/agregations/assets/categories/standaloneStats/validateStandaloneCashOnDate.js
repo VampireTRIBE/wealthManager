@@ -12,7 +12,6 @@ async function validateStandaloneCashOnDate({ category_id, date }) {
 
   const catId = new mongoose.Types.ObjectId(category_id);
   const buyDate = new Date(date);
-l
   const dayStart = new Date(buyDate);
   dayStart.setHours(0, 0, 0, 0);
   const nextDay = new Date(dayStart);

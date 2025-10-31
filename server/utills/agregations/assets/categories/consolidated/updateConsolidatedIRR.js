@@ -61,6 +61,10 @@ async function updateConsolidatedIRR(categoryId) {
       .lean();
 
     if (cashflows.length === 0) {
+      await AssetsCategory.updateOne(
+        { _id: categoryId },
+        { $set: { consolidatedIRR: 0 } }
+      );
       return;
     }
 
@@ -80,6 +84,8 @@ async function updateConsolidatedIRR(categoryId) {
     }
 
     const irr = computeIRR(signedFlows);
+    console.log(cashflows);
+    console.log(irr);
 
     await AssetsCategory.updateOne(
       { _id: categoryId },
