@@ -90,26 +90,37 @@ export const SubAssetData2 = (
 
 export function HoldingsData(category) {
   if (!category || !category.products) return [];
+
+  const formatINR = (num) => {
+    if (isNaN(num)) return "Rs 0.00";
+    return `Rs ${Number(num).toLocaleString("en-IN", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+  };
+
   return category.products.map((product) => {
-    const pl = product.currentValue - product.investmentValue;
-    const plPercent = ((pl / product.investmentValue) * 100).toFixed(2);
+    const pl = product.currentValue - product.totalValue;
+    const plPercent =
+      ((pl / (product.currentValue + product.totalValue)) * 100).toFixed(2);
+
     return {
       name: product.name,
       data: {
-        LTP:
-          product.currentValue && product.qty
-            ? (product.currentValue / product.qty).toFixed(2)
-            : "0.00",
-        Qty: product.qty?.toFixed(2) || "0.00",
-        price: product.buyAVG?.toFixed(2) || "0.00",
-        invested: product.investmentValue?.toFixed(2) || "0.00",
-        current: product.currentValue?.toFixed(2) || "0.00",
-        "P/L": pl.toFixed(2),
-        "p/l %": `${plPercent}%`,
-        "Irr %": `${product.xirrPercent?.toFixed(2) || "0.00"}%`,
-        "realized gains": product.realizedGain?.toFixed(2) || "0.00",
+        LTP: formatINR(product.LTP),
+        Qty: formatINR(product.qty),
+        Avg: formatINR(product.buyAVG),
+        Invested: formatINR(product.totalValue),
+        Current: formatINR(product.currentValue),
+        "P/L": formatINR(pl),
+        "P/L%": `${plPercent}%`,
+        "Realized Gains": formatINR(product.realizedGain),
+        "Unrealized Gains": formatINR(product.unRealizedGain),
+        "Current Year Gains": formatINR(product.currentYearGain),
+        "IRR%": `${product.IRR?.toFixed(2) || "0.00"}%`,
       },
       _id: product._id,
     };
   });
 }
+

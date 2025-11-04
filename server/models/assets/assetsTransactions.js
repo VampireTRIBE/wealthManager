@@ -59,8 +59,35 @@ assetsTransactionsSchema.pre("save", async function (next) {
 });
 
 assetsTransactionsSchema.post("save", async function () {
+  const assetsCatModel = require("../../models/assets/assetsCat");
   const updateBuySellTransaction = require("../../utills/agregations/assets/products/updateQtyAvgTotalValue");
+  const updateCurrentYearGains = require("../../utills/agregations/assets/products/updateCurrentYearGains");
+  const updateCurrentValuesByFilter = require("../../utills/agregations/assets/products/updateCurrentValueUnrealizedGainFilter");
+  const updateStandaloneGains = require("../../utills/agregations/assets/categories/standaloneStats/updateCurrentvalueUnrealizedGainCurrentYearGain");
+  const updateConsolidatedValues = require("../../utills/agregations/assets/categories/consolidated/updateConsolidatedValues");
+  const {
+    getLeafCategoryIds,
+    getAllSubCategoryIds,
+  } = require("../../utills/agregations/assets/findsAllCategoryIDs");
+
+  const userID = await assetsCatModel
+    .findById(this.category_id)
+    .select("user")
+    .lean();
+
   await updateBuySellTransaction(this);
+  await updateCurrentValuesByFilter({ userId: userID?.user });
+  await updateCurrentYearGains({ userId: userID?.user });
+  await updateStandaloneGains(await getAllSubCategoryIds(userID?.user));
+
+  const leafcategorys = await getLeafCategoryIds(userID?.user);
+  for (const catid of leafcategorys) {
+    await updateConsolidatedValues(catid);
+  }
+  const rootAssetsCategoryId = await assetsCatModel
+    .findOne({ name: "ASSETS", parentCategory: null }, { _id: 1 })
+    .lean();
+  await updateConsolidatedValues(rootAssetsCategoryId?._id);
 });
 
 module.exports = mongoose.model("assetstransactions", assetsTransactionsSchema);

@@ -60,8 +60,15 @@ function ProductSection({ holdings = [], u_id, c_id }) {
       let formData;
       let url;
       if (type === "newBuy") {
-        const { name, description, industry, tags, quantity, Price, Date } =
-          newBuyFormData;
+        const {
+          name,
+          description,
+          industry,
+          tags,
+          quantity,
+          Price,
+          Date: txnDate,
+        } = newBuyFormData;
         formData = {
           newProduct: {
             name,
@@ -77,27 +84,39 @@ function ProductSection({ holdings = [], u_id, c_id }) {
           transaction: {
             quantity: Number(quantity),
             Price: Number(Price),
-            Date: Date || new Date(),
+            Date:
+              txnDate ||
+              new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+                .toISOString()
+                .split("T")[0],
           },
         };
         url = `/assets/product/${u_id}/${c_id}`;
       } else if (type === "buy") {
-        const { quantity, Price, Date } = buyFormDataMap[id] || {};
+        const { quantity, Price, Date: txnDate } = buyFormDataMap[id] || {};
         formData = {
           transaction: {
             quantity: Number(quantity),
             Price: Number(Price),
-            Date: Date || new Date(),
+            Date:
+              txnDate ||
+              new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+                .toISOString()
+                .split("T")[0],
           },
         };
         url = `/assets/transaction/${u_id}/${id}`;
       } else if (type === "sell") {
-        const { quantity, Price, Date } = sellFormDataMap[id] || {};
+        const { quantity, Price, Date: txnDate } = sellFormDataMap[id] || {};
         formData = {
           transaction: {
             quantity: Number(quantity),
             Price: Number(Price),
-            Date: Date || new Date(),
+            Date:
+              txnDate ||
+              new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+                .toISOString()
+                .split("T")[0],
           },
         };
         url = `/assets/transaction/${u_id}/${id}/sell`;
@@ -125,11 +144,8 @@ function ProductSection({ holdings = [], u_id, c_id }) {
     <div className={productSectionStyle.main}>
       <div className={productSectionStyle.head}>
         <H1>Holdings</H1>
-        <Button
-          className={btnStyle.snbtns}
-          style={{ backgroundColor: "#10b981" }}
-          onClick={toggleNewHandler}>
-          New
+        <Button className={btnStyle.buy} onClick={toggleNewHandler}>
+          New Product
         </Button>
       </div>
 
@@ -171,7 +187,12 @@ function ProductSection({ holdings = [], u_id, c_id }) {
                 type="Date"
                 name="Date"
                 placeholder="Date"
-                value={newBuyFormData?.Date || ""}
+                value={
+                  newBuyFormData?.Date ||
+                  new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+                    .toISOString()
+                    .split("T")[0]
+                }
                 onChange={handleNewBuyInputChange}
                 className={inpStyle.primery}
               />
@@ -270,7 +291,12 @@ function ProductSection({ holdings = [], u_id, c_id }) {
               type="Date"
               name="Date"
               placeholder="Date"
-              value={buyFormDataMap[holding._id]?.Date || ""}
+              value={
+                buyFormDataMap[holding._id]?.Date ||
+                new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+                  .toISOString()
+                  .split("T")[0]
+              }
               onChange={(e) => handleBuyInputChange(holding._id, e)}
               className={inpStyle.primery}
             />
@@ -318,7 +344,12 @@ function ProductSection({ holdings = [], u_id, c_id }) {
               type="Date"
               placeholder="Date"
               name="Date"
-              value={sellFormDataMap[holding._id]?.Date || ""}
+              value={
+                sellFormDataMap[holding._id]?.Date ||
+                new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+                  .toISOString()
+                  .split("T")[0]
+              }
               onChange={(e) => handleSellInputChange(holding._id, e)}
               className={inpStyle.primery}
             />

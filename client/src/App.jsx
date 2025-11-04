@@ -10,7 +10,7 @@ import HomeDashbordPage from "./pages/homeDashbordPage";
 import HomeAssets from "./pages/assets/homePage";
 import HomeAssetsSub from "./pages/assets/homePageSubCategory";
 import HomeAssetsSub2 from "./pages/assets/homePageSubCategory2";
-import HomeAssetsSub3 from "./pages/assets/homePageSubCategory3";
+import HomeAssetsSub3 from "./pages/assets/homePageSubCategory3"; 
 
 function App() {
   return (
@@ -38,8 +38,6 @@ function App() {
               path="/assets/:sc/:ssc/:sssc"
               element={<HomeAssetsSub3 />}
             />
-
-            
           </Routes>
         </UserProvider>
       </Router>

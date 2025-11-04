@@ -21,7 +21,6 @@ const assetsStatementControllers = {
       });
 
       const u_data = await dbReq.userData(u_id);
-      console.log(u_id);
       if (!u_data) {
         return res.status(404).json({ error: "User data not found" });
       }

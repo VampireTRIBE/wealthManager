@@ -11,11 +11,22 @@
   padding: 10px;
   width: 100%;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   background-color: #dbeafe;
   border-radius: 1rem;
+  gap: 1rem;
+}
+
+.categoryCurveDiv{
+  padding: 0.2rem;
+  height: 200px;
+  width: 100%;
+  border: 2px solid black;
+  border-radius: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .main {
@@ -37,8 +48,23 @@
 .headmain{
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 0.5rem;
 }
+
+.headDiv {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+.headDivSub {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.4rem;
+}
+
 .toggleType{
   cursor: pointer;
   aspect-ratio: 1/0.8;
@@ -59,7 +85,7 @@
     flex-direction: row;
   }
   .head {
-    width: 35%;
+    width: 42%;
     justify-content: flex-start;
     align-items: flex-start;
     flex-direction: column;
@@ -78,5 +104,8 @@
     margin: auto auto;
     width: 90%;
     font-size: 1.3rem;
+  }
+  .head {
+    width: 35%;
   }
 }

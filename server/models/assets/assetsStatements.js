@@ -16,11 +16,32 @@ const assetsStatementSchema = new Schema(
 
 assetsStatementSchema.post("save", async function (doc, next) {
   try {
+    const assetsCatModel = require("../../models/assets/assetsCat");
+    const updateConsolidatedValues = require("../../utills/agregations/assets/categories/consolidated/updateConsolidatedValues");
+    const {
+      getLeafCategoryIds,
+    } = require("../../utills/agregations/assets/findsAllCategoryIDs");
+
     await incrementStandaloneInvestmentAndCash({
       type: doc.type,
       category_id: doc.category_id,
       amount: doc.amount,
     });
+
+    const userID = await assetsCatModel
+      .findById(doc.category_id)
+      .select("user")
+      .lean();
+
+    const leafcategorys = await getLeafCategoryIds(userID?.user);
+    for (const catid of leafcategorys) {
+      await updateConsolidatedValues(catid);
+    }
+    const rootAssetsCategoryId = await assetsCatModel
+      .findOne({ name: "ASSETS", parentCategory: null }, { _id: 1 })
+      .lean();
+    await updateConsolidatedValues(rootAssetsCategoryId?._id);
+
     next();
   } catch (err) {
     next(err);
