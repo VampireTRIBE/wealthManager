@@ -18,15 +18,11 @@
   gap: 1rem;
 }
 
-.categoryCurveDiv{
-  padding: 0.2rem;
-  height: 200px;
+.headSub{
   width: 100%;
-  border: 2px solid black;
-  border-radius: 1rem;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .main {

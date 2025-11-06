@@ -9,8 +9,8 @@ export const objectToLabelValue = (obj) =>
     )
     .map(([key, val]) => {
       const label = key
-        .replace(/([A-Z])/g, " $1") // camelCase → words
-        .replace(/^./, (str) => str.toUpperCase()); // capitalize first letter
+        .replace(/([A-Z])/g, " $1")
+        .replace(/^./, (str) => str.toUpperCase()); 
 
       let value = typeof val === "number" ? val.toFixed(2) : val;
       if (

@@ -115,8 +115,6 @@ async function updateCurrentYearGains(options = {}, debug = false) {
     await AssetsProduct.aggregate(pipeline, { allowDiskUse: true });
     const duration = Date.now() - t0;
 
-    console.log(`✅ Current Year Gains updated successfully in ${duration}ms`);
-
     // --- Optional Debug Output ---
     if (debug) {
       const debugData = await AssetsProduct.aggregate([

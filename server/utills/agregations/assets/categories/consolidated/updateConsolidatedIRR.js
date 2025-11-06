@@ -84,8 +84,8 @@ async function updateConsolidatedIRR(categoryId) {
     }
 
     const irr = computeIRR(signedFlows);
-    console.log(cashflows);
-    console.log(irr);
+    // console.log(cashflows);
+    // console.log(irr);
 
     await AssetsCategory.updateOne(
       { _id: categoryId },

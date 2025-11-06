@@ -30,12 +30,14 @@ const assetsTransactionRoute = require("./routes/assets/assetsTransaction");
 const assetsLiveLTP = require("./routes/assets/marketPrice");
 
 const { updateLivePrices } = require("./controllers/assets/marketPrice");
-const updateStandaloneIRR = require("./utills/agregations/assets/categories/standaloneStats/updateStandaloneIRR");
+const updateCurveValues = require("./controllers/assets/assetsCategoryCurve");
 
 // for listning all requests
 app.listen(port, async () => {
   console.log(`<----- Server Running : port : ${port} ----->`);
   try {
+    await updateCurveValues();
+    console.log("<----- Past LTP UPDATE ----->");
     console.log("<----- Performing initial live price update ----->");
     await updateLivePrices();
     console.log("<----- Initial update completed ----->");
@@ -50,13 +52,13 @@ app.listen(port, async () => {
       } catch (err) {
         console.error("<----- Auto update failed ----->", err.message);
       }
-    }, 2 * 60 * 1000);
-  }, 5000);
+    }, 1 * 60 * 1000);
+  }, 20000);
 });
 
 // Diffrent Routes
 app.use("/", userRoute);
-app.use("/live/", assetsLiveLTP);
+app.use("/:u_id/live", assetsLiveLTP);
 app.use("/assets/:u_id/", assetsCatRoute);
 app.use("/assets/product/:u_id/:c_id/", assetsProductRoute);
 app.use("/assets/statement/:u_id/:c_id/", assetsStatementRoute);

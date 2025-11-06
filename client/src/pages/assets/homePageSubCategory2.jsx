@@ -10,10 +10,12 @@ import homePageStyle from "./homePage.module.css";
 
 import { HoldingsData } from "../../utills/helpers/assets/assets";
 import ProductSection from "../../componets/layoutComponets/pageSections/assets/productSection";
+import { useUserCurve } from "../../hooks/userCurveContex";
 
 export default function HomeAssetsSub2() {
   const { sc, ssc } = useParams();
   const { userData, setUserData } = useUser();
+  const { userCurveData, setUserCurveData } = useUserCurve();
 
   const assetsCategory = userData.categories.find(
     (cat) => cat.Name === "ASSETS"
@@ -25,6 +27,10 @@ export default function HomeAssetsSub2() {
     (cat) => cat.Name === ssc
   );
 
+  const assetsCategoryCurve = userCurveData.find(
+    (cat) => cat.categoryName === ssc
+  );
+
   const holdings = HoldingsData(assetsSubCategory2);
   return (
     <>
@@ -34,6 +40,7 @@ export default function HomeAssetsSub2() {
           categoryDetails={assetsSubCategory2}
           topCat={"false"}
           u_id={userData.user._id}
+          curveData={assetsCategoryCurve}
         />
         <AssetsSection2
           categoryDetails={assetsSubCategory2?.subCategories}

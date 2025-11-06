@@ -3,6 +3,8 @@ const Category = require("../../models/assets/assetsCat");
 const Product = require("../../models/assets/assetsProduct");
 const MarketPrice = require("../../models/assets/marketPrice");
 const User = require("../../models/user");
+const Assets = require("../../models/assets/assetsCat");
+const AssetsCategoryCurve = require("../../models/assets/categoryCurve");
 
 const dbReq = {
   async userData(userId) {
@@ -17,7 +19,7 @@ const dbReq = {
 
     // 2️⃣ Fetch all products of this user + join market price
     const products = await Product.aggregate([
-      { $match: { user: objectId } },
+      { $match: { user: objectId, qty: { $gt: 0 } } }, // ⬅️ Added qty > 0 filter
       {
         $lookup: {
           from: "marketprices",
@@ -131,6 +133,134 @@ const dbReq = {
       categories: roots,
       lastUpdated: new Date(),
     };
+  },
+
+  async getCategoryCurveData(userId) {
+    const userObjectId = new mongoose.Types.ObjectId(userId);
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+    const result = await Assets.aggregate([
+      // 1️⃣ Find the root "ASSETS" category for this user
+      {
+        $match: {
+          name: "ASSETS",
+          parentCategory: null,
+          user: userObjectId,
+        },
+      },
+      {
+        $project: { _id: 1, name: 1 },
+      },
+
+      // 2️⃣ Lookup all descendants (up to depth 3)
+      {
+        $graphLookup: {
+          from: "assets",
+          startWith: "$_id",
+          connectFromField: "_id",
+          connectToField: "parentCategory",
+          as: "descendants",
+          maxDepth: 3,
+        },
+      },
+
+      // 3️⃣ Combine root + descendants
+      {
+        $project: {
+          allCategories: {
+            $concatArrays: [
+              [
+                {
+                  _id: "$_id",
+                  name: "$name",
+                },
+              ],
+              {
+                $map: {
+                  input: "$descendants",
+                  as: "d",
+                  in: { _id: "$$d._id", name: "$$d.name" },
+                },
+              },
+            ],
+          },
+        },
+      },
+
+      // 4️⃣ Unwind to get each category individually
+      { $unwind: "$allCategories" },
+
+      // 5️⃣ Lookup curve data for each category for past one year
+      {
+        $lookup: {
+          from: "assetscategorycurves",
+          let: { catId: "$allCategories._id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$category_id", "$$catId"] },
+                    { $eq: ["$user", userObjectId] },
+                    { $gte: ["$date", oneYearAgo] },
+                  ],
+                },
+              },
+            },
+            { $sort: { date: 1 } },
+            {
+              $project: {
+                _id: 0,
+                date: 1,
+                standaloneCurrentValue: 1,
+                standalonePL: 1,
+                standalonePLpercent: 1,
+                consolidatedCurrentValue: 1,
+                consolidatedPL: 1,
+                consolidatedPLpercent: 1,
+              },
+            },
+          ],
+          as: "curveData",
+        },
+      },
+
+      // 6️⃣ Format final output
+      {
+        $project: {
+          _id: 0,
+          categoryName: "$allCategories.name",
+          category_id: "$allCategories._id",
+          standalone: {
+            $map: {
+              input: "$curveData",
+              as: "cd",
+              in: {
+                date: "$$cd.date",
+                currentValue: "$$cd.standaloneCurrentValue",
+                PL: "$$cd.standalonePL",
+                PLpercent: "$$cd.standalonePLpercent",
+              },
+            },
+          },
+          consolidated: {
+            $map: {
+              input: "$curveData",
+              as: "cd",
+              in: {
+                date: "$$cd.date",
+                currentValue: "$$cd.consolidatedCurrentValue",
+                PL: "$$cd.consolidatedPL",
+                PLpercent: "$$cd.consolidatedPLpercent",
+              },
+            },
+          },
+        },
+      },
+    ]);
+
+    return result;
   },
 };
 
