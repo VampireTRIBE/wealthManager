@@ -1,14 +1,11 @@
-import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-
-import api from "../servises/apis/apis";
 import { useUser } from "../hooks/userContext";
 import useTitle from "../hooks/useTitle";
 
 import Navbar from "../componets/layoutComponets/navbar/navbar";
-import HomeDashbord from "../componets/layoutComponets/main/dashbords/homedashbord";
 
 import buttonStyle from "../componets/singleComponets/button/button.module.css";
+
 import { logoutUser } from "../utills/helpers/funtions";
 import { navbarBtns } from "../utills/helpers/navbars/navbarBtns";
 

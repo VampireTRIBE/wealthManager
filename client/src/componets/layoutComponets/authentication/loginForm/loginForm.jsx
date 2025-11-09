@@ -1,21 +1,22 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import Button from "../../../../singleComponets/button/button";
-import { H1, H3 } from "../../../../singleComponets/heading/heading";
-import Input from "../../../../singleComponets/input/input";
-import Label from "../../../../singleComponets/label/label";
-import Link from "../../../../singleComponets/link/link";
+import Button from "../../../singleComponets/button/button";
+import { H1, H3 } from "../../../singleComponets/heading/heading";
+import Input from "../../../singleComponets/input/input";
+import Label from "../../../singleComponets/label/label";
+import Link from "../../../singleComponets/link/link";
 
-import api from "../../../../../servises/apis/apis";
-import { useFormData } from "../../../../../hooks/fromdata";
-import { useUser } from "../../../../../hooks/userContext";
+import api from "../../../../servises/apis/apis";
+import { useFormData } from "../../../../hooks/fromdata";
+import { useUser } from "../../../../hooks/userContext";
 
 
 import loginFromStyle from "./loginForm.module.css";
-import btnStyle from "../../../../singleComponets/button/button.module.css";
-import inputStyle from "../../../../singleComponets/input/input.module.css";
-import labelStyle from "../../../../singleComponets/label/label.module.css";
+import btnStyle from "../../../singleComponets/button/button.module.css";
+import inputStyle from "../../../singleComponets/input/input.module.css";
+import labelStyle from "../../../singleComponets/label/label.module.css";
+import { useUserCurve } from "../../../../hooks/userCurveContex";
 
 
 function LoginFrom({ ...props }) {
@@ -26,6 +27,7 @@ function LoginFrom({ ...props }) {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { setUserData } = useUser();
+  const { userCurveData, setUserCurveData } = useUserCurve();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,6 +39,7 @@ function LoginFrom({ ...props }) {
       });
       resetForm();
       setUserData(response.data.Data);
+      setUserCurveData(response.data.CData);
       navigate(`/home`);
     } catch (err) {
       console.error(err);

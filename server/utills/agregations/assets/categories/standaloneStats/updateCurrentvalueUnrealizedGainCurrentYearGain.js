@@ -1,5 +1,3 @@
-// utils/agregations/assets/category/updateStandaloneGains.js
-
 const mongoose = require("mongoose");
 const AssetsCategory = require("../../../../../models/assets/assetsCat");
 const AssetsProduct = require("../../../../../models/assets/assetsProduct");

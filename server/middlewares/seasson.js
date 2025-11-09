@@ -1,5 +1,6 @@
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
+const log = require("../utills/logers/logger");
 
 function sessionConfig(app) {
   store = MongoStore.create({
@@ -11,7 +12,7 @@ function sessionConfig(app) {
   });
 
   store.on("error", () => {
-    console.log("<----- Error in mongo sesson store ----->", err);
+    log.error("MONGO SESSON STORE", err);
   });
 
   const sessionOptions = {
@@ -26,7 +27,7 @@ function sessionConfig(app) {
     },
   };
   app.use(session(sessionOptions));
-  console.log("<----- Session connected successfully with MongoDB ----->");
+  log.success("SESSION CONNECTED WITH MONGODB");
 }
 
 module.exports = sessionConfig;

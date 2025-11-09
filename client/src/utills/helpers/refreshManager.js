@@ -5,13 +5,10 @@ import { useUserCurve } from "../../hooks/userCurveContex";
 
 export function useAutoRefresh(intervalMs = 40000) {
   const userContext = useUser();
-  const curveContext = useUserCurve?.();
 
   if (!userContext) return;
   const { userData, setUserData } = userContext;
-
-  // 🛡️ Prevent crash if curve context not yet available
-  const setUserCurveData = curveContext?.setUserCurveData;
+  const { setUserCurveData } = useUserCurve();
 
   useEffect(() => {
     const userId = userData?.user?._id;

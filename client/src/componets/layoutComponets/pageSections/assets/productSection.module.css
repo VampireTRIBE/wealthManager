@@ -141,9 +141,6 @@
 
 
 @media screen and (min-width: 400px) {
-  .info {
-    width: 45%;
-  }
   .editcatToggle {
     width: 80%;
   }
@@ -183,7 +180,7 @@
     width: 90%;
   }
   .info {
-    width: 30%;
+    width: 48%;
   }
   .editcatToggle {
     width: 85%;
@@ -204,7 +201,7 @@
 
 @media screen and (min-width: 1030px) {
   .info {
-    width: 20%;
+    width: 32%;
   }
   .editcatToggle {
     width: 50%;
@@ -223,9 +220,6 @@
 }
 
 @media screen and (min-width: 1270px) {
-  .info {
-    width: 15%;
-  }
   .editcatToggle {
     margin-top: 1rem;
   }
@@ -234,5 +228,11 @@
   }
   .Toggle{
     flex-direction: row;
+  }
+}
+
+@media screen and (min-width: 1500px) {
+  .info {
+    width: 23.5%;
   }
 }

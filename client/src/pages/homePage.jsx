@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import Navbar from "../componets/layoutComponets/navbar/navbar";
 import useTitle from "../hooks/useTitle";
 
+import Navbar from "../componets/layoutComponets/navbar/navbar";
+import HomeBlogin from "../componets/layoutComponets/home/homeBlogin";
+
 import buttonStyle from "../componets/singleComponets/button/button.module.css";
-import Home from "../componets/layoutComponets/main/home/home";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ export default function HomePage() {
         />
       </header>
       <>
-        <Home />
+        <HomeBlogin />
       </>
       <footer></footer>
     </>

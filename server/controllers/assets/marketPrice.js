@@ -1,6 +1,7 @@
 const axios = require("axios");
 const MarketPrice = require("../../models/assets/marketPrice");
 const recordCategoryCurves = require("../../utills/agregations/assets/categoryCarve/updateCurveValues");
+const log = require("../../utills/logers/logger");
 
 const marketPriceControllers = {
   async updateLTP(req, res, next) {
@@ -42,7 +43,7 @@ const marketPriceControllers = {
       await recordCategoryCurves(assetsSubCategoriesIDs, today);
 
       const [c_data, u_data] = await Promise.all([
-        dbReq.getCategoryCurveData(u_id),
+        dbReq.getCategoryCurveData(u_id,90),
         dbReq.userData(u_id),
       ]);
 
@@ -64,7 +65,8 @@ const marketPriceControllers = {
 
 async function updateLivePrices() {
   try {
-    console.log("<----- Running background live price update ----->");
+    log.running("LIVE LTP UPDATE");
+    log.waiting("LIVE LTP DATA");
     const { data: livePrices } = await axios
       .post(process.env.GOOGLE_SCRIPT_URL, {
         headers: {
@@ -73,14 +75,15 @@ async function updateLivePrices() {
         timeout: 20000,
       })
       .catch((err) => {
-        console.warn("<----- Error fetching live prices ----->", err.message);
+        log.error(`DATA NOT FOUND > ${err.message}`);
         return { data: [] };
       });
 
     if (!Array.isArray(livePrices) || livePrices.length === 0) {
+      log.info("NO LTP DATA FOUND");
       return { success: false, message: "No price data received" };
     }
-
+    log.success("LTP DATA FOUND");
     const normalized = livePrices.map((p) => ({
       symbol: String(p.symbol).toUpperCase(),
       LTP: Number(p.LTP ?? 0),
@@ -116,11 +119,12 @@ async function updateLivePrices() {
 
     if (bulkPriceOps.length > 0) {
       await MarketPrice.bulkWrite(bulkPriceOps, { ordered: false });
+      log.success("LIVE LTP UPDATE COMPLETED");
       return {
         success: true,
       };
     }
-
+    log.success("LIVE LTP UPDATE COMPLETED");
     return {
       success: true,
       message: "Market prices updated (no LTP changes)",
@@ -128,7 +132,7 @@ async function updateLivePrices() {
       totalReceived: normalized.length,
     };
   } catch (error) {
-    console.error("<----- updateLivePrices() Error:", error);
+    log.error(`LIVE LTP UPDATE FAILED > Error : ${error.message}`);
     return { success: false, error: error.message };
   }
 }

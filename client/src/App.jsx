@@ -18,8 +18,8 @@ function App() {
     <>
       <GlobalStyles />
       <Router>
-        <UserProvider>
-          <UserCurveProvider>
+        <UserCurveProvider>
+          <UserProvider>
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<LoginPage />} />
@@ -35,8 +35,8 @@ function App() {
                 element={<HomeAssetsSub3 />}
               />
             </Routes>
-          </UserCurveProvider>
-        </UserProvider>
+          </UserProvider>
+        </UserCurveProvider>
       </Router>
     </>
   );

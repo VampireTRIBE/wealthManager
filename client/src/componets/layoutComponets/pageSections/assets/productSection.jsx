@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
-import Button from "../../../singleComponets/button/button";
-import btnStyle from "../../../singleComponets/button/button.module.css";
-import { H1, H3, H4 } from "../../../singleComponets/heading/heading";
-import productSectionStyle from "./productSection.module.css";
+
 import { useUser } from "../../../../hooks/userContext";
-import Input from "../../../singleComponets/input/input";
-import inpStyle from "../../../singleComponets/input/input.module.css";
 import api from "../../../../servises/apis/apis";
+
+import { H1, H3, H4 } from "../../../singleComponets/heading/heading";
+import Button from "../../../singleComponets/button/button";
+import Input from "../../../singleComponets/input/input";
+
+import productSectionStyle from "./productSection.module.css";
+import inpStyle from "../../../singleComponets/input/input.module.css";
+import btnStyle from "../../../singleComponets/button/button.module.css";
 
 function ProductSection({ holdings = [], u_id, c_id }) {
   const { userData, setUserData } = useUser();
@@ -15,6 +17,21 @@ function ProductSection({ holdings = [], u_id, c_id }) {
   const [newBuyFormData, setNewBuyFormData] = useState({});
   const [buyFormDataMap, setBuyFormDataMap] = useState({});
   const [sellFormDataMap, setSellFormDataMap] = useState({});
+  const [irrViewMap, setIrrViewMap] = useState({});
+  const [irrValueMap, setIrrValueMap] = useState({});
+
+  const changeIrrView = async (id) => {
+    try {
+      const res = await api.get(`/assets/irr/${u_id}/${id}/p_irr`);
+      const irr = res?.data?.irr ?? 0;
+      setIrrValueMap((prev) => ({ ...prev, [id]: irr }));
+    } catch (error) {
+      console.error("Failed to fetch IRR:", error);
+      setIrrValueMap((prev) => ({ ...prev, [id]: 0 }));
+    }
+
+    setIrrViewMap((prev) => ({ ...prev, [id]: true }));
+  };
 
   const toggleNewHandler = () => {
     setActiveForm((prev) => (prev === "newBuy" ? null : "newBuy"));
@@ -370,10 +387,22 @@ function ProductSection({ holdings = [], u_id, c_id }) {
 
           {Object.entries(holding.data || {}).map(([label, value]) => (
             <div key={label} className={productSectionStyle.info}>
-              <H3>{label}</H3>
+              <H4>{label}</H4>
               <H4>{value}</H4>
             </div>
           ))}
+          <div className={productSectionStyle.info}>
+            <H4>IRR %</H4>
+            {irrViewMap[holding._id] ? (
+              `${(irrValueMap[holding._id] ?? 0).toFixed(2)} %`
+            ) : (
+              <Button
+                className={btnStyle.buy}
+                onClick={() => changeIrrView(holding._id)}>
+                View
+              </Button>
+            )}
+          </div>
         </div>
       ))}
     </div>

@@ -1,16 +1,34 @@
 import { useState } from "react";
+import api from "../../../../../servises/apis/apis";
 
 import { H3, H4 } from "../../../../singleComponets/heading/heading";
+import Button from "../../../../singleComponets/button/button";
 import Image from "../../../../singleComponets/image/image";
+
+import section1Style from "../section1.module.css";
+import btnStyle from "../../../../singleComponets/button/button.module.css";
 
 import { AssetsData } from "../../../../../utills/helpers/assets/assets";
 
-import section1Style from "../section1.module.css";
-
-function HeadContent({ categoryDetails, topCat }) {
+function HeadContent({ categoryDetails, topCat, u_id }) {
   const [isConsolidated, setisConsolidated] = useState(false);
+  const [irrView, setirrView] = useState(false);
+  const [irrValue, setIrrValue] = useState(null);
   const ChangeConsolidated = () => {
     setisConsolidated(!isConsolidated);
+    setirrView(false);
+  };
+
+  const changeIrrView = async (type) => {
+    try {
+      const res = await api.get(
+        `/assets/irr/${u_id}/${categoryDetails._id}/${type}`
+      );
+      setIrrValue(res?.data?.irr ?? 0);
+    } catch (error) {
+      console.error("Failed to fetch IRR:", error);
+    }
+    setirrView(true);
   };
 
   const type =
@@ -47,7 +65,26 @@ function HeadContent({ categoryDetails, topCat }) {
       {CategoryContent.content.map((item, i) => (
         <div key={i} className={section1Style.content}>
           <H3 className={section1Style.name}>{item.label}</H3>
-          <H4>{item.value}</H4>
+          <H4>
+            {i == CategoryContent.content.length - 1 ? (
+              topCat === true ? (
+                item.value
+              ) : irrView ? (
+                `${irrValue.toFixed(2)} %`
+              ) : (
+                <Button
+                  className={btnStyle.buy}
+                  onClick={() => changeIrrView(type)}>
+                  View
+                </Button>
+              )
+            ) : (
+              `${Number(item.value).toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })} Rs`
+            )}
+          </H4>
         </div>
       ))}
     </div>

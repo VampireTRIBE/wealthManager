@@ -4,7 +4,7 @@ const AssetsProduct = require("../../../../models/assets/assetsProduct");
 /**
  * @param {Object} options - { userId?: string, productIds?: string[]|ObjectId[] }
  */
-async function updateCurrentValuesByFilter(options = {}, debug = false) {
+async function updateCurrentValuesByFilter(options = {}) {
   try {
     const { userId, productIds } = options;
     const match = {};
@@ -81,13 +81,6 @@ async function updateCurrentValuesByFilter(options = {}, debug = false) {
     const t0 = Date.now();
     await AssetsProduct.aggregate(pipeline, { allowDiskUse: true });
     const duration = Date.now() - t0;
-
-    if (debug) {
-      const updated = await AssetsProduct.find(match)
-        .select("symbol currentValue unRealizedGain buyAVG qty updatedAt")
-        .lean();
-      console.table(updated);
-    }
 
     return { ok: true, updatedAt: new Date(), duration };
   } catch (err) {

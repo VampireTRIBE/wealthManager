@@ -84,15 +84,15 @@ async function updateConsolidatedIRR(categoryId) {
     }
 
     const irr = computeIRR(signedFlows);
-    // console.log(cashflows);
-    // console.log(irr);
+    console.log(signedFlows);
+    console.log(irr*100);
 
     await AssetsCategory.updateOne(
       { _id: categoryId },
-      { $set: { consolidatedIRR: irr } }
+      { $set: { consolidatedIRR: irr * 100 } }
     );
 
-    return irr;
+    return irr * 100;
   } catch (err) {}
 }
 

@@ -1,4 +1,3 @@
-// utils/aggregations/assets/updateCurrentYearGains.js
 const mongoose = require("mongoose");
 const AssetsProduct = require("../../../../models/assets/assetsProduct");
 const MarketPrice = require("../../../../models/assets/marketPrice");
@@ -6,9 +5,8 @@ const Transactions = require("../../../../models/assets/assetsTransactions");
 
 /**
  * @param {Object} options - { userId?: string|ObjectId, productIds?: string[]|ObjectId[] }
- * @param {boolean} debug - If true, logs table of results.
  */
-async function updateCurrentYearGains(options = {}, debug = false) {
+async function updateCurrentYearGains(options = {}) {
   try {
     const { userId, productIds } = options;
     const startOfYear = new Date(new Date().getFullYear(), 0, 1);
@@ -114,51 +112,6 @@ async function updateCurrentYearGains(options = {}, debug = false) {
     const t0 = Date.now();
     await AssetsProduct.aggregate(pipeline, { allowDiskUse: true });
     const duration = Date.now() - t0;
-
-    // --- Optional Debug Output ---
-    if (debug) {
-      const debugData = await AssetsProduct.aggregate([
-        { $match: matchStage },
-        {
-          $lookup: {
-            from: "marketprices",
-            localField: "symbol",
-            foreignField: "symbol",
-            as: "mp",
-          },
-        },
-        { $unwind: { path: "$mp", preserveNullAndEmptyArrays: true } },
-        {
-          $project: {
-            name: 1,
-            symbol: 1,
-            buyAVG: 1,
-            qty: 1,
-            LTP: "$mp.LTP",
-            realizedGainCY: 1,
-            unrealizedGainCY: 1,
-            currentYearGain: 1,
-            dateAdded: 1,
-          },
-        },
-      ]);
-
-      console.table(
-        debugData.map((d) => ({
-          Name: d.name,
-          Symbol: d.symbol,
-          BuyAVG: d.buyAVG,
-          Qty: d.qty,
-          LTP: d.LTP,
-          RealizedCY: d.realizedGainCY,
-          UnrealizedCY: d.unrealizedGainCY,
-          TotalCY: d.currentYearGain,
-          DateAdded: d.dateAdded
-            ? new Date(d.dateAdded).toISOString().split("T")[0]
-            : "-",
-        }))
-      );
-    }
 
     return { ok: true, updatedAt: new Date(), duration };
   } catch (err) {

@@ -51,6 +51,10 @@
   transition: background-color 0.3s ease-in-out, padding 0.3s ease-in-out;
 }
 
+.hide[dis="yes"] {
+  display: none;
+}
+
 .categoryCurveSubD,
 .categoryCurveSubD *:focus,
 .categoryCurveSubD svg:focus,
@@ -65,3 +69,14 @@
   outline: none !important;
 }
 
+@media screen and (min-width: 700px) {
+  .categoryCurveDiv {
+    width: 48%;
+  }
+}
+
+@media screen and (min-width: 800px) {
+  .hide[dis="yes"] {
+    display: flex;
+  }
+}

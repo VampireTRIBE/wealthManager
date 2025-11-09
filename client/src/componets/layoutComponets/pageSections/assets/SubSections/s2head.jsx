@@ -1,16 +1,19 @@
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+
+import { useUser } from "../../../../../hooks/userContext";
+import { useFormData } from "../../../../../hooks/fromdata";
+import api from "../../../../../servises/apis/apis";
+
 import { H3 } from "../../../../singleComponets/heading/heading";
 import Image from "../../../../singleComponets/image/image";
+import Button from "../../../../singleComponets/button/button";
+
 import section2Style from "../section2.module.css";
 import imgStyle from "../../../../singleComponets/image/image.module.css";
 import btnStyle from "../../../../singleComponets/button/button.module.css";
-import Button from "../../../../singleComponets/button/button";
-import api from "../../../../../servises/apis/apis";
-import { useFormData } from "../../../../../hooks/fromdata";
-import { useState } from "react";
 import Input from "../../../../singleComponets/input/input";
 import inpStyle from "../../../../singleComponets/input/input.module.css";
-import { useUser } from "../../../../../hooks/userContext";
 
 export default function S2Head({ Category, handleDelete, u_id }) {
   const params = useParams();

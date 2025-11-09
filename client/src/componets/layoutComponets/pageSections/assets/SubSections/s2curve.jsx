@@ -9,24 +9,25 @@ import {
   CartesianGrid,
 } from "recharts";
 
-import Image from "../../../../singleComponets/image/image";
 import { H3 } from "../../../../singleComponets/heading/heading";
+import Image from "../../../../singleComponets/image/image";
 
-import styleCurve from "./curve.module.css";
+import styleCurve from "./s2curve.module.css";
 import imgStyle from "../../../../singleComponets/image/image.module.css";
 
-export default function CurveGraph({ categoryData }) {
+export default function S2CurveGraph({ categoryData, flag = 1 }) {
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   if (!categoryData) return null;
-
   const { categoryName, standalone = [], consolidated = [] } = categoryData;
-
+  const dataType =
+    flag === 1 ? "currentValue" : flag === 2 ? "PL" : "PLpercent";
+  const curveName = flag === 1 ? "Current Value" : flag === 2 ? "P/L" : "P/L %";
   const chartData1 =
     standalone.length > 0
       ? standalone.map((d) => ({
           date: new Date(d.date).toLocaleDateString("en-IN").split("T")[0],
-          value: d.PL ?? 0,
+          value: d[dataType] ? Number(d[dataType].toFixed(2)) : 0,
         }))
       : [];
 
@@ -34,7 +35,7 @@ export default function CurveGraph({ categoryData }) {
     consolidated.length > 0
       ? consolidated.map((d) => ({
           date: new Date(d.date).toLocaleDateString("en-IN").split("T")[0],
-          value: d.PL ?? 0,
+          value: d[dataType] ? Number(d[dataType].toFixed(2)) : 0,
         }))
       : [];
 
@@ -46,13 +47,16 @@ export default function CurveGraph({ categoryData }) {
 
   return (
     <div
-      className={
+      className={`${
         isFullScreen
           ? styleCurve.fullScreenCurveDiv
           : styleCurve.categoryCurveDiv
-      }>
+      } ${flag === 3 ? styleCurve.hide : ""}`}
+      dis={flag === 3 ? "yes" : ""}>
       <div className={`${styleCurve.categoryCurveSub}`}>
-        <H3>{categoryName || "Category"} - P/L</H3>
+        <H3>
+          {categoryName || "Category"} - {curveName}
+        </H3>
         <Image
           className={imgStyle.subimg}
           src="/assets/medias/images/maximize.png"
@@ -61,8 +65,7 @@ export default function CurveGraph({ categoryData }) {
           onClick={() => setIsFullScreen((prev) => !prev)}
         />
       </div>
-      <div
-        className={`${styleCurve.categoryCurveSubD}`}>
+      <div className={`${styleCurve.categoryCurveSubD}`}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={mergedData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#eee" />

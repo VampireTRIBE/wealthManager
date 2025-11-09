@@ -1,19 +1,20 @@
 import { useUser } from "../../hooks/userContext";
 import { useParams } from "react-router-dom";
+import { useUserCurve } from "../../hooks/userCurveContex";
+import useTitle from "../../hooks/useTitle";
 
 import AssetsNavbar from "../../componets/layoutComponets/pageSections/assets/SubSections/assetsNavbar";
 import AssetsSection1 from "../../componets/layoutComponets/pageSections/assets/section1";
 import AssetsSection2 from "../../componets/layoutComponets/pageSections/assets/section2";
-import AssetsSection3 from "../../componets/layoutComponets/pageSections/assets/section3";
+import ProductSection from "../../componets/layoutComponets/pageSections/assets/productSection";
 
 import homePageStyle from "./homePage.module.css";
 
 import { HoldingsData } from "../../utills/helpers/assets/assets";
-import ProductSection from "../../componets/layoutComponets/pageSections/assets/productSection";
-import { useUserCurve } from "../../hooks/userCurveContex";
 
 export default function HomeAssetsSub2() {
   const { sc, ssc } = useParams();
+  useTitle(`Wealth Manager - ${ssc}`);
   const { userData, setUserData } = useUser();
   const { userCurveData, setUserCurveData } = useUserCurve();
 

@@ -8,7 +8,6 @@ async function recordCategoryCurves(catIds, date = new Date()) {
       return { success: false, message: "No category IDs provided" };
     }
 
-    // Ensure date is Date object and set to start of day
     const curveDate = date instanceof Date ? new Date(date) : new Date(date);
     if (isNaN(curveDate.getTime())) {
       console.log("Invalid date detected:", date);
@@ -19,7 +18,6 @@ async function recordCategoryCurves(catIds, date = new Date()) {
     const endOfDay = new Date(startOfDay);
     endOfDay.setDate(endOfDay.getDate() + 1);
 
-    // Fetch category data
     const categoryData = await AssetsCategory.aggregate([
       { $match: { _id: { $in: catIds } } },
       {
@@ -38,11 +36,9 @@ async function recordCategoryCurves(catIds, date = new Date()) {
     ]);
 
     if (!categoryData.length) {
-      console.warn("<----- No matching categories found ----->");
       return { success: false, message: "No categories found" };
     }
 
-    // Fetch all previous curves for these categories in one query
     const prevCurves = await AssetsCategoryCurves.find({
       category_id: { $in: catIds },
       date: { $lt: startOfDay },
@@ -50,10 +46,8 @@ async function recordCategoryCurves(catIds, date = new Date()) {
       .sort({ date: -1 })
       .lean();
 
-    // Map previous curves to category_id for easy lookup
     const prevCurveMap = {};
     for (const curve of prevCurves) {
-      // Only take the latest for each category
       if (!prevCurveMap[curve.category_id.toString()]) {
         prevCurveMap[curve.category_id.toString()] = curve;
       }
@@ -116,7 +110,6 @@ async function recordCategoryCurves(catIds, date = new Date()) {
 
     return { success: true, upsertedCount: result.upsertedCount };
   } catch (error) {
-    console.error("<----- recordCategoryCurves() Error:", error);
     return { success: false, error: error.message };
   }
 }
