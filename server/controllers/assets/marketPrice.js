@@ -1,11 +1,61 @@
 const axios = require("axios");
 const MarketPrice = require("../../models/assets/marketPrice");
+const recordCategoryCurves = require("../../utills/agregations/assets/categoryCarve/updateCurveValues");
+const log = require("../../utills/logers/logger");
 
 const marketPriceControllers = {
   async updateLTP(req, res, next) {
+    const { u_id } = req.params;
     try {
-      const summary = await updateLivePrices();
-      return res.status(200).json(summary);
+      const assetsCatModel = require("../../models/assets/assetsCat");
+      const updateCurrentValuesByFilter = require("../../utills/agregations/assets/products/updateCurrentValueUnrealizedGainFilter");
+      const updateCurrentYearGains = require("../../utills/agregations/assets/products/updateCurrentYearGains");
+      const updateStandaloneGains = require("../../utills/agregations/assets/categories/standaloneStats/updateCurrentvalueUnrealizedGainCurrentYearGain");
+      const {
+        getAllSubCategoryIds,
+        getLeafCategoryIds,
+      } = require("../../utills/agregations/assets/findsAllCategoryIDs");
+      const updateConsolidatedValues = require("../../utills/agregations/assets/categories/consolidated/updateConsolidatedValues");
+      const dbReq = require("../../utills/databaseReq/dbReq");
+      const updateConsolidatedIRR = require("../../utills/agregations/assets/categories/consolidated/updateConsolidatedIRR");
+
+      const rootAssetsCategoryId = await assetsCatModel
+        .findOne({ name: "ASSETS", parentCategory: null }, { _id: 1 })
+        .lean();
+      const assetsSubCategoriesIDs = await getAllSubCategoryIds(u_id);
+
+      await updateCurrentValuesByFilter({ userId: u_id });
+      await updateCurrentYearGains({ userId: u_id });
+      await updateStandaloneGains(assetsSubCategoriesIDs);
+
+      const leafcategorys = await getLeafCategoryIds(u_id);
+      for (const catid of leafcategorys) {
+        await updateConsolidatedValues(catid);
+      }
+
+      await updateConsolidatedValues(rootAssetsCategoryId?._id);
+      await updateConsolidatedIRR(rootAssetsCategoryId?._id);
+      assetsSubCategoriesIDs.push(rootAssetsCategoryId._id);
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      await recordCategoryCurves(assetsSubCategoriesIDs, today);
+
+      const [c_data, u_data] = await Promise.all([
+        dbReq.getCategoryCurveData(u_id,90),
+        dbReq.userData(u_id),
+      ]);
+
+      if (!u_data) {
+        return res.status(404).json({ error: "User data not found" });
+      }
+      return res.status(200).json({
+        success: "successful",
+        userID: u_id,
+        Data: u_data,
+        CData: c_data,
+      });
     } catch (err) {
       console.error("🔥 updateLTP Controller Error:", err);
       return res.status(500).json({ error: "Server error" });
@@ -15,7 +65,8 @@ const marketPriceControllers = {
 
 async function updateLivePrices() {
   try {
-    console.log(" <----- Running background live price update ----->");
+    log.running("LIVE LTP UPDATE");
+    log.waiting("LIVE LTP DATA");
     const { data: livePrices } = await axios
       .post(process.env.GOOGLE_SCRIPT_URL, {
         headers: {
@@ -24,15 +75,15 @@ async function updateLivePrices() {
         timeout: 20000,
       })
       .catch((err) => {
-        console.warn("<----- Error fetching live prices ----->", err.message);
+        log.error(`DATA NOT FOUND > ${err.message}`);
         return { data: [] };
       });
 
     if (!Array.isArray(livePrices) || livePrices.length === 0) {
-      console.warn("<----- No price data receive ----->");
+      log.info("NO LTP DATA FOUND");
       return { success: false, message: "No price data received" };
     }
-
+    log.success("LTP DATA FOUND");
     const normalized = livePrices.map((p) => ({
       symbol: String(p.symbol).toUpperCase(),
       LTP: Number(p.LTP ?? 0),
@@ -68,12 +119,12 @@ async function updateLivePrices() {
 
     if (bulkPriceOps.length > 0) {
       await MarketPrice.bulkWrite(bulkPriceOps, { ordered: false });
+      log.success("LIVE LTP UPDATE COMPLETED");
       return {
         success: true,
       };
     }
-
-    console.log("<----- No LTP changes detected ----->");
+    log.success("LIVE LTP UPDATE COMPLETED");
     return {
       success: true,
       message: "Market prices updated (no LTP changes)",
@@ -81,7 +132,7 @@ async function updateLivePrices() {
       totalReceived: normalized.length,
     };
   } catch (error) {
-    console.error("<----- updateLivePrices() Error:", error);
+    log.error(`LIVE LTP UPDATE FAILED > Error : ${error.message}`);
     return { success: false, error: error.message };
   }
 }

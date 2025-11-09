@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import useTitle from "../../hooks/useTitle";
 
 import Navbar from "../../componets/layoutComponets/navbar/navbar";
-import SingupFrom from "../../componets/layoutComponets/main/authentication/signupFrom/signupForm";
+import SingupFrom from "../../componets/layoutComponets/authentication/signupFrom/signupForm";
 
 import buttonStyle from "../../componets/singleComponets/button/button.module.css";
 

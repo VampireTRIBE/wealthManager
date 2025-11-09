@@ -1,0 +1,67 @@
+.categoryCurveDiv {
+  width: 100%;
+  height: 245px;
+  border: 2px solid black;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: all 0.4s ease-in-out;
+}
+
+.categoryCurveSub {
+  background-color: #3b82f6;
+  border-radius: 1rem 1rem 0 0;
+  padding: 0.5rem;
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  justify-content: space-between;
+}
+
+.categoryCurveSubD {
+  padding: 0.5rem 0.6rem 0.5rem 0;
+  flex: 1;
+}
+
+.fullScreenCurveDiv {
+  overflow: hidden;
+  position: absolute;
+  top: 4.5rem;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 4.5rem);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  background-color: #dbeafe;
+  gap: 0.5rem;
+  transition: all 0.4s ease-in-out;
+}
+
+.fullScreenCurveDiv .categoryCurveSubD {
+  padding: 1rem;
+  flex: 1;
+  transition: all 0.3s ease-in-out;
+}
+.fullScreenCurveDiv .categoryCurveSub {
+  border-radius: 0;
+  background-color: #3b82f6;
+  padding: 1rem;
+  transition: background-color 0.3s ease-in-out, padding 0.3s ease-in-out;
+}
+
+.categoryCurveSubD,
+.categoryCurveSubD *:focus,
+.categoryCurveSubD svg:focus,
+.categoryCurveSubD .recharts-wrapper:focus,
+.categoryCurveSubD .recharts-surface:focus {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.categoryCurveSubD *:focus-visible {
+  outline: none !important;
+}
+

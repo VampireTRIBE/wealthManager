@@ -38,12 +38,12 @@ function computeIRR(cashflows, guess = 0.1) {
 async function updateStandaloneIRR(categoryIds = null) {
   try {
     const matchStage = categoryIds
-      ? {
-          category_id: {
-            $in: categoryIds.map((id) => new mongoose.Types.ObjectId(id)),
-          },
-        }
-      : {};
+    ? {
+      category_id: {
+        $in: categoryIds.map((id) => new mongoose.Types.ObjectId(id)),
+      },
+    }
+    : {};
     const grouped = await AssetsStatement.aggregate([
       { $match: matchStage },
       {
@@ -55,37 +55,39 @@ async function updateStandaloneIRR(categoryIds = null) {
         },
       },
     ]);
-
+    
     if (!grouped.length) {
       return { ok: true, updated: 0 };
     }
-
+    
     const bulkOps = [];
-
+    
     for (const cat of grouped) {
       const category = await AssetsCategory.findById(cat._id).lean();
       if (!category) continue;
-
+      
       const cashflows = cat.cashflows
-        .map((cf) => ({
-          date: cf.date,
-          value: cf.type === "deposit" ? -cf.amount : cf.amount,
-        }))
-        .sort((a, b) => a.date - b.date);
-
+      .map((cf) => ({
+        date: cf.date,
+        value: cf.type === "deposit" ? -cf.amount : cf.amount,
+      }))
+      .sort((a, b) => a.date - b.date);
+      
       if (category.standaloneCurrentValue > 0) {
         cashflows.push({
           date: new Date(),
           value: category.standaloneCurrentValue,
         });
       }
-
+      
+      console.log(cashflows);
       const irr = computeIRR(cashflows);
+      console.log(irr);
 
       bulkOps.push({
         updateOne: {
           filter: { _id: cat._id },
-          update: { $set: { standaloneIRR: irr, updatedAt: new Date() } },
+          update: { $set: { standaloneIRR: irr * 100, updatedAt: new Date() } },
         },
       });
     }

@@ -1,4 +1,13 @@
 const Category = require("../../models/assets/assetsCat");
+const updateConsolidatedIRR = require("../../utills/agregations/assets/categories/consolidated/updateConsolidatedIRR");
+const updateConsolidatedValues = require("../../utills/agregations/assets/categories/consolidated/updateConsolidatedValues");
+const updateStandaloneGains = require("../../utills/agregations/assets/categories/standaloneStats/updateCurrentvalueUnrealizedGainCurrentYearGain");
+const {
+  getAllSubCategoryIds,
+  getLeafCategoryIds,
+} = require("../../utills/agregations/assets/findsAllCategoryIDs");
+const updateCurrentValuesByFilter = require("../../utills/agregations/assets/products/updateCurrentValueUnrealizedGainFilter");
+const updateCurrentYearGains = require("../../utills/agregations/assets/products/updateCurrentYearGains");
 const dbReq = require("../../utills/databaseReq/dbReq");
 
 const assetsCategoryController = {
@@ -76,6 +85,19 @@ const assetsCategoryController = {
       }
       await category.deleteOne();
 
+      await updateCurrentValuesByFilter({ userId: u_id });
+      await updateCurrentYearGains({ userId: u_id });
+      await updateStandaloneGains(await getAllSubCategoryIds(u_id));
+      const leafcategorys = await getLeafCategoryIds(u_id);
+      for (const catid of leafcategorys) {
+        await updateConsolidatedValues(catid);
+      }
+      const rootAssetsCategoryId = await category
+        .findOne({ name: "ASSETS", parentCategory: null }, { _id: 1 })
+        .lean();
+      await updateConsolidatedValues(rootAssetsCategoryId?._id);
+      await updateConsolidatedIRR(rootAssetsCategoryId?._id);
+
       const u_data = await dbReq.userData(u_id);
       if (!u_data) {
         return res.status(404).json({ error: "User data not found" });
@@ -86,7 +108,6 @@ const assetsCategoryController = {
         Data: u_data,
       });
     } catch (error) {
-      console.log(error);
       return res.status(500).json({ error: error.message });
     }
   },

@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
-import Button from "../../../singleComponets/button/button";
-import btnStyle from "../../../singleComponets/button/button.module.css";
-import { H1, H3, H4 } from "../../../singleComponets/heading/heading";
-import productSectionStyle from "./productSection.module.css";
+
 import { useUser } from "../../../../hooks/userContext";
-import Input from "../../../singleComponets/input/input";
-import inpStyle from "../../../singleComponets/input/input.module.css";
 import api from "../../../../servises/apis/apis";
+
+import { H1, H3, H4 } from "../../../singleComponets/heading/heading";
+import Button from "../../../singleComponets/button/button";
+import Input from "../../../singleComponets/input/input";
+
+import productSectionStyle from "./productSection.module.css";
+import inpStyle from "../../../singleComponets/input/input.module.css";
+import btnStyle from "../../../singleComponets/button/button.module.css";
 
 function ProductSection({ holdings = [], u_id, c_id }) {
   const { userData, setUserData } = useUser();
@@ -15,6 +17,21 @@ function ProductSection({ holdings = [], u_id, c_id }) {
   const [newBuyFormData, setNewBuyFormData] = useState({});
   const [buyFormDataMap, setBuyFormDataMap] = useState({});
   const [sellFormDataMap, setSellFormDataMap] = useState({});
+  const [irrViewMap, setIrrViewMap] = useState({});
+  const [irrValueMap, setIrrValueMap] = useState({});
+
+  const changeIrrView = async (id) => {
+    try {
+      const res = await api.get(`/assets/irr/${u_id}/${id}/p_irr`);
+      const irr = res?.data?.irr ?? 0;
+      setIrrValueMap((prev) => ({ ...prev, [id]: irr }));
+    } catch (error) {
+      console.error("Failed to fetch IRR:", error);
+      setIrrValueMap((prev) => ({ ...prev, [id]: 0 }));
+    }
+
+    setIrrViewMap((prev) => ({ ...prev, [id]: true }));
+  };
 
   const toggleNewHandler = () => {
     setActiveForm((prev) => (prev === "newBuy" ? null : "newBuy"));
@@ -60,8 +77,15 @@ function ProductSection({ holdings = [], u_id, c_id }) {
       let formData;
       let url;
       if (type === "newBuy") {
-        const { name, description, industry, tags, quantity, Price, Date } =
-          newBuyFormData;
+        const {
+          name,
+          description,
+          industry,
+          tags,
+          quantity,
+          Price,
+          Date: txnDate,
+        } = newBuyFormData;
         formData = {
           newProduct: {
             name,
@@ -77,27 +101,39 @@ function ProductSection({ holdings = [], u_id, c_id }) {
           transaction: {
             quantity: Number(quantity),
             Price: Number(Price),
-            Date: Date || new Date(),
+            Date:
+              txnDate ||
+              new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+                .toISOString()
+                .split("T")[0],
           },
         };
         url = `/assets/product/${u_id}/${c_id}`;
       } else if (type === "buy") {
-        const { quantity, Price, Date } = buyFormDataMap[id] || {};
+        const { quantity, Price, Date: txnDate } = buyFormDataMap[id] || {};
         formData = {
           transaction: {
             quantity: Number(quantity),
             Price: Number(Price),
-            Date: Date || new Date(),
+            Date:
+              txnDate ||
+              new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+                .toISOString()
+                .split("T")[0],
           },
         };
         url = `/assets/transaction/${u_id}/${id}`;
       } else if (type === "sell") {
-        const { quantity, Price, Date } = sellFormDataMap[id] || {};
+        const { quantity, Price, Date: txnDate } = sellFormDataMap[id] || {};
         formData = {
           transaction: {
             quantity: Number(quantity),
             Price: Number(Price),
-            Date: Date || new Date(),
+            Date:
+              txnDate ||
+              new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+                .toISOString()
+                .split("T")[0],
           },
         };
         url = `/assets/transaction/${u_id}/${id}/sell`;
@@ -125,11 +161,8 @@ function ProductSection({ holdings = [], u_id, c_id }) {
     <div className={productSectionStyle.main}>
       <div className={productSectionStyle.head}>
         <H1>Holdings</H1>
-        <Button
-          className={btnStyle.snbtns}
-          style={{ backgroundColor: "#10b981" }}
-          onClick={toggleNewHandler}>
-          New
+        <Button className={btnStyle.buy} onClick={toggleNewHandler}>
+          New Product
         </Button>
       </div>
 
@@ -171,7 +204,12 @@ function ProductSection({ holdings = [], u_id, c_id }) {
                 type="Date"
                 name="Date"
                 placeholder="Date"
-                value={newBuyFormData?.Date || ""}
+                value={
+                  newBuyFormData?.Date ||
+                  new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+                    .toISOString()
+                    .split("T")[0]
+                }
                 onChange={handleNewBuyInputChange}
                 className={inpStyle.primery}
               />
@@ -270,7 +308,12 @@ function ProductSection({ holdings = [], u_id, c_id }) {
               type="Date"
               name="Date"
               placeholder="Date"
-              value={buyFormDataMap[holding._id]?.Date || ""}
+              value={
+                buyFormDataMap[holding._id]?.Date ||
+                new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+                  .toISOString()
+                  .split("T")[0]
+              }
               onChange={(e) => handleBuyInputChange(holding._id, e)}
               className={inpStyle.primery}
             />
@@ -318,7 +361,12 @@ function ProductSection({ holdings = [], u_id, c_id }) {
               type="Date"
               placeholder="Date"
               name="Date"
-              value={sellFormDataMap[holding._id]?.Date || ""}
+              value={
+                sellFormDataMap[holding._id]?.Date ||
+                new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+                  .toISOString()
+                  .split("T")[0]
+              }
               onChange={(e) => handleSellInputChange(holding._id, e)}
               className={inpStyle.primery}
             />
@@ -339,10 +387,22 @@ function ProductSection({ holdings = [], u_id, c_id }) {
 
           {Object.entries(holding.data || {}).map(([label, value]) => (
             <div key={label} className={productSectionStyle.info}>
-              <H3>{label}</H3>
+              <H4>{label}</H4>
               <H4>{value}</H4>
             </div>
           ))}
+          <div className={productSectionStyle.info}>
+            <H4>IRR %</H4>
+            {irrViewMap[holding._id] ? (
+              `${(irrValueMap[holding._id] ?? 0).toFixed(2)} %`
+            ) : (
+              <Button
+                className={btnStyle.buy}
+                onClick={() => changeIrrView(holding._id)}>
+                View
+              </Button>
+            )}
+          </div>
         </div>
       ))}
     </div>

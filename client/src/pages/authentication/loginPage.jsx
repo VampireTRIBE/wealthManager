@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import useTitle from "../../hooks/useTitle";
 
 import Navbar from "../../componets/layoutComponets/navbar/navbar";
-import LoginFrom from "../../componets/layoutComponets/main/authentication/loginForm/loginForm";
+import LoginFrom from "../../componets/layoutComponets/authentication/loginForm/loginForm";
 
 import buttonStyle from "../../componets/singleComponets/button/button.module.css";
 

@@ -11,6 +11,7 @@ const {
   getLeafCategoryIds,
 } = require("../utills/agregations/assets/findsAllCategoryIDs");
 const updateConsolidatedIRR = require("../utills/agregations/assets/categories/consolidated/updateConsolidatedIRR");
+const recordCategoryCurves = require("../utills/agregations/assets/categoryCarve/updateCurveValues");
 
 const usersControllers = {
   async registerUser(req, res, next) {
@@ -52,20 +53,31 @@ const usersControllers = {
       req.login(user, async (err) => {
         if (err) return next(err);
 
+        const rootAssetsCategoryId = await assetsCat
+          .findOne({ name: "ASSETS", parentCategory: null }, { _id: 1 })
+          .lean();
+        const assetsSubCategoriesIDs = await getAllSubCategoryIds(user._id);
+
         await updateCurrentValuesByFilter({ userId: user._id });
         await updateCurrentYearGains({ userId: user._id });
-        await updateStandaloneGains(await getAllSubCategoryIds(user._id));
+        await updateStandaloneGains(assetsSubCategoriesIDs);
         const leafcategorys = await getLeafCategoryIds(user._id);
         for (const catid of leafcategorys) {
           await updateConsolidatedValues(catid);
         }
-        const rootAssetsCategoryId = await assetsCat
-          .findOne({ name: "ASSETS", parentCategory: null }, { _id: 1 })
-          .lean();
         await updateConsolidatedValues(rootAssetsCategoryId?._id);
         await updateConsolidatedIRR(rootAssetsCategoryId?._id);
 
-        const u_data = await dbReq.userData(user._id);
+        assetsSubCategoriesIDs.push(rootAssetsCategoryId._id);
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        await recordCategoryCurves(assetsSubCategoriesIDs, today);
+        const [c_data, u_data] = await Promise.all([
+          dbReq.getCategoryCurveData(user._id,90),
+          dbReq.userData(user._id),
+        ]);
+
         if (!u_data) {
           return res.status(404).json({ error: "User data not found" });
         }
@@ -73,6 +85,7 @@ const usersControllers = {
           success: "Login successful",
           userID: user._id,
           Data: u_data,
+          CData: c_data,
         });
       });
     })(req, res, next);

@@ -1,13 +1,11 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-
 import useScroll from "../../../hooks/scroll";
 import { useFormData } from "../../../hooks/fromdata";
 import { useUser } from "../../../hooks/userContext";
+import api from "../../../servises/apis/apis";
 
-import NavButtons from "./navButtons/navButtons";
 import { H3 } from "../../singleComponets/heading/heading";
+import NavButtons from "./navButtons/navButtons";
 import Button from "../../singleComponets/button/button";
 import Image from "../../singleComponets/image/image";
 import Input from "../../singleComponets/input/input";
@@ -16,7 +14,6 @@ import subnavbarStyle from "./secnavbar.module.css";
 import btnStyle from "../../singleComponets/button/button.module.css";
 import imgStyle from "../../singleComponets/image/image.module.css";
 import inpStyle from "../../singleComponets/input/input.module.css";
-import api from "../../../servises/apis/apis";
 
 function SubNavbar({ d_btns, u_id, dc_id }) {
   const { userData, setUserData } = useUser();

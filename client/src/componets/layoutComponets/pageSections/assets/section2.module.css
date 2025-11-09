@@ -16,27 +16,53 @@
   background-color: #3b82f6;
   border-radius: 1rem 1rem 0 0;
   display: flex;
-  gap: 0.9rem;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.headDiv {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+.headDivSub {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 .content {
   padding: 0.5rem 1rem 0.5rem;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.contentSUB{
+  padding: 0.5rem 0.5rem 0.8rem;
+  width: 100%;
+  display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  border-radius: 0.8rem;
 }
 
 .info {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .info_detail {
   font-size: 0.8rem;
   display: flex;
   justify-content: space-between;
-  gap: 0.5rem;
+  gap: 2rem;
 }
 
 .editcatToggle {
@@ -53,12 +79,11 @@
   gap: 0.5rem;
 }
 
-
 .editcatTogleopen {
   transform: scale(1);
 }
 
-.frombtndiv{
+.frombtndiv {
   display: flex;
   justify-content: space-between;
   gap: 0.5rem;
@@ -69,19 +94,19 @@
   align-self: flex-end;
 }
 
-.toggleDiv{
-  padding-right: 1rem;
+.toggleDiv {
+  width: 100%;
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  gap: 0.8rem;
 }
 
-.toggleType{
+.toggleType {
   cursor: pointer;
-  aspect-ratio: 1/0.8;
+  aspect-ratio: 1/0.6;
 }
+
 
 @media screen and (min-width: 400px) {
   .info_detail {
@@ -89,13 +114,18 @@
   }
 }
 
-
 @media screen and (min-width: 500px) {
   .section2 {
     width: 75%;
   }
-  .info_detail {
-    padding-right: 2rem;
+}
+
+@media screen and (min-width: 670px) {
+  .headDiv {
+    gap: 1rem;
+  }
+  .headDivSub {
+    gap: 0.8rem;
   }
 }
 
@@ -103,15 +133,7 @@
   .section2 {
     width: 90%;
   }
-  .info {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-  .info_detail {
-    flex: 1;
-    padding-right: 1rem;
-    font-size: 1.3rem;
+  .contentSUB{
+    width: 48%;
   }
 }

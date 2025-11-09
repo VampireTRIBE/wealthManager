@@ -11,7 +11,6 @@ const flash = require("connect-flash");
 const dataParser = require("./middlewares/dataParser");
 const Locals = require("./utills/locals/locals");
 const app = express();
-const path = require("path");
 let port = 3000;
 
 corAuth.corAuth(app);
@@ -28,39 +27,40 @@ const assetsProductRoute = require("./routes/assets/assetsProduct");
 const assetsStatementRoute = require("./routes/assets/assetsStatement");
 const assetsTransactionRoute = require("./routes/assets/assetsTransaction");
 const assetsLiveLTP = require("./routes/assets/marketPrice");
-
+const assetsIrr = require("./routes/assets/assetsIrr");
 const { updateLivePrices } = require("./controllers/assets/marketPrice");
-const updateStandaloneIRR = require("./utills/agregations/assets/categories/standaloneStats/updateStandaloneIRR");
+const updateCurveValues = require("./controllers/assets/assetsCategoryCurve");
+const log = require("./utills/logers/logger");
 
 // for listning all requests
 app.listen(port, async () => {
-  console.log(`<----- Server Running : port : ${port} ----->`);
+  log.running(`SERVER PORT : ${port}`);
   try {
-    console.log("<----- Performing initial live price update ----->");
+    log.running("INITIAL SERVER UPDATE");
+    const { success } = await updateCurveValues();
+    success ? "" : await updateCurveValues();
     await updateLivePrices();
-    console.log("<----- Initial update completed ----->");
+    log.success("INITIAL SERVER UPDATE COMPLETED");
   } catch (err) {
-    console.error("<----- Initial update failed ----->", err.message);
+    log.error(`${err.message}`);
   }
   setTimeout(() => {
     setInterval(async () => {
       try {
         await updateLivePrices();
-        console.log("<----- Auto update successful ----->");
-      } catch (err) {
-        console.error("<----- Auto update failed ----->", err.message);
-      }
-    }, 2 * 60 * 1000);
-  }, 5000);
+      } catch (err) {}
+    }, 1 * 60 * 1000);
+  }, 20000);
 });
 
 // Diffrent Routes
 app.use("/", userRoute);
-app.use("/live/", assetsLiveLTP);
+app.use("/:u_id/live", assetsLiveLTP);
 app.use("/assets/:u_id/", assetsCatRoute);
 app.use("/assets/product/:u_id/:c_id/", assetsProductRoute);
 app.use("/assets/statement/:u_id/:c_id/", assetsStatementRoute);
 app.use("/assets/transaction/:u_id/:p_id/", assetsTransactionRoute);
+app.use("/assets/irr/:u_id/:c_id/", assetsIrr);
 
 // error handling middleware
 app.use((err, req, res, next) => {

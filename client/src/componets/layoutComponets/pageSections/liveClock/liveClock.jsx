@@ -1,6 +1,5 @@
-import { useLiveDateTime } from "../../../../utills/helpers/funtions";
 import { H3 } from "../../../singleComponets/heading/heading";
-
+import { useLiveDateTime } from "../../../../utills/helpers/funtions";
 
 export default function LiveClock() {
   const currentDate = useLiveDateTime();
