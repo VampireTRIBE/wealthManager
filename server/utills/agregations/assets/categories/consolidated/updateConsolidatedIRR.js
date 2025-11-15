@@ -1,30 +1,7 @@
 const mongoose = require("mongoose");
 const AssetsCategory = require("../../../../../models/assets/assetsCat");
 const AssetsStatement = require("../../../../../models/assets/assetsStatements");
-
-function computeIRR(cashflows, guess = 0.1) {
-  const maxIter = 100;
-  const tol = 1e-6;
-
-  let rate = guess;
-  for (let i = 0; i < maxIter; i++) {
-    let npv = 0;
-    let dnpv = 0;
-
-    for (let j = 0; j < cashflows.length; j++) {
-      const t =
-        (cashflows[j].date - cashflows[0].date) / (365 * 24 * 3600 * 1000);
-      const cf = cashflows[j].amount;
-      npv += cf / Math.pow(1 + rate, t);
-      dnpv -= (t * cf) / Math.pow(1 + rate, t + 1);
-    }
-
-    const newRate = rate - npv / dnpv;
-    if (Math.abs(newRate - rate) < tol) return rate;
-    rate = newRate;
-  }
-  return rate;
-}
+const { computeIRR } = require("../../../../mathhelpers/xirr");
 
 async function getAllSubCategoryIds(rootId) {
   const queue = [rootId];
@@ -84,12 +61,10 @@ async function updateConsolidatedIRR(categoryId) {
     }
 
     const irr = computeIRR(signedFlows);
-    console.log(signedFlows);
-    console.log(irr*100);
 
     await AssetsCategory.updateOne(
       { _id: categoryId },
-      { $set: { consolidatedIRR: irr * 100 } }
+      { $set: { consolidatedIRR: irr } }
     );
 
     return irr * 100;

@@ -92,7 +92,7 @@ const assetsCategoryController = {
       for (const catid of leafcategorys) {
         await updateConsolidatedValues(catid);
       }
-      const rootAssetsCategoryId = await category
+      const rootAssetsCategoryId = await Category
         .findOne({ name: "ASSETS", parentCategory: null }, { _id: 1 })
         .lean();
       await updateConsolidatedValues(rootAssetsCategoryId?._id);

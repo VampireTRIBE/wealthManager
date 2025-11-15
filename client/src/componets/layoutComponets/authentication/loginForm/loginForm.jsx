@@ -6,11 +6,12 @@ import { H1, H3 } from "../../../singleComponets/heading/heading";
 import Input from "../../../singleComponets/input/input";
 import Label from "../../../singleComponets/label/label";
 import Link from "../../../singleComponets/link/link";
+import FlashMessage from "../../flashMessage/flashMesssage";
 
 import api from "../../../../servises/apis/apis";
 import { useFormData } from "../../../../hooks/fromdata";
 import { useUser } from "../../../../hooks/userContext";
-
+import { useFlash } from "../../../../hooks/flashContext";
 
 import loginFromStyle from "./loginForm.module.css";
 import btnStyle from "../../../singleComponets/button/button.module.css";
@@ -18,20 +19,19 @@ import inputStyle from "../../../singleComponets/input/input.module.css";
 import labelStyle from "../../../singleComponets/label/label.module.css";
 import { useUserCurve } from "../../../../hooks/userCurveContex";
 
-
 function LoginFrom({ ...props }) {
+  const { showFlash } = useFlash();
+  const { setUserData } = useUser();
+  const navigate = useNavigate();
+  const { userCurveData, setUserCurveData } = useUserCurve();
+
   const { formData, handleInputChange, resetForm } = useFormData({
     username: "",
     password: "",
   });
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
-  const { setUserData } = useUser();
-  const { userCurveData, setUserCurveData } = useUserCurve();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
     try {
       const response = await api.post("/login", {
         username: formData.username,
@@ -40,16 +40,18 @@ function LoginFrom({ ...props }) {
       resetForm();
       setUserData(response.data.Data);
       setUserCurveData(response.data.CData);
+      showFlash(response.data.error, "success");
       navigate(`/home`);
     } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.error || "Server error. Please try again.");
+      console.log(err);
+      showFlash(err.response.data.error, "success");
     }
   };
 
   return (
     <main className={loginFromStyle.main}>
       <H1 text="Login to Wealth Manager" />
+      <FlashMessage />
       <form className={loginFromStyle.from} onSubmit={handleSubmit}>
         <div className={loginFromStyle.cdiv}>
           <Label

@@ -1,6 +1,7 @@
 import { useUser } from "../../hooks/userContext";
 import { useUserCurve } from "../../hooks/userCurveContex";
 import useTitle from "../../hooks/useTitle";
+import { useFlash } from "../../hooks/flashContext";
 
 import AssetsNavbar from "../../componets/layoutComponets/pageSections/assets/SubSections/assetsNavbar";
 import AssetsSection1 from "../../componets/layoutComponets/pageSections/assets/section1";
@@ -9,10 +10,11 @@ import AssetsSection2 from "../../componets/layoutComponets/pageSections/assets/
 import homePageStyle from "./homePage.module.css";
 
 export default function HomeAssets() {
+  const { showFlash } = useFlash();
   useTitle(`Wealth Manager - ASSETS`);
   const { userData, setUserData } = useUser();
   const { userCurveData, setUserCurveData } = useUserCurve();
-  
+
   const assetsCategory = userData.categories.find(
     (cat) => cat.Name === "ASSETS"
   );
