@@ -4,12 +4,16 @@ import { useNavigate } from "react-router-dom";
 import api from "../../../../servises/apis/apis";
 import { useFormData } from "../../../../hooks/fromdata";
 import { useUser } from "../../../../hooks/userContext";
+import { useFlash } from "../../../../hooks/flashContext";
+import { useAutoFields } from "../../../../hooks/useAutoFields";
+import { useAutoValidator } from "../../../../hooks/useFormValidator";
 
 import Button from "../../../singleComponets/button/button";
 import { H1, H3 } from "../../../singleComponets/heading/heading";
 import Input from "../../../singleComponets/input/input";
 import Label from "../../../singleComponets/label/label";
 import Link from "../../../singleComponets/link/link";
+import FlashMessage from "../../flashMessage/flashMesssage";
 
 import singupFromStyle from "./signupForm.module.css";
 import btnStyle from "../../../singleComponets/button/button.module.css";
@@ -17,6 +21,12 @@ import inputStyle from "../../../singleComponets/input/input.module.css";
 import labelStyle from "../../../singleComponets/label/label.module.css";
 
 function SingupFrom({ ...props }) {
+  const { getFields, getConfirmFields } = useAutoFields();
+  const { autoValidate } = useAutoValidator();
+  const { showFlash } = useFlash();
+  const navigate = useNavigate();
+  const { userData, setUserData } = useUser();
+
   const { formData, handleInputChange, resetForm } = useFormData({
     newUser: {
       firstName: "",
@@ -26,14 +36,15 @@ function SingupFrom({ ...props }) {
     },
     password: "",
   });
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
-  const { userData, setUserData } = useUser();
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const fields = getFields();
+      const confirmFields = getConfirmFields();
+      console.log(fields)
+      if (!autoValidate(formData, fields, confirmFields, showFlash)) return;
+
       const response = await api.post("/signup", {
         newUser: formData.newUser,
         password: formData.password,
@@ -42,13 +53,14 @@ function SingupFrom({ ...props }) {
       setUserData(response.data.Data);
       navigate(`/home`);
     } catch (err) {
-      setError(err.response?.data?.error || "Server error. Please try again.");
+      
     }
   };
   return (
     <main className={singupFromStyle.main}>
       <H1 text="SignUP to Wealth Manager" />
-      <form className={singupFromStyle.from} onSubmit={handleSubmit}>
+      <FlashMessage />
+      <form className={singupFromStyle.from} onSubmit={handleSubmit} noValidate>
         <div className={singupFromStyle.cdiv}>
           <div className={singupFromStyle.cdivsub}>
             <Label

@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import useTitle from "../../hooks/useTitle";
+import { AutoFieldsProvider } from "../../hooks/useAutoFields";
 
 import Navbar from "../../componets/layoutComponets/navbar/navbar";
 import SingupFrom from "../../componets/layoutComponets/authentication/signupFrom/signupForm";
@@ -8,7 +9,7 @@ import buttonStyle from "../../componets/singleComponets/button/button.module.cs
 
 export default function SingupPage() {
   const navigate = useNavigate();
-  useTitle("Wealth Manager - SignUp")
+  useTitle("Wealth Manager - SignUp");
   return (
     <>
       <header>
@@ -37,7 +38,9 @@ export default function SingupPage() {
         />
       </header>
       <>
-        <SingupFrom />
+        <AutoFieldsProvider>
+          <SingupFrom />
+        </AutoFieldsProvider>
       </>
       <footer></footer>
     </>
