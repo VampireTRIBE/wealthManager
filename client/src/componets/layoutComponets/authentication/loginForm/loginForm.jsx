@@ -11,15 +11,20 @@ import FlashMessage from "../../flashMessage/flashMesssage";
 import api from "../../../../servises/apis/apis";
 import { useFormData } from "../../../../hooks/fromdata";
 import { useUser } from "../../../../hooks/userContext";
+import { useAutoValidator } from "../../../../hooks/useFormValidator";
 import { useFlash } from "../../../../hooks/flashContext";
+import { useUserCurve } from "../../../../hooks/userCurveContex";
+import { useAutoFields } from "../../../../hooks/useAutoFields";
 
 import loginFromStyle from "./loginForm.module.css";
 import btnStyle from "../../../singleComponets/button/button.module.css";
 import inputStyle from "../../../singleComponets/input/input.module.css";
 import labelStyle from "../../../singleComponets/label/label.module.css";
-import { useUserCurve } from "../../../../hooks/userCurveContex";
 
 function LoginFrom({ ...props }) {
+  const { getFields, getConfirmFields } = useAutoFields();
+  const { autoValidate } = useAutoValidator();
+
   const { showFlash } = useFlash();
   const { setUserData } = useUser();
   const navigate = useNavigate();
@@ -33,18 +38,22 @@ function LoginFrom({ ...props }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const fields = getFields();
+      const confirmFields = getConfirmFields();
+      if (!autoValidate(formData, fields, confirmFields, showFlash)) return;
+
       const response = await api.post("/login", {
         username: formData.username,
         password: formData.password,
       });
       resetForm();
-      setUserData(response.data.Data);
-      setUserCurveData(response.data.CData);
-      showFlash(response.data.error, "success");
+      setUserData(response?.data?.Data);
+      setUserCurveData(response?.data?.CData);
+      showFlash(response?.data?.success, "success");
+      showFlash(response?.data?.error, "error");
       navigate(`/home`);
     } catch (err) {
-      console.log(err);
-      showFlash(err.response.data.error, "success");
+      showFlash(err.response.data.error, "error");
     }
   };
 
@@ -52,7 +61,7 @@ function LoginFrom({ ...props }) {
     <main className={loginFromStyle.main}>
       <H1 text="Login to Wealth Manager" />
       <FlashMessage />
-      <form className={loginFromStyle.from} onSubmit={handleSubmit}>
+      <form className={loginFromStyle.from} onSubmit={handleSubmit} noValidate>
         <div className={loginFromStyle.cdiv}>
           <Label
             className={labelStyle.primery}
