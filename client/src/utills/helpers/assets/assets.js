@@ -17,8 +17,8 @@ export const objectToLabelValue = (obj) =>
         key.toLowerCase().includes("percent") ||
         key.toLowerCase().includes("irr")
       ) {
-        label="IRR %"
-        value = `${value} %`;
+        label = "IRR %";
+        value = `${value ? value : 0.00} %`;
       }
       return { label, value };
     });
@@ -59,9 +59,9 @@ export function HoldingsData(category) {
     return {
       name: product.name,
       data: {
-        LTP: (product.LTP.toFixed(2)),
-        Qty: (product.qty.toFixed(2)),
-        Avg: (product.buyAVG).toFixed(2),
+        LTP: product.LTP.toFixed(2),
+        Qty: product.qty.toFixed(2),
+        Avg: product.buyAVG.toFixed(2),
         Invested: formatINR(product.totalValue),
         Current: formatINR(product.currentValue),
         "P/L": formatINR(pl),

@@ -11,6 +11,7 @@ function AssetsSection2({ u_id, categoryDetails }) {
   const handleDelete = async (c_id) => {
     try {
       const res = await api.delete(`/assets/${u_id}/${c_id}/delete`);
+      console.log(res);
       setUserData(res.data.Data);
     } catch (error) {
       console.error("Error in Deletion:", error);

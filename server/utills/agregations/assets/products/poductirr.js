@@ -3,39 +3,7 @@ require("../../../../models/assets/assetsProduct");
 require("../../../../models/assets/assetsTransactions");
 const Product = mongoose.model("assetsproducts");
 const Transactions = mongoose.model("assetstransactions");
-
-function computeIRR(cashflows, guess = 0.1) {
-  try {
-    let rate = guess;
-    const maxIter = 100;
-    const tol = 1e-6;
-    const t0 = cashflows[0].date.getTime();
-
-    for (let i = 0; i < maxIter; i++) {
-      let npv = 0,
-        dnpv = 0;
-
-      for (const { date, amount } of cashflows) {
-        const t = (date.getTime() - t0) / 31557600000;
-        const disc = Math.pow(1 + rate, t);
-        npv += amount / disc;
-        dnpv += (-t * amount) / (disc * (1 + rate));
-      }
-
-      if (dnpv === 0) return null;
-
-      const newRate = rate - npv / dnpv;
-      if (!isFinite(newRate)) return null;
-      if (Math.abs(newRate - rate) < tol) return rate * 100;
-
-      rate = newRate;
-    }
-
-    return null;
-  } catch {
-    return null;
-  }
-}
+const { computeIRR } = require("../../../mathhelpers/xirr");
 
 async function updateIRR(productId) {
   const product = await Product.findById(productId)
@@ -72,7 +40,6 @@ async function updateIRR(productId) {
 
   const irr = computeIRR(cashflows);
   const safeIRR = isFinite(irr) ? irr : 0;
-
   await Product.updateOne({ _id: productId }, { $set: { IRR: safeIRR } });
 }
 module.exports = { updateIRR };

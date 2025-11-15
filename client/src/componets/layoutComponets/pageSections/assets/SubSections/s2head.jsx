@@ -182,19 +182,22 @@ export default function S2Head({ Category, handleDelete, u_id }) {
             <Image
               className={imgStyle.subimg}
               src="/assets/medias/images/plus2.png"
-              alt="Add Category"
+              alt="Add New Category"
+              title="Add New Category"
               onClick={toggleAddCat}
             />
             <Image
               className={imgStyle.subimg}
               src="/assets/medias/images/edit.png"
               alt="Edit"
+              title="Edit Category"
               onClick={toggleeditCat}
             />
             <Image
               className={imgStyle.subimg}
               src="/assets/medias/images/trash.png"
               alt="Delete"
+              title="Delete Category"
               onClick={() => {
                 handleDelete(Category._id);
               }}

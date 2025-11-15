@@ -26,13 +26,13 @@ const log = {
     console.error(`${COLORS.red}${getTimestamp()} ❌ ERROR   : ${COLORS.reset}${msg}`);
   },
   running: (msg) => {
-    console.log(`${COLORS.blue}${getTimestamp()} ⚙️  RUNNING : ${COLORS.reset}${msg}`);
+    console.log(`${COLORS.blue}${getTimestamp()} ⚙️ RUNNING : ${COLORS.reset}${msg}`);
   },
   waiting: (msg) => {
     console.log(`${COLORS.yellow}${getTimestamp()} ⏳ WAITING : ${COLORS.reset}${msg}`);
   },
   info: (msg) => {
-    console.log(`${COLORS.cyan}${getTimestamp()} ℹ️  INFO    : ${COLORS.reset}${msg}`);
+    console.log(`${COLORS.cyan}${getTimestamp()} ℹ️ INFO    : ${COLORS.reset}${msg}`);
   },
   done: (msg) => {
     console.log(`${COLORS.magenta}${getTimestamp()} 🏁 DONE    : ${COLORS.reset}${msg}`);

@@ -31,6 +31,8 @@ async function recordCategoryCurves(catIds, date = new Date()) {
           consolidatedRealizedGain: 1,
           standaloneUnrealizedGain: 1,
           consolidatedUnRealizedGain: 1,
+          standaloneCash: 1,
+          consolidatedCash: 1,
         },
       },
     ]);
@@ -59,7 +61,8 @@ async function recordCategoryCurves(catIds, date = new Date()) {
       const standalonePL =
         (cat.standaloneRealizedGain ?? 0) + (cat.standaloneUnrealizedGain ?? 0);
       const consolidatedPL =
-        (cat.consolidatedRealizedGain ?? 0) + (cat.consolidatedUnRealizedGain ?? 0);
+        (cat.consolidatedRealizedGain ?? 0) +
+        (cat.consolidatedUnRealizedGain ?? 0);
 
       const prevCurve = prevCurveMap[cat._id.toString()];
 
@@ -69,12 +72,16 @@ async function recordCategoryCurves(catIds, date = new Date()) {
       if (prevCurve) {
         standalonePLpercent =
           prevCurve.standaloneCurrentValue > 0
-            ? ((standalonePL - prevCurve.standalonePL) / prevCurve.standaloneCurrentValue) * 100
+            ? ((standalonePL - prevCurve.standalonePL) /
+                prevCurve.standaloneCurrentValue) *
+              100
             : 0;
 
         consolidatedPLpercent =
           prevCurve.consolidatedCurrentValue > 0
-            ? ((consolidatedPL - prevCurve.consolidatedPL) / prevCurve.consolidatedCurrentValue) * 100
+            ? ((consolidatedPL - prevCurve.consolidatedPL) /
+                prevCurve.consolidatedCurrentValue) *
+              100
             : 0;
       }
 
@@ -88,10 +95,12 @@ async function recordCategoryCurves(catIds, date = new Date()) {
             $set: {
               categoryName: cat.categoryName || "Unnamed Category",
               user: cat.user,
-              standaloneCurrentValue: cat.standaloneCurrentValue ?? 0,
+              standaloneCurrentValue:
+                cat.standaloneCurrentValue + cat.standaloneCash ?? 0,
               standalonePL,
               standalonePLpercent,
-              consolidatedCurrentValue: cat.consolidatedCurrentValue ?? 0,
+              consolidatedCurrentValue:
+                cat.consolidatedCurrentValue + cat.consolidatedCash ?? 0,
               consolidatedPL,
               consolidatedPLpercent,
               date: startOfDay,
@@ -105,7 +114,8 @@ async function recordCategoryCurves(catIds, date = new Date()) {
     let result = { upsertedCount: 0 };
     if (bulkOps.length > 0) {
       const bulkWriteResult = await AssetsCategoryCurves.bulkWrite(bulkOps);
-      result.upsertedCount = bulkWriteResult.upsertedCount + bulkWriteResult.modifiedCount;
+      result.upsertedCount =
+        bulkWriteResult.upsertedCount + bulkWriteResult.modifiedCount;
     }
 
     return { success: true, upsertedCount: result.upsertedCount };
