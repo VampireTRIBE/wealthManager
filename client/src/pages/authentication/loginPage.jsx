@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import useTitle from "../../hooks/useTitle";
-import { AutoFieldsProvider } from "../../hooks/useAutoFields";
 
 import Navbar from "../../componets/layoutComponets/navbar/navbar";
 import LoginFrom from "../../componets/layoutComponets/authentication/loginForm/loginForm";
@@ -38,9 +37,7 @@ export default function LoginPage() {
         />
       </header>
       <>
-        <AutoFieldsProvider>
-          <LoginFrom />
-        </AutoFieldsProvider>
+        <LoginFrom />
       </>
       <footer></footer>
     </>

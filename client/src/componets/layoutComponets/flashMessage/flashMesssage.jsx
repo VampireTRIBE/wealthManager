@@ -1,17 +1,14 @@
-import { useFlash } from "../../../hooks/flashContext";
-import flashMessageStyle from "./flashMessage.module.css";
+// import flashMessageStyle from "./flashMessage.module.css";
 
-export default function FlashMessage() {
-  const { flash } = useFlash();
-  if (!flash) return null;
+// export default function FlashMessage() {
+//   if (!flash) return null;
 
-  return (
-    <div
-      className={`${flashMessageStyle["flash-container"]} ${
-        flashMessageStyle[`flash-${flash.type}`]
-      }`}
-    >
-      {flash.msg}
-    </div>
-  );
-}
+//   return (
+//     <div
+//       className={`${flashMessageStyle["flash-container"]} ${
+//         flashMessageStyle[`flash-${flash.type}`]
+//       }`}>
+//       {flash.msg}
+//     </div>
+//   );
+// }

@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import useTitle from "../../hooks/useTitle";
-import { AutoFieldsProvider } from "../../hooks/useAutoFields";
 
 import Navbar from "../../componets/layoutComponets/navbar/navbar";
 import SingupFrom from "../../componets/layoutComponets/authentication/signupFrom/signupForm";
@@ -38,9 +37,7 @@ export default function SingupPage() {
         />
       </header>
       <>
-        <AutoFieldsProvider>
-          <SingupFrom />
-        </AutoFieldsProvider>
+        <SingupFrom />
       </>
       <footer></footer>
     </>

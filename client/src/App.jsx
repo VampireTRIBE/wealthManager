@@ -12,18 +12,14 @@ import HomeAssetsSub from "./pages/assets/homePageSubCategory";
 import HomeAssetsSub2 from "./pages/assets/homePageSubCategory2";
 import HomeAssetsSub3 from "./pages/assets/homePageSubCategory3";
 import { UserCurveProvider } from "./hooks/userCurveContex";
-import { FlashProvider } from "./hooks/flashContext";
-import { AutoFieldsProvider } from "./hooks/useAutoFields";
-
 
 function App() {
   return (
     <>
       <GlobalStyles />
-      <FlashProvider>
-          <Router>
-            <UserCurveProvider>
-              <UserProvider>
+        <Router>
+          <UserCurveProvider>
+            <UserProvider>
                 <Routes>
                   <Route path="/" element={<HomePage />} />
                   <Route path="/login" element={<LoginPage />} />
@@ -39,10 +35,9 @@ function App() {
                     element={<HomeAssetsSub3 />}
                   />
                 </Routes>
-              </UserProvider>
-            </UserCurveProvider>
-          </Router>
-      </FlashProvider>
+            </UserProvider>
+          </UserCurveProvider>
+        </Router>
     </>
   );
 }
