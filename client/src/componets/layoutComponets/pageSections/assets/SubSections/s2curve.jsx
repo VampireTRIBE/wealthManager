@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   LineChart,
   Line,
@@ -14,14 +13,12 @@ import Image from "../../../../singleComponets/image/image";
 
 import styleCurve from "./s2curve.module.css";
 import imgStyle from "../../../../singleComponets/image/image.module.css";
-import { useNavigate } from "react-router-dom";
 
 export default function S2CurveGraph({
   categoryData,
   flag = 1,
   isFullScreen = "false",
 }) {
-  const navigate = useNavigate();
 
   if (!categoryData) return null;
   const { categoryName, standalone = [], consolidated = [] } = categoryData;

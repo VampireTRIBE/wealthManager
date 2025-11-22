@@ -31,7 +31,7 @@ async function updateCurveValues() {
 
     data.length == 0 ? log.info("[] DATA") : log.success("DATA FOUND");
 
-    const user_id1 = "68fe8c2389ae1387ed9484a8";
+    const user_id1 = "6921eae0ff7fdf021e0672ca";
     const rootAssetsCategoryId = await assetsCatModel
       .findOne({ name: "ASSETS", parentCategory: null }, { _id: 1 })
       .lean();
