@@ -14,8 +14,10 @@ import { H3 } from "../../../../singleComponets/heading/heading";
 
 import styleCurve from "./curve.module.css";
 import imgStyle from "../../../../singleComponets/image/image.module.css";
+import { useNavigate } from "react-router-dom";
 
 export default function CurveGraph({ categoryData }) {
+  const navigate = useNavigate();
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   if (!categoryData) return null;
@@ -58,11 +60,12 @@ export default function CurveGraph({ categoryData }) {
           src="/assets/medias/images/maximize.png"
           alt="Maximize"
           title="Maximize"
-          onClick={() => setIsFullScreen((prev) => !prev)}
+          onClick={() =>
+            window.open(`/assets/chart/${categoryName}/2`, "_blank")
+          }
         />
       </div>
-      <div
-        className={`${styleCurve.categoryCurveSubD}`}>
+      <div className={`${styleCurve.categoryCurveSubD}`}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={mergedData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
