@@ -43,7 +43,7 @@ const marketPriceControllers = {
       await recordCategoryCurves(assetsSubCategoriesIDs, today);
 
       const [c_data, u_data] = await Promise.all([
-        dbReq.getCategoryCurveData(u_id,90),
+        dbReq.getCategoryCurveData(u_id, 90),
         dbReq.userData(u_id),
       ]);
 
@@ -78,7 +78,6 @@ async function updateLivePrices() {
         log.error(`DATA NOT FOUND > ${err.message}`);
         return { data: [] };
       });
-
     if (!Array.isArray(livePrices) || livePrices.length === 0) {
       log.info("NO LTP DATA FOUND");
       return { success: false, message: "No price data received" };

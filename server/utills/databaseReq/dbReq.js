@@ -102,7 +102,7 @@ const dbReq = {
         UnrealizedGain: cat.standaloneUnrealizedGain,
         CurrentYearGain: cat.standaloneCurrentYearGain,
         Irr: cat.standaloneIRR,
-      };
+      }; 
 
       return {
         ...baseDetails,

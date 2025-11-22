@@ -17,13 +17,9 @@ import imgStyle from "../../../../singleComponets/image/image.module.css";
 import { useNavigate } from "react-router-dom";
 
 export default function CurveGraph({ categoryData }) {
-  const navigate = useNavigate();
   const [isFullScreen, setIsFullScreen] = useState(false);
-
   if (!categoryData) return null;
-
   const { categoryName, standalone = [], consolidated = [] } = categoryData;
-
   const chartData1 =
     standalone.length > 0
       ? standalone.map((d) => ({
