@@ -14,9 +14,14 @@ import Image from "../../../../singleComponets/image/image";
 
 import styleCurve from "./s2curve.module.css";
 import imgStyle from "../../../../singleComponets/image/image.module.css";
+import { useNavigate } from "react-router-dom";
 
-export default function S2CurveGraph({ categoryData, flag = 1 }) {
-  const [isFullScreen, setIsFullScreen] = useState(false);
+export default function S2CurveGraph({
+  categoryData,
+  flag = 1,
+  isFullScreen = "false",
+}) {
+  const navigate = useNavigate();
 
   if (!categoryData) return null;
   const { categoryName, standalone = [], consolidated = [] } = categoryData;
@@ -48,7 +53,7 @@ export default function S2CurveGraph({ categoryData, flag = 1 }) {
   return (
     <div
       className={`${
-        isFullScreen
+        isFullScreen === "true"
           ? styleCurve.fullScreenCurveDiv
           : styleCurve.categoryCurveDiv
       } ${flag === 3 ? styleCurve.hide : ""}`}
@@ -57,13 +62,19 @@ export default function S2CurveGraph({ categoryData, flag = 1 }) {
         <H3>
           {categoryName || "Category"} - {curveName}
         </H3>
-        <Image
-          className={imgStyle.subimg}
-          src="/assets/medias/images/maximize.png"
-          alt="Maximize"
-          title="Maximize"
-          onClick={() => setIsFullScreen((prev) => !prev)}
-        />
+        {isFullScreen === "true" ? (
+          ""
+        ) : (
+          <Image
+            className={imgStyle.subimg}
+            src="/assets/medias/images/maximize.png"
+            alt="Maximize"
+            title="Maximize"
+            onClick={() =>
+              window.open(`/assets/chart/${categoryName}/${flag}`, "_blank")
+            }
+          />
+        )}
       </div>
       <div className={`${styleCurve.categoryCurveSubD}`}>
         <ResponsiveContainer width="100%" height="100%">
