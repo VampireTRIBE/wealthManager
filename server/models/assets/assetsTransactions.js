@@ -85,7 +85,10 @@ assetsTransactionsSchema.post("save", async function () {
     await updateConsolidatedValues(catid);
   }
   const rootAssetsCategoryId = await assetsCatModel
-    .findOne({ name: "ASSETS", parentCategory: null }, { _id: 1 })
+    .findOne(
+      { name: "ASSETS", parentCategory: null, user: userID?.user },
+      { _id: 1 }
+    )
     .lean();
   await updateConsolidatedValues(rootAssetsCategoryId?._id);
 });

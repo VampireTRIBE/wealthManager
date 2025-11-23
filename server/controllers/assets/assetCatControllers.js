@@ -92,9 +92,10 @@ const assetsCategoryController = {
       for (const catid of leafcategorys) {
         await updateConsolidatedValues(catid);
       }
-      const rootAssetsCategoryId = await Category
-        .findOne({ name: "ASSETS", parentCategory: null }, { _id: 1 })
-        .lean();
+      const rootAssetsCategoryId = await Category.findOne(
+        { name: "ASSETS", parentCategory: null, user: u_id },
+        { _id: 1 }
+      ).lean();
       await updateConsolidatedValues(rootAssetsCategoryId?._id);
       await updateConsolidatedIRR(rootAssetsCategoryId?._id);
 
