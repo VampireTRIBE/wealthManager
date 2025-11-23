@@ -3,10 +3,9 @@ var cors = require("cors");
 var corsOptions = {
   origin: (origin, callback) => {
     const allowedOrigins = [
-      "http://localhost:5173",                      
+      "http://localhost:5173",
       "https://wealthmanager-uema.onrender.com",
     ];
-
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -16,6 +15,10 @@ var corsOptions = {
 
   methods: "GET, POST, PUT, PATCH, DELETE",
   credentials: true,
+
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+
+  exposedHeaders: ["set-cookie"],
 };
 
 const corsAuth = {
