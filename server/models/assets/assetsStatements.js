@@ -39,13 +39,15 @@ assetsStatementSchema.post("save", async function (doc, next) {
       await updateConsolidatedValues(catid);
     }
     const rootAssetsCategoryId = await assetsCatModel
-      .findOne({ name: "ASSETS", parentCategory: null }, { _id: 1 })
+      .findOne(
+        { name: "ASSETS", parentCategory: null, user: userID?.user },
+        { _id: 1 }
+      )
       .lean();
     await updateConsolidatedValues(rootAssetsCategoryId?._id);
     const assetsSubCategoriesIDs = await getAllSubCategoryIds(userID?.user);
     const today = new Date(doc.date);
     today.setHours(0, 0, 0, 0);
-    console.log(today);
     assetsSubCategoriesIDs.push(rootAssetsCategoryId?._id);
     await recordCategoryCurves(assetsSubCategoriesIDs, today);
 
