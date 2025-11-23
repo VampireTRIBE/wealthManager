@@ -42,7 +42,7 @@ export default function AssetsNavbar({ categoryName, flag = false }) {
 
   return (
     <header>
-      <Navbar d_btns={d_btns} m_btns={m_btns} path={`/home`} />
+      <Navbar d_btns={d_btns} m_btns={m_btns} path={`/assets`} />
       {flag ? (
         ""
       ) : (

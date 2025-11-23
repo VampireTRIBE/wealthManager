@@ -1,14 +1,14 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import api from "../../servises/apis/apis";
 
-export default function ProtectRoute({ children }) {
-  const [isAuth, setIsAuth] = useState(null); 
+export default function ProtectRoute() {
+  const [isAuth, setIsAuth] = useState(null);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await api.get("/islogedin"); 
+        const res = await api.get("/islogedin");
         setIsAuth(res.data.authenticated);
       } catch (err) {
         setIsAuth(false);
@@ -16,7 +16,8 @@ export default function ProtectRoute({ children }) {
     };
     checkAuth();
   }, []);
+
   if (isAuth === null) return <p>Loading...</p>;
 
-  return isAuth ? children : <Navigate to="/login" replace />;
+  return isAuth ? <Outlet /> : <Navigate to="/login" replace />;
 }
