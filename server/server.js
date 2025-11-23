@@ -32,7 +32,7 @@ const updateCurveValues = require("./controllers/assets/assetsCategoryCurve");
 const log = require("./utills/logers/logger");
 
 // for listning all requests
-app.listen(process.env.PORT, async () => {
+app.listen(process.env.PORT || 3000, async () => {
   log.running(`SERVER PORT : ${process.env.PORT}`);
   try {
     log.running("INITIAL SERVER UPDATE");
