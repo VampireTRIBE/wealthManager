@@ -19,7 +19,7 @@ import labelStyle from "../../../singleComponets/label/label.module.css";
 function LoginFrom({ ...props }) {
   const { setUserData } = useUser();
   const navigate = useNavigate();
-  const { userCurveData, setUserCurveData } = useUserCurve();
+  const { setUserCurveData } = useUserCurve();
 
   const { formData, handleInputChange, resetForm } = useFormData({
     username: "",
@@ -36,8 +36,10 @@ function LoginFrom({ ...props }) {
       resetForm();
       setUserData(response?.data?.Data);
       setUserCurveData(response?.data?.CData);
-      navigate(`/home`);
-    } catch (err) {}
+      navigate(`/assets`);
+    } catch (err) {
+      alert(err?.response?.data?.error);
+    }
   };
 
   return (

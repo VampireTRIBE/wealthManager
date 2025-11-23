@@ -20,7 +20,7 @@ const marketPriceControllers = {
       const updateConsolidatedIRR = require("../../utills/agregations/assets/categories/consolidated/updateConsolidatedIRR");
 
       const rootAssetsCategoryId = await assetsCatModel
-        .findOne({ name: "ASSETS", parentCategory: null }, { _id: 1 })
+        .findOne({ name: "ASSETS", parentCategory: null, user: u_id }, { _id: 1 })
         .lean();
       const assetsSubCategoriesIDs = await getAllSubCategoryIds(u_id);
 

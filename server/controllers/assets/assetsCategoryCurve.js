@@ -8,6 +8,7 @@ const updateStandaloneGains = require("../../utills/agregations/assets/categorie
 const {
   getAllSubCategoryIds,
   getLeafCategoryIds,
+  getAllUserIds,
 } = require("../../utills/agregations/assets/findsAllCategoryIDs");
 const updateConsolidatedValues = require("../../utills/agregations/assets/categories/consolidated/updateConsolidatedValues");
 const recordCategoryCurves = require("../../utills/agregations/assets/categoryCarve/updateCurveValues");
@@ -16,7 +17,6 @@ async function updateCurveValues() {
   try {
     log.running("PAST CURVE VALUE UPDATE");
     log.waiting("PAST DATA");
-
     const { data } = await axios
       .post(process.env.GOOGLE_SCRIPT_URL2, {
         headers: {
@@ -30,12 +30,6 @@ async function updateCurveValues() {
       });
 
     data.length == 0 ? log.info("[] DATA") : log.success("DATA FOUND");
-
-    const user_id1 = "6921eae0ff7fdf021e0672ca";
-    const rootAssetsCategoryId = await assetsCatModel
-      .findOne({ name: "ASSETS", parentCategory: null }, { _id: 1 })
-      .lean();
-    const assetsSubCategoriesIDs = await getAllSubCategoryIds(user_id1);
 
     for (const day of data) {
       const livePrices = day.data;
@@ -59,19 +53,31 @@ async function updateCurveValues() {
         await MarketPrice.bulkWrite(bulkPriceOps, { ordered: false });
       }
 
-      await updateCurrentValuesByFilter({ userId: user_id1 });
-      await updateCurrentYearGains({ userId: user_id1 });
-      await updateStandaloneGains(assetsSubCategoriesIDs);
+      const user_IDs = await getAllUserIds();
+      for (const user_id1 of user_IDs) {
+        log.running(`PAST CURVE VALUE UPDATE User - ${user_id1}`);
+        const rootAssetsCategoryId = await assetsCatModel
+          .findOne(
+            { name: "ASSETS", parentCategory: null, user: user_id1 },
+            { _id: 1 }
+          )
+          .lean();
+        const assetsSubCategoriesIDs = await getAllSubCategoryIds(user_id1);
 
-      const leafcategorys = await getLeafCategoryIds(user_id1);
-      for (const catid of leafcategorys) {
-        await updateConsolidatedValues(catid);
+        await updateCurrentValuesByFilter({ userId: user_id1 });
+        await updateCurrentYearGains({ userId: user_id1 });
+        await updateStandaloneGains(assetsSubCategoriesIDs);
+
+        const leafcategorys = await getLeafCategoryIds(user_id1);
+        for (const catid of leafcategorys) {
+          await updateConsolidatedValues(catid);
+        }
+
+        await updateConsolidatedValues(rootAssetsCategoryId?._id);
+        assetsSubCategoriesIDs.push(rootAssetsCategoryId._id);
+        await recordCategoryCurves(assetsSubCategoriesIDs, day.date);
+        assetsSubCategoriesIDs.pop();
       }
-
-      await updateConsolidatedValues(rootAssetsCategoryId?._id);
-      assetsSubCategoriesIDs.push(rootAssetsCategoryId._id);
-      await recordCategoryCurves(assetsSubCategoriesIDs, day.date);
-      assetsSubCategoriesIDs.pop();
     }
     log.success("PAST CURVE VALUE UPDATE COMPLETED");
     return { success: true };

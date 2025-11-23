@@ -51,7 +51,7 @@ async function getLeafCategoryIds(userId) {
     },
     {
       $lookup: {
-        from: "assets", 
+        from: "assets",
         localField: "_id",
         foreignField: "parentCategory",
         as: "children",
@@ -70,4 +70,15 @@ async function getLeafCategoryIds(userId) {
   return result.map((cat) => cat._id);
 }
 
-module.exports = { getAllSubCategoryIds, getLeafCategoryIds };
+async function getAllUserIds() {
+  try {
+    const Users = require("../../../models/user");
+    const users = await Users.find({}, "_id");
+    return users.map((user) => user._id.toString());
+  } catch (error) {
+    console.error("Error fetching user IDs:", error);
+    return [];
+  }
+}
+
+module.exports = { getAllSubCategoryIds, getLeafCategoryIds, getAllUserIds };

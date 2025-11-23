@@ -38,7 +38,7 @@ function SingupFrom({ ...props }) {
       });
       resetForm();
       setUserData(response.data.Data);
-      navigate(`/home`);
+      navigate(`/assets`);
     } catch (err) {
       
     }
