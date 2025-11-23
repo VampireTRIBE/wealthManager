@@ -1,7 +1,6 @@
 import axios from "axios";
-const hostname = window.location.hostname;
 const api = axios.create({
-  baseURL: `http://${hostname}:3000`,
+  baseURL: `https://wealthmanager-backend-1y3o.onrender.com`,
   withCredentials: true,
 });
 export default api;
