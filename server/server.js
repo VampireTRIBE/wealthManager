@@ -11,7 +11,6 @@ const flash = require("connect-flash");
 const dataParser = require("./middlewares/dataParser");
 const Locals = require("./utills/locals/locals");
 const app = express();
-let port = 3000;
 
 corAuth.corAuth(app);
 DB_connect();
@@ -33,8 +32,8 @@ const updateCurveValues = require("./controllers/assets/assetsCategoryCurve");
 const log = require("./utills/logers/logger");
 
 // for listning all requests
-app.listen(port, async () => {
-  log.running(`SERVER PORT : ${port}`);
+app.listen(process.env.PORT, async () => {
+  log.running(`SERVER PORT : ${process.env.PORT}`);
   try {
     log.running("INITIAL SERVER UPDATE");
     const { success } = await updateCurveValues();

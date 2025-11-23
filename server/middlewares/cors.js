@@ -2,16 +2,15 @@ var cors = require("cors");
 var corsOptions = {
   origin: (origin, callback) => {
     if (
-      !origin || 
-      origin.startsWith("http://192.168.") || 
-      origin.startsWith("http://localhost:5173")
+      !origin ||
+      origin.startsWith("https://wealthmanager-uema.onrender.com")
     ) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
     }
   },
-  methods: "GET, POST, PUT, PATCH, DELETE", 
+  methods: "GET, POST, PUT, PATCH, DELETE",
   credentials: true,
 };
 
