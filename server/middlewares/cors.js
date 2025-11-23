@@ -1,4 +1,3 @@
-// middlewares/cors.js
 var cors = require("cors");
 
 var corsOptions = {
@@ -23,8 +22,18 @@ var corsOptions = {
 
 const corsAuth = {
   async corAuth(app) {
-    app.options("*", cors(corsOptions));
     app.use(cors(corsOptions));
+
+    app.use((req, res, next) => {
+      if (req.method === "OPTIONS") {
+        res.set("Access-Control-Allow-Origin", req.headers.origin || "*");
+        res.set("Access-Control-Allow-Credentials", "true");
+        res.set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
+        res.set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE");
+        return res.sendStatus(204);
+      }
+      next();
+    });
   },
 };
 
