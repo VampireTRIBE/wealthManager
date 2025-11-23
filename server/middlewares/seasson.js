@@ -20,8 +20,8 @@ function sessionConfig(app) {
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Fix 🚀
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Fix 🚀
+      secure: true, // Fix 🚀
+      sameSite: "none", // Fix 🚀
       maxAge: 7 * 24 * 60 * 60 * 1000,
     },
   };

@@ -12,6 +12,8 @@ const dataParser = require("./middlewares/dataParser");
 const Locals = require("./utills/locals/locals");
 const app = express();
 
+app.set("trust proxy", 1);
+
 corAuth.corAuth(app);
 DB_connect();
 sessionConfig(app);
